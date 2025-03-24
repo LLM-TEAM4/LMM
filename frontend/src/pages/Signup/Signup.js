@@ -117,7 +117,9 @@ class Signup extends React.Component {
         <Divider>OR</Divider>
 
         {/* 아이디로 시작하기 버튼 */}
-        <IDButton>아이디로 시작하기</IDButton>
+        <Link to="/signupid">
+          <IDButton>아이디로 시작하기</IDButton>
+        </Link>
 
         {/* 로그인 안내 */}
         <LoginText>
