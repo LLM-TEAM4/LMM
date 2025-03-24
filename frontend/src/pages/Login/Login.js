@@ -1,6 +1,14 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
+// 네비게이션 기능을 클래스형 컴포넌트에서 사용하도록 HOC 생성
+function withRouter(Component) {
+  return (props) => {
+    const navigate = useNavigate();
+    return <Component {...props} navigate={navigate} />;
+  };
+}
 
 // 전체 컨테이너
 const Container = styled.div`
@@ -91,8 +99,15 @@ class Login extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    console.log("로그인 시도:", this.state);
-    // 이후 API 요청 코드 추가 가능
+    const { email, password } = this.state;
+
+    // 임시 로그인 검증 (실제 API 요청으로 대체 가능)
+    if (email === "test@test.com" && password === "1234") {
+      console.log("로그인 성공!");
+      this.props.navigate("/mainpage"); // 로그인 성공 시 /mainpage로 이동
+    } else {
+      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+    }
   };
 
   render() {
@@ -135,4 +150,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);

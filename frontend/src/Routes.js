@@ -6,6 +6,7 @@ import Signup from "./pages/Signup/Signup";
 import SignupID from "./pages/Signup/SignupID";
 import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
+import MainPage from "./pages/Main/MainPage";
 
 class AppRoutes extends React.Component {
   render() {
@@ -13,6 +14,7 @@ class AppRoutes extends React.Component {
       <Router>
         <Routes>
           <Route exact path="/" element={<Main />} />
+          <Route exact path="/mainpage" element={<MainPage />} />
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/signupid" element={<SignupID />} />
           <Route exact path="/signupsns" element={<SignupSNS />} />
