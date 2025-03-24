@@ -59,7 +59,7 @@ class Main extends React.Component {
       <Container>
         {/* 상단 헤더 (로고 + 로그인 + 시작하기) */}
         <Header>
-          <Logo>Survey Archive</Logo>
+          <Logo>Culture Lens</Logo>
           <ButtonGroup>
             <Button to="/login">로그인</Button>
             <Button to="/signup">시작하기</Button>

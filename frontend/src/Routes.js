@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
 import SignupID from "./pages/Signup/SignupID";
+import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
 
 class AppRoutes extends React.Component {
@@ -14,6 +15,7 @@ class AppRoutes extends React.Component {
           <Route exact path="/" element={<Main />} />
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/signupid" element={<SignupID />} />
+          <Route exact path="/signupsns" element={<SignupSNS />} />
           <Route exact path="/login" element={<Login />} />
         </Routes>
       </Router>

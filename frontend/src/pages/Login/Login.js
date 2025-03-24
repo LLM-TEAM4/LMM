@@ -100,7 +100,7 @@ class Login extends Component {
       <Container>
         {/* 로고 */}
         <Logo>
-          <img src="/logo.png" alt="logo" /> Survey Archive
+          <img src="/logo.png" alt="logo" /> Culture Lens
         </Logo>
 
         {/* 로그인 폼 */}

@@ -99,7 +99,7 @@ const SignupID = () => {
   return (
     <Container>
       <Logo>
-        <img src="/logo.png" alt="logo" /> user spoon
+        <img src="/logo.png" alt="logo" /> Culture Lens
       </Logo>
 
       <p>빠르고 쉽게 계정을 만들어보세요!</p>

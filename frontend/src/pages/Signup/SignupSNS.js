@@ -1,6 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
+import naverLogo from "../../assets/img/naver.png";
+import kakaoLogo from "../../assets/img/kakao.png";
+import googleLogo from "../../assets/img/google.png";
 
 // 전체 컨테이너
 const Container = styled.div`
@@ -43,47 +46,27 @@ const Button = styled.button`
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
-  text-align: center;
-`;
-
-// SNS 시작하기 버튼
-const SNSButton = styled(Button)`
-  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: 1px solid #ddd;
-  color: #333;
-  margin-bottom: 15px;
+  background-color: #fff;
+  margin-bottom: 10px;
 
   &:hover {
     background-color: #f7f7f7;
   }
-`;
 
-// 구분선
-const Divider = styled.div`
-  display: flex;
-  align-items: center;
-  width: 80%;
-  margin: 15px 0;
-  color: #aaa;
-  font-size: 14px;
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    border-bottom: 1px solid #ddd;
-    margin: 0 10px;
+  img {
+    width: 20px;
+    margin-right: 10px;
   }
 `;
 
-// 아이디로 시작하기 버튼
-const IDButton = styled(Button)`
-  background-color: #68a0f4;
-  color: white;
-  border: none;
-
-  &:hover {
-    background-color: #4a82d9;
+const GoogleButton = styled(Button)`
+  img {
+    width: 30px; // 기존보다 크게 설정
+    height: 20px;
   }
 `;
 
@@ -100,7 +83,7 @@ const LoginText = styled.p`
   }
 `;
 
-class Signup extends React.Component {
+class SignupSNS extends React.Component {
   render() {
     return (
       <Container>
@@ -110,18 +93,16 @@ class Signup extends React.Component {
         </Logo>
         <Description>빠르고 쉽게 계정을 만들어보세요!</Description>
 
-        {/* SNS로 시작하기 버튼 */}
-        <Link to="/signupsns">
-          <SNSButton>SNS로 시작하기</SNSButton>
-        </Link>
-
-        {/* 구분선 */}
-        <Divider>OR</Divider>
-
-        {/* 아이디로 시작하기 버튼 */}
-        <Link to="/signupid">
-          <IDButton>아이디로 시작하기</IDButton>
-        </Link>
+        {/* SNS 버튼 */}
+        <Button>
+          <img src={naverLogo} alt="네이버" /> 네이버로 시작하기
+        </Button>
+        <Button>
+          <img src={kakaoLogo} alt="카카오" /> 카카오로 시작하기
+        </Button>
+        <GoogleButton>
+          <img src={googleLogo} alt="구글" /> 구글로 시작하기
+        </GoogleButton>
 
         {/* 로그인 안내 */}
         <LoginText>
@@ -132,4 +113,4 @@ class Signup extends React.Component {
   }
 }
 
-export default Signup;
+export default SignupSNS;
