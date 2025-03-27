@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import LogoImage from "../../assets/img/logo.png";
 
 const Container = styled.div`
   display: flex;
@@ -10,7 +11,7 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-const Logo = styled.div`
+const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,7 +21,7 @@ const Logo = styled.div`
   margin-bottom: 20px;
 
   img {
-    width: 30px;
+    width: 150px;
     margin-right: 10px;
   }
 `;
@@ -98,9 +99,9 @@ const SignupID = () => {
 
   return (
     <Container>
-      <Logo>
-        <img src="/logo.png" alt="logo" /> Culture Lens
-      </Logo>
+      <HeaderLogo>
+        <img src={LogoImage} alt="로고" /> {/* 이미지 소스 변경 */}
+      </HeaderLogo>
 
       <p>빠르고 쉽게 계정을 만들어보세요!</p>
 

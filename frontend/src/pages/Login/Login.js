@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import LoginLogoImage from "../../assets/img/loginlogo.png"; // 이미지 변수명 변경
 
 // 네비게이션 기능을 클래스형 컴포넌트에서 사용하도록 HOC 생성
 function withRouter(Component) {
@@ -21,7 +22,7 @@ const Container = styled.div`
 `;
 
 // 로고 스타일
-const Logo = styled.div`
+const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -31,7 +32,7 @@ const Logo = styled.div`
   margin-bottom: 30px;
 
   img {
-    width: 30px;
+    width: 150px; /* 로고 크기 키움 */
     margin-right: 10px;
   }
 `;
@@ -114,9 +115,9 @@ class Login extends Component {
     return (
       <Container>
         {/* 로고 */}
-        <Logo>
-          <img src="/logo.png" alt="logo" /> Culture Lens
-        </Logo>
+        <HeaderLogo>
+          <img src={LoginLogoImage} alt="로고" />
+        </HeaderLogo>
 
         {/* 로그인 폼 */}
         <Form onSubmit={this.handleSubmit}>

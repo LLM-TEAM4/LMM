@@ -4,6 +4,7 @@ import styled from "styled-components";
 import naverLogo from "../../assets/img/naver.png";
 import kakaoLogo from "../../assets/img/kakao.png";
 import googleLogo from "../../assets/img/google.png";
+import LogoImage from "../../assets/img/logo.png";
 
 // 전체 컨테이너
 const Container = styled.div`
@@ -16,7 +17,7 @@ const Container = styled.div`
 `;
 
 // 로고 스타일
-const Logo = styled.div`
+const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -26,7 +27,7 @@ const Logo = styled.div`
   margin-bottom: 10px;
 
   img {
-    width: 30px;
+    width: 150px;
     margin-right: 10px;
   }
 `;
@@ -88,9 +89,9 @@ class SignupSNS extends React.Component {
     return (
       <Container>
         {/* 로고 */}
-        <Logo>
-          <img src="/logo.png" alt="logo" /> Culture Lens
-        </Logo>
+        <HeaderLogo>
+          <img src={LogoImage} alt="로고" /> {/* 이미지 소스 변경 */}
+        </HeaderLogo>
         <Description>빠르고 쉽게 계정을 만들어보세요!</Description>
 
         {/* SNS 버튼 */}
