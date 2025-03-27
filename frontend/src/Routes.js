@@ -7,6 +7,7 @@ import SignupID from "./pages/Signup/SignupID";
 import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
 import MainPage from "./pages/Main/MainPage";
+import Survey from "./pages/Survey/Survey";
 
 class AppRoutes extends React.Component {
   render() {
@@ -19,6 +20,7 @@ class AppRoutes extends React.Component {
           <Route exact path="/signupid" element={<SignupID />} />
           <Route exact path="/signupsns" element={<SignupSNS />} />
           <Route exact path="/login" element={<Login />} />
+          <Route exact path="/survey" element={<Survey />} />
         </Routes>
       </Router>
     );
