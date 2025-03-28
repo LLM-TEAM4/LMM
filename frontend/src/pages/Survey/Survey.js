@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 import BibimbabImg from "../../assets/img/bibimbab.png";
 import KimchiImg from "../../assets/img/kimchi.png";
 
-// 스타일 정의
 const Wrapper = styled.div`
   display: flex;
   font-family: Arial, sans-serif;
@@ -146,31 +145,67 @@ const ContinueButton = styled.button`
 
 const Survey = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { completedTitle } = location.state || {};
 
-  const surveys = [
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [surveys, setSurveys] = useState([
     {
       title: "불고기",
       progress: 5,
       total: 20,
       image: BulgogiImg,
+      category: "cuisine",
+      caption:
+        "Traditional Korean dish, Bulgogi is marinated thinly sliced beef that has been grilled or stir-fried. It is often served with rice and kimchi.",
     },
     {
       title: "비빔밥",
       progress: 10,
       total: 20,
       image: BibimbabImg,
+      category: "cuisine",
+      caption:
+        "Bibimbap is a Korean mixed rice dish topped with various seasoned vegetables, meat, egg, and gochujang (chili pepper paste).",
     },
     {
       title: "김치",
       progress: 0,
       total: 20,
       image: KimchiImg,
+      category: "cuisine",
+      caption:
+        "Kimchi is a traditional Korean side dish of fermented vegetables, typically cabbage and radish, seasoned with chili powder, garlic, and ginger.",
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    if (completedTitle) {
+      setSurveys((prev) =>
+        prev.map((item) =>
+          item.title === completedTitle
+            ? { ...item, progress: Math.min(item.progress + 1, item.total) }
+            : item
+        )
+      );
+    }
+  }, [completedTitle]);
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const filteredSurveys =
+    selectedCategories.length > 0
+      ? surveys.filter((item) => selectedCategories.includes(item.category))
+      : surveys;
 
   return (
     <Wrapper>
-      {/* 왼쪽 사이드바 */}
       <LeftSidebar>
         <SectionTitle>국가</SectionTitle>
         <CheckboxGroup>
@@ -187,27 +222,21 @@ const Survey = () => {
 
         <SectionTitle>카테고리</SectionTitle>
         <CheckboxGroup>
-          <CheckboxLabel>
-            <input type="checkbox" /> architecture
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> clothes
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> cuisine
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> game
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> tool
-          </CheckboxLabel>
+          {["architecture", "clothes", "cuisine", "game", "tool"].map((cat) => (
+            <CheckboxLabel key={cat}>
+              <input
+                type="checkbox"
+                onChange={() => handleCategoryChange(cat)}
+                checked={selectedCategories.includes(cat)}
+              />{" "}
+              {cat}
+            </CheckboxLabel>
+          ))}
         </CheckboxGroup>
 
         <SelectButton>SELECT</SelectButton>
       </LeftSidebar>
 
-      {/* 오른쪽 컨텐츠 */}
       <RightContent>
         <Header>
           <HeaderLogo>
@@ -219,12 +248,19 @@ const Survey = () => {
         </Header>
 
         <SurveyContainer>
-          {surveys.map((item, index) => {
+          {filteredSurveys.map((item, index) => {
             const percent = Math.round((item.progress / item.total) * 100);
             return (
               <SurveyItem
                 key={index}
-                onClick={() => navigate(`/survey/${item.title}`)}
+                onClick={() =>
+                  navigate(`/survey/${item.title}`, {
+                    state: {
+                      image: item.image,
+                      caption: item.caption,
+                    },
+                  })
+                }
               >
                 <SurveyImage src={item.image} alt={item.title} />
                 <SurveyContent>

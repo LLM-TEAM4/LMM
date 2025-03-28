@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 
 const Container = styled.div`
   padding: 40px;
@@ -38,6 +38,7 @@ const StartButton = styled.button`
   border: none;
   border-radius: 8px;
   cursor: pointer;
+
   &:hover {
     background-color: #3a6fbd;
   }
@@ -45,6 +46,10 @@ const StartButton = styled.button`
 
 const SurveyDetail = () => {
   const navigate = useNavigate();
+  const { title } = useParams();
+  const location = useLocation();
+
+  const { image, caption } = location.state || {};
 
   return (
     <Container>
@@ -52,6 +57,7 @@ const SurveyDetail = () => {
         LLM 기반 캡션과 사람의 생각이 일치하는 정도에 대한 설문조사입니다.
       </Title>
       <Instruction>이미지를 보고 적절한 캡션을 선택해주세요.</Instruction>
+
       <OptionBox>
         <strong>1. 문화적으로 풍부한 캡션</strong>
         <br />- 문화적 세부 사항이 정확하게 담겨있으며, 역사적, 의미적, 상징적
@@ -74,7 +80,14 @@ const SurveyDetail = () => {
         <br />- 잘못된 이름이나 국가를 표현하거나 올바르지 않은 문화적 맥락을
         담고있는 캡션
       </OptionBox>
-      <StartButton onClick={() => navigate("/survey/:title/start")}>
+
+      <StartButton
+        onClick={() =>
+          navigate(`/survey/${title}/start`, {
+            state: { image, caption },
+          })
+        }
+      >
         설문 시작하기
       </StartButton>
     </Container>

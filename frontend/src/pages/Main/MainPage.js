@@ -97,6 +97,7 @@ const MainPage = () => {
       {/* 주간 & 월간 순위 */}
       <RankingContainer>
         <RankingBox>
+          <h3>🏆 주간 통합 순위</h3>
           {weeklyRanking.map((user) => (
             <p key={user.id}>
               <strong>{user.id}</strong> {user.name} {user.count}회

@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 
@@ -111,7 +111,30 @@ const NextButton = styled.button`
 
 const SurveyStart = () => {
   const { title } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { image, caption } = location.state || {};
+
   const [selected, setSelected] = useState(null);
+
+  const fallbackImage = BulgogiImg;
+  const fallbackCaption = "설명이 제공되지 않았습니다.";
+
+  const handleNext = () => {
+    // 완료 시 Survey.js로 돌아가며 완료 정보를 넘김
+    navigate("/survey", {
+      state: {
+        completedTitle: title,
+      },
+      replace: true,
+    });
+  };
+
+  useEffect(() => {
+    if (location.state?.completedTitle) {
+      // 상태 업데이트 로직
+    }
+  }, [location.key]);
 
   return (
     <Wrapper>
@@ -128,15 +151,9 @@ const SurveyStart = () => {
           <Progress>1/5</Progress>
         </TopBar>
 
-        <Image src={BulgogiImg} alt="bulgogi" />
+        <Image src={image || fallbackImage} alt={title} />
 
-        <Caption>
-          Traditional Korean dish, Bulgogi is marinated thinly sliced beef that
-          has been grilled or stir-fried. This popular meal is often served with
-          rice and kimchi, a spicy fermented vegetable side dish. The marinade
-          typically includes ingredients like soy sauce, sugar, garlic, ginger,
-          sesame oil, and black pepper.
-        </Caption>
+        <Caption>{caption || fallbackCaption}</Caption>
 
         <Options>
           <Option>
@@ -191,7 +208,9 @@ const SurveyStart = () => {
           </Option>
         </Options>
 
-        <NextButton disabled={!selected}>다음으로</NextButton>
+        <NextButton disabled={!selected} onClick={handleNext}>
+          다음으로
+        </NextButton>
       </Container>
     </Wrapper>
   );
