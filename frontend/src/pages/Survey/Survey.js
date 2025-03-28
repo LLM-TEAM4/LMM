@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 import BibimbabImg from "../../assets/img/bibimbab.png";
@@ -96,6 +97,12 @@ const SurveyItem = styled.div`
   border-radius: 12px;
   margin-bottom: 15px;
   background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;
 
 const SurveyImage = styled.img`
@@ -123,11 +130,13 @@ const ProgressBar = styled.progress`
 `;
 
 const ContinueButton = styled.button`
+  padding: 8px 12px;
   background-color: #649eff;
   color: white;
-  padding: 10px 14px;
   border: none;
   border-radius: 6px;
+  font-size: 14px;
+  margin-left: auto;
   cursor: pointer;
 
   &:hover {
@@ -136,6 +145,8 @@ const ContinueButton = styled.button`
 `;
 
 const Survey = () => {
+  const navigate = useNavigate();
+
   const surveys = [
     {
       title: "불고기",
@@ -211,7 +222,10 @@ const Survey = () => {
           {surveys.map((item, index) => {
             const percent = Math.round((item.progress / item.total) * 100);
             return (
-              <SurveyItem key={index}>
+              <SurveyItem
+                key={index}
+                onClick={() => navigate(`/survey/${item.title}`)}
+              >
                 <SurveyImage src={item.image} alt={item.title} />
                 <SurveyContent>
                   <strong>{item.title}</strong>
