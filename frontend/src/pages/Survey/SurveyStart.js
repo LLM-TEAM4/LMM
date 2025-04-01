@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
@@ -75,7 +75,7 @@ const Caption = styled.p`
 
 const Options = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   margin: 30px 0;
   flex-wrap: wrap;
 `;
@@ -84,12 +84,13 @@ const Option = styled.label`
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 120px;
-  margin: 10px;
+  margin: 10px 15px;
   font-size: 14px;
   cursor: pointer;
 
   input[type="radio"] {
+    width: 24px;
+    height: 24px;
     margin-bottom: 8px;
   }
 `;
@@ -113,28 +114,26 @@ const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { image, caption } = location.state || {};
+  const { image, caption = [] } = location.state || {};
 
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState({});
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const fallbackImage = BulgogiImg;
   const fallbackCaption = "설명이 제공되지 않았습니다.";
 
   const handleNext = () => {
-    // 완료 시 Survey.js로 돌아가며 완료 정보를 넘김
-    navigate("/survey", {
-      state: {
-        completedTitle: title,
-      },
-      replace: true,
-    });
-  };
-
-  useEffect(() => {
-    if (location.state?.completedTitle) {
-      // 상태 업데이트 로직
+    if (currentIndex < caption.length - 1) {
+      setCurrentIndex((prev) => prev + 1);
+    } else {
+      navigate("/survey", {
+        state: {
+          completedTitle: title,
+        },
+        replace: true,
+      });
     }
-  }, [location.key]);
+  };
 
   return (
     <Wrapper>
@@ -148,67 +147,44 @@ const SurveyStart = () => {
       <Container>
         <TopBar>
           <Breadcrumb>한국 cuisine {title}</Breadcrumb>
-          <Progress>1/5</Progress>
+          <Progress>
+            {caption.length > 0 ? currentIndex + 1 : 0}/{caption.length || 5}
+          </Progress>
         </TopBar>
 
         <Image src={image || fallbackImage} alt={title} />
 
-        <Caption>{caption || fallbackCaption}</Caption>
+        <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
 
         <Options>
-          <Option>
-            <input
-              type="radio"
-              name="rating"
-              value="1"
-              checked={selected === "1"}
-              onChange={() => setSelected("1")}
-            />
-            문화적으로 풍부하다
-          </Option>
-          <Option>
-            <input
-              type="radio"
-              name="rating"
-              value="2"
-              checked={selected === "2"}
-              onChange={() => setSelected("2")}
-            />
-            문화적으로 매우 적절하다
-          </Option>
-          <Option>
-            <input
-              type="radio"
-              name="rating"
-              value="3"
-              checked={selected === "3"}
-              onChange={() => setSelected("3")}
-            />
-            문화적으로 적절하다
-          </Option>
-          <Option>
-            <input
-              type="radio"
-              name="rating"
-              value="4"
-              checked={selected === "4"}
-              onChange={() => setSelected("4")}
-            />
-            중립적 또는 일반적이다
-          </Option>
-          <Option>
-            <input
-              type="radio"
-              name="rating"
-              value="5"
-              checked={selected === "5"}
-              onChange={() => setSelected("5")}
-            />
-            문화적으로 부적절하다
-          </Option>
+          {[1, 2, 3, 4, 5].map((num) => (
+            <Option key={num}>
+              <input
+                type="radio"
+                name={`rating-${currentIndex}`}
+                value={num}
+                checked={selected[currentIndex] === num}
+                onChange={() =>
+                  setSelected((prev) => ({ ...prev, [currentIndex]: num }))
+                }
+              />
+              {
+                [
+                  "문화적으로 풍부하다",
+                  "문화적으로 매우 적절하다",
+                  "문화적으로 적절하다",
+                  "중립적 또는 일반적이다",
+                  "문화적으로 부적절하다",
+                ][num - 1]
+              }
+            </Option>
+          ))}
         </Options>
 
-        <NextButton disabled={!selected} onClick={handleNext}>
+        <NextButton
+          disabled={selected[currentIndex] == null}
+          onClick={handleNext}
+        >
           다음으로
         </NextButton>
       </Container>

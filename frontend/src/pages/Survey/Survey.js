@@ -123,7 +123,7 @@ const ProgressText = styled.div`
 `;
 
 const ProgressBar = styled.progress`
-  width: 100%;
+  width: 95%;
   height: 16px;
   margin-bottom: 5px;
 `;
