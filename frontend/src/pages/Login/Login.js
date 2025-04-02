@@ -105,7 +105,7 @@ class Login extends Component {
     // 임시 로그인 검증 (실제 API 요청으로 대체 가능)
     if (email === "test@test.com" && password === "1234") {
       console.log("로그인 성공!");
-      this.props.navigate("/mainpage"); // 로그인 성공 시 /mainpage로 이동
+      this.props.navigate("/mainpage"); // 로그인 성공 시 /Main/MainPage로 이동
     } else {
       alert("아이디 또는 비밀번호가 올바르지 않습니다.");
     }

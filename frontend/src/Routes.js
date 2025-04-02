@@ -8,19 +8,24 @@ import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
 import MainPage from "./pages/Main/MainPage";
 import Survey from "./pages/Survey/Survey";
+import MyPage from "./pages/MyPage/MyPage";  // ✅ MyPage 불러오기!
+import SurveyParticipation from "./pages/MyPage/SurveyParticipation";
+
 
 class AppRoutes extends React.Component {
   render() {
     return (
       <Router>
         <Routes>
-          <Route exact path="/" element={<Main />} />
-          <Route exact path="/mainpage" element={<MainPage />} />
-          <Route exact path="/signup" element={<Signup />} />
-          <Route exact path="/signupid" element={<SignupID />} />
-          <Route exact path="/signupsns" element={<SignupSNS />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/survey" element={<Survey />} />
+          <Route  path="/" element={<Main />} />
+          <Route  path="/mainpage" element={<MainPage />} />
+          <Route  path="/signup" element={<Signup />} />
+          <Route  path="/signupid" element={<SignupID />} />
+          <Route  path="/signupsns" element={<SignupSNS />} />
+          <Route  path="/login" element={<Login />} />
+          <Route  path="/mypage" element={<MyPage />} /> {/* ✅ MyPage 연결 */}
+          <Route  path="/survey" element={<Survey />} />
+          <Route path="/survey-participation" element={<SurveyParticipation />} />
         </Routes>
       </Router>
     );
