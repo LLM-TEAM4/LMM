@@ -4,6 +4,9 @@ import styled from "styled-components";
 import LogoImg from "../../assets/img/logo.png";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
+import KoreaFlag from "../../assets/img/korea.png";
+import ChinaFlag from "../../assets/img/china.png";
+import JapanFlag from "../../assets/img/japan.png";
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -141,9 +144,9 @@ const RightContent = styled.div`
 `;
 
 const TotalResponses = styled.p`
-  margin-top: 100px;
+  margin-top: 150px;
   padding: 10px 15px;
-  border-radius: 8px;
+  
   display: inline-block;
 `;
 
@@ -181,6 +184,13 @@ const SectionHeader = styled.div`
   border-bottom: 1px solid #ddd;  
    
 `;
+
+const countryFlags = {
+  한국: KoreaFlag,
+  중국: ChinaFlag,
+  일본: JapanFlag,
+};
+
 const totalResponsesCount = chartData.reduce((sum, { data }) => sum + data[0], 0);
 
 const SurveyParticipation = () => {
@@ -223,9 +233,25 @@ const SurveyParticipation = () => {
           <div style={{ display: "flex", justifyContent: "center", gap: "30px" }}>
             {chartData.map(({ country, data }, index) => (
               <div key={index} style={{ width: "200px", height: "200px", marginTop: "30px" }}>
-                
+                <p style={{ 
+                  textAlign: "center", 
+                  marginTop: "30px", 
+                  fontWeight: "600", 
+                  fontSize: "15px" ,
+                  display: "flex", 
+                  flexDirection: "column",  
+                  alignItems: "center", 
+                  justifyContent: "center"
+                  }}>
+                <img 
+                  src={countryFlags[country]} 
+                  alt={`${country} 국기`} 
+                  style={{ width: "30px", height: "30px", marginBottom: "5px" }} />
+                {country}
+                </p>
                 <Doughnut data={{ labels: ["응답", "미응답"], datasets: [{ data, backgroundColor: colors.backgroundColor, hoverBackgroundColor: colors.hoverBackgroundColor, marginTop: "30px" }] }} options={options} />
-                <p style={{ textAlign: "center", marginTop: "30px", fontWeight: "600", fontSize: "17px" }}>{country}</p>
+                
+                
               </div>
             ))}
           </div>
