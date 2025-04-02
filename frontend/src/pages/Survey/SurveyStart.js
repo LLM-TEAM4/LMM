@@ -114,7 +114,7 @@ const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { image, caption = [] } = location.state || {};
+  const { image, caption = [], path } = location.state || {};
 
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -146,7 +146,7 @@ const SurveyStart = () => {
 
       <Container>
         <TopBar>
-          <Breadcrumb>한국 cuisine {title}</Breadcrumb>
+          <Breadcrumb>{path || `한국 > cuisine > ${title}`}</Breadcrumb>
           <Progress>
             {caption.length > 0 ? currentIndex + 1 : 0}/{caption.length || 5}
           </Progress>

@@ -39,6 +39,12 @@ const Container = styled.div`
   padding: 40px;
 `;
 
+const CategoryPath = styled.div`
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
 const Title = styled.h2`
   font-size: 22px;
   font-weight: bold;
@@ -80,7 +86,7 @@ const SurveyDetail = () => {
   const { title } = useParams();
   const location = useLocation();
 
-  const { image } = location.state || {};
+  const { image, path } = location.state || {};
 
   const captions = {
     불고기: [
@@ -118,6 +124,8 @@ const SurveyDetail = () => {
       </Header>
 
       <Container>
+        {path && <CategoryPath>{path}</CategoryPath>}
+
         <Title>
           LLM 기반 캡션과 사람의 생각이 일치하는 정도에 대한 설문조사입니다.
         </Title>
@@ -149,7 +157,7 @@ const SurveyDetail = () => {
         <StartButton
           onClick={() =>
             navigate(`/survey/${title}/start`, {
-              state: { image, caption: captionList },
+              state: { image, caption: captionList, path },
             })
           }
         >

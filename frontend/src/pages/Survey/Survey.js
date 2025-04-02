@@ -88,6 +88,19 @@ const SurveyContainer = styled.div`
   margin-top: 20px;
 `;
 
+const PathAndSortContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 10px;
+`;
+
+const CategoryPath = styled.div`
+  font-size: 14px;
+  color: #666;
+`;
+
 const SurveyItem = styled.div`
   display: flex;
   align-items: center;
@@ -149,15 +162,15 @@ const Survey = () => {
   const { completedTitle } = location.state || {};
 
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
   const [surveys, setSurveys] = useState([
     {
       title: "불고기",
-      progress: 5,
+      progress: 20,
       total: 20,
       image: BulgogiImg,
       category: "cuisine",
-      caption:
-        "Traditional Korean dish, Bulgogi is marinated thinly sliced beef that has been grilled or stir-fried. It is often served with rice and kimchi.",
+      caption: "...",
     },
     {
       title: "비빔밥",
@@ -165,8 +178,7 @@ const Survey = () => {
       total: 20,
       image: BibimbabImg,
       category: "cuisine",
-      caption:
-        "Bibimbap is a Korean mixed rice dish topped with various seasoned vegetables, meat, egg, and gochujang (chili pepper paste).",
+      caption: "...",
     },
     {
       title: "김치",
@@ -174,8 +186,7 @@ const Survey = () => {
       total: 20,
       image: KimchiImg,
       category: "cuisine",
-      caption:
-        "Kimchi is a traditional Korean side dish of fermented vegetables, typically cabbage and radish, seasoned with chili powder, garlic, and ginger.",
+      caption: "...",
     },
   ]);
 
@@ -203,6 +214,12 @@ const Survey = () => {
     selectedCategories.length > 0
       ? surveys.filter((item) => selectedCategories.includes(item.category))
       : surveys;
+
+  const sortedSurveys = [...filteredSurveys].sort((a, b) => {
+    return sortOrder === "asc"
+      ? a.title.localeCompare(b.title)
+      : b.title.localeCompare(a.title);
+  });
 
   return (
     <Wrapper>
@@ -247,8 +264,17 @@ const Survey = () => {
           </BackButton>
         </Header>
 
+        <PathAndSortContainer>
+          <CategoryPath>설문조사 &gt; 한국 &gt; cuisine</CategoryPath>
+          <div>
+            <strong>정렬:</strong>{" "}
+            <button onClick={() => setSortOrder("asc")}>오름차순</button>{" "}
+            <button onClick={() => setSortOrder("desc")}>내림차순</button>
+          </div>
+        </PathAndSortContainer>
+
         <SurveyContainer>
-          {filteredSurveys.map((item, index) => {
+          {sortedSurveys.map((item, index) => {
             const percent = Math.round((item.progress / item.total) * 100);
             return (
               <SurveyItem
@@ -258,6 +284,7 @@ const Survey = () => {
                     state: {
                       image: item.image,
                       caption: item.caption,
+                      path: `한국 > ${item.category} > ${item.title}`,
                     },
                   })
                 }
@@ -271,7 +298,9 @@ const Survey = () => {
                     {percent}% ({item.progress} / {item.total})
                   </ProgressText>
                 </SurveyContent>
-                <ContinueButton>이어서 진행하기</ContinueButton>
+                <ContinueButton>
+                  {item.progress >= item.total ? "완료" : "이어서 진행하기"}
+                </ContinueButton>
               </SurveyItem>
             );
           })}
