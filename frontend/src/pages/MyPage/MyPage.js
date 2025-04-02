@@ -148,6 +148,7 @@ const ProfileDetails = styled.div`
   flex-direction: column;
   gap: 10px;
   
+  
 `;
 
 const InputField = styled.input`
@@ -272,7 +273,7 @@ const MyPage = () => {
           <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
         </LeftSidebar>
         <RightContent>
-          <SectionTitle>계정</SectionTitle>
+          <SectionTitle>👤 계정</SectionTitle>
 
 
           <ProfileSection>
@@ -289,20 +290,20 @@ const MyPage = () => {
               </ActionButton>
             </ProfileImageWrapper>
 
-            <ProfileDetails>
+            <ProfileDetails style={{ marginTop: "103px" }}>
               <InputField 
                 type="text" 
                 value={userName} 
                 onChange={handleInputChange} 
               />
-              <ButtonRow>
+              <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
                 <ActionButton>저장</ActionButton>
               </ButtonRow>
             </ProfileDetails>
 
           </ProfileSection>
           <SecuritySection>
-            <SectionTitle>계정보안</SectionTitle>
+            <SectionTitle>🔒 계정보안</SectionTitle>
             <SecurityOption>
               비밀번호 변경 <span>&gt;</span>
             </SecurityOption>

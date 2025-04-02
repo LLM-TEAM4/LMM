@@ -225,7 +225,7 @@ const SurveyParticipation = () => {
               <div key={index} style={{ width: "200px", height: "200px", marginTop: "30px" }}>
                 
                 <Doughnut data={{ labels: ["응답", "미응답"], datasets: [{ data, backgroundColor: colors.backgroundColor, hoverBackgroundColor: colors.hoverBackgroundColor, marginTop: "30px" }] }} options={options} />
-                <p style={{ textAlign: "center", marginTop: "30px", fontWeight: "600", fontSize: "14px" }}>{country}</p>
+                <p style={{ textAlign: "center", marginTop: "30px", fontWeight: "600", fontSize: "17px" }}>{country}</p>
               </div>
             ))}
           </div>
