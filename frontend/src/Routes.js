@@ -22,7 +22,6 @@ class AppRoutes extends React.Component {
     return (
       <Router>
         <Routes>
-
           <Route  path="/" element={<Main />} />
           <Route  path="/mainpage" element={<MainPage />} />
           <Route  path="/signup" element={<Signup />} />
