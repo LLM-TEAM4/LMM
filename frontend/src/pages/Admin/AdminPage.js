@@ -246,8 +246,8 @@ const AdminPage = () => {
 
       <ContentWrapper>
         <LeftSidebar>
-          <SidebarButton to="/adminpage">➕ 설문조사 등록</SidebarButton>
-          <SidebarButton to="/adminlist">📊 설문통계 조회</SidebarButton>
+          <SidebarButton to="/survey-create">➕ 설문조사 등록</SidebarButton>
+          <SidebarButton to="/survey-statistics">📊 설문통계 조회</SidebarButton>
         </LeftSidebar>
 
         <RightContent>
