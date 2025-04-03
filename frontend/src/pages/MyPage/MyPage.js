@@ -76,6 +76,7 @@ const LeftSidebar = styled.div`
   flex-direction: column;
   gap: 10px;
   border-right: 1px solid #ddd;
+  margin-top: 20px;
 `;
 
 const SidebarButton = styled(Link)`
@@ -104,7 +105,7 @@ const SidebarButton = styled(Link)`
 
 const RightContent = styled.div`
   flex: 1;
-  padding: 20px;
+  padding: 60px 20px 20px 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -116,6 +117,7 @@ const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
+  margin-top:40px;
   padding-bottom: 10px;
   width: 100%;
   border-bottom: 1px solid #ddd;
@@ -163,13 +165,14 @@ const InputField = styled.input`
   font-size: 16px;
   border-radius: 6px;
   border: 2px solid #F5F5F5;
+  
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   gap: 10px;
   justify-content: center; 
-  margin-top: 15px; 
+  margin-top: 20px; 
   `;
 
 const ActionButton = styled.button`
@@ -222,7 +225,8 @@ const ModalContent = styled.div`
   transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
-  width: 300px;
+  width: 100%;
+  max-width: 350px;
   text-align: center;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -272,21 +276,55 @@ const CreditArrow = styled.span`
 `;
 
 
+const WarningText = styled.p`
+  font-size: 12px;
+  color: ${({ isValid }) => (isValid ? "#68A0F4" : "red")};
+  margin-top: 0px;
+`;
 
 ///////////////////
 const MyPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(ProfilePic);
   const [userName, setUserName] = useState("종합설계1");
+  const [isNameValid, setIsNameValid] = useState(true); 
   const [isSurveyMenuOpen, setSurveyMenuOpen] = useState(false);
   const navigate = useNavigate(); 
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleDeleteAccount = () => {
-    navigate("/mainpage"); // 🔹 Main.js로 이동
+    navigate("/"); // 🔹 Main.js로 이동
   };
 
+
+  const handleOpenPasswordModal = () => {
+    setPasswordModalOpen(true);
+  };
+  
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+  
+  const handleChangePassword = () => {
+    if (newPassword !== confirmPassword) {
+      alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    alert("비밀번호가 변경되었습니다.");
+    handleClosePasswordModal();
+  };
+
+
   const handleInputChange = (event) => {
-    setUserName(event.target.value); // 입력값 업데이트
+    const newName = event.target.value;
+    setUserName(newName);
+    setIsNameValid(newName.length <= 10); // 10글자 이하일 때만 true
   };
 
   const handleImageChange = (event) => {
@@ -301,7 +339,7 @@ const MyPage = () => {
   };
 
   const toggleSurveyMenu = () => {
-    setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
+    setSurveyMenuOpen((prev) => !prev); 
   };
   return (
     <Wrapper>
@@ -323,15 +361,15 @@ const MyPage = () => {
           <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
           <SidebarButton as="button" onClick={toggleSurveyMenu}>
           <span>⚙️ 설문관리</span> 
-          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
+          <span>{isSurveyMenuOpen ? "🔼" : "🔽"}</span> 
           </SidebarButton>
           {isSurveyMenuOpen && (
-            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
+            <div style={{ paddingLeft: "10px" }}> 
               <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
-                ➕ 설문 만들기
+                ➕    설문 만들기
               </SidebarButton>
               <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
-                📋 내 설문 목록
+                📋    내 설문 목록
               </SidebarButton>
             </div>
           )}
@@ -342,7 +380,7 @@ const MyPage = () => {
 
           <ProfileSection>
             <ProfileImageWrapper>
-              <ProfileImage src={profileImage} alt="Profile" /> {/* ✅ 상태 적용 */}
+              <ProfileImage src={profileImage} alt="Profile" /> 
               <HiddenFileInput 
                 type="file" 
                 accept="image/*" 
@@ -354,15 +392,18 @@ const MyPage = () => {
               </ActionButton>
             </ProfileImageWrapper>
 
-            <ProfileDetails style={{ marginTop: "103px" }}>
-              <InputField 
-                type="text" 
-                value={userName} 
-                onChange={handleInputChange} 
-              />
-              <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-                <ActionButton>저장</ActionButton>
-              </ButtonRow>
+            <ProfileDetails style={{ marginTop: "50px" }}>
+            <InputField 
+              type="text" 
+              value={userName} 
+              onChange={handleInputChange} 
+            />
+            <WarningText isValid={isNameValid}>
+              닉네임은 10글자를 초과하면 안됩니다!
+            </WarningText> 
+            <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+            <ActionButton disabled={!isNameValid}>저장</ActionButton> {/* 10글자 초과면 저장 비활성화 가능 */}
+            </ButtonRow>
             </ProfileDetails>
             
 
@@ -377,16 +418,20 @@ const MyPage = () => {
             </CreditSection>
           <SecuritySection>
             <SectionTitle>🔒 계정보안</SectionTitle>
-            <SecurityOption>
+
+            <SecurityOption onClick={handleOpenPasswordModal}>
               비밀번호 변경 <span>&gt;</span>
             </SecurityOption>
+
             <SecurityOption onClick={() => setModalOpen(true)}>
               회원 탈퇴 <span>&gt;</span>
             </SecurityOption>
+
           </SecuritySection>
         </RightContent>
       </ContentWrapper>
 
+    
       {isModalOpen && (
         <ModalOverlay isOpen={isModalOpen}>
           <ModalContent>
@@ -406,6 +451,49 @@ const MyPage = () => {
           </ModalContent>
         </ModalOverlay>
       )}
+
+
+
+      {isPasswordModalOpen && (
+        <ModalOverlay isOpen={isPasswordModalOpen}>  
+        <ModalContent>
+          <h3>비밀번호 변경</h3>
+
+          <InputField
+            type="password"
+            placeholder="현재 비밀번호"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+          <InputField
+            type="password"
+            placeholder="새 비밀번호"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+          <InputField
+            type="password"
+            placeholder="새 비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+
+          <ButtonRow>
+            <ActionButton onClick={handleClosePasswordModal}>취소</ActionButton>
+            <ActionButton onClick={handleChangePassword}>
+              비밀번호 변경
+            </ActionButton>
+        </ButtonRow>
+        </ModalContent>
+
+      </ModalOverlay>
+)}
+
+
+
     </Wrapper>
   );
 };
