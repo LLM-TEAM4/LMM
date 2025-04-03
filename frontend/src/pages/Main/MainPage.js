@@ -90,7 +90,9 @@ const MainPage = () => {
           <Link to="/survey">설문조사</Link>{" "}
           {/* 설문조사 버튼 클릭 시 Survey.js로 이동 */}
           <span>랭킹조회</span>
-          <span>👤</span>
+          <Link to="/mypage">
+            <span>👤</span>
+          </Link> {/* 클릭 시 MyPage.js로 이동 */}
         </Nav>
       </Header>
 
