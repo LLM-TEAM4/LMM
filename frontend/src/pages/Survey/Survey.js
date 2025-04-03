@@ -9,6 +9,44 @@ import KimchiImg from "../../assets/img/kimchi.png";
 const Wrapper = styled.div`
   display: flex;
   font-family: Arial, sans-serif;
+  margin-top: 60px; /* 헤더 고정으로 인해 여백 추가 */
+`;
+
+const Header = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 30px;
+  border-bottom: 1px solid #ddd;
+  z-index: 1000;
+`;
+
+const HeaderLogo = styled.h1`
+  font-size: 20px;
+  font-weight: bold;
+
+  img {
+    width: 150px;
+  }
+`;
+
+const BackButton = styled.button`
+  background-color: #68a0f4;
+  color: white;
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #4a82d9;
+  }
 `;
 
 const LeftSidebar = styled.div`
@@ -54,34 +92,17 @@ const RightContent = styled.div`
   padding: 20px;
 `;
 
-const Header = styled.div`
+const PathAndSortContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
+  margin-top: 10px;
+  margin-bottom: 10px;
 `;
 
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-
-  img {
-    width: 150px;
-  }
-`;
-
-const BackButton = styled.button`
-  background-color: #68a0f4;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #4a82d9;
-  }
+const CategoryPath = styled.div`
+  font-size: 14px;
+  color: #666;
 `;
 
 const SurveyContainer = styled.div`
@@ -123,7 +144,7 @@ const ProgressText = styled.div`
 `;
 
 const ProgressBar = styled.progress`
-  width: 100%;
+  width: 95%;
   height: 16px;
   margin-bottom: 5px;
 `;
@@ -149,15 +170,16 @@ const Survey = () => {
   const { completedTitle } = location.state || {};
 
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+
   const [surveys, setSurveys] = useState([
     {
       title: "불고기",
-      progress: 5,
+      progress: 20,
       total: 20,
       image: BulgogiImg,
       category: "cuisine",
-      caption:
-        "Traditional Korean dish, Bulgogi is marinated thinly sliced beef that has been grilled or stir-fried. It is often served with rice and kimchi.",
+      caption: "...",
     },
     {
       title: "비빔밥",
@@ -165,8 +187,7 @@ const Survey = () => {
       total: 20,
       image: BibimbabImg,
       category: "cuisine",
-      caption:
-        "Bibimbap is a Korean mixed rice dish topped with various seasoned vegetables, meat, egg, and gochujang (chili pepper paste).",
+      caption: "...",
     },
     {
       title: "김치",
@@ -174,8 +195,7 @@ const Survey = () => {
       total: 20,
       image: KimchiImg,
       category: "cuisine",
-      caption:
-        "Kimchi is a traditional Korean side dish of fermented vegetables, typically cabbage and radish, seasoned with chili powder, garlic, and ginger.",
+      caption: "...",
     },
   ]);
 
@@ -204,80 +224,100 @@ const Survey = () => {
       ? surveys.filter((item) => selectedCategories.includes(item.category))
       : surveys;
 
+  const sortedSurveys = [...filteredSurveys].sort((a, b) => {
+    return sortOrder === "asc"
+      ? a.title.localeCompare(b.title)
+      : b.title.localeCompare(a.title);
+  });
+
   return (
-    <Wrapper>
-      <LeftSidebar>
-        <SectionTitle>국가</SectionTitle>
-        <CheckboxGroup>
-          <CheckboxLabel>
-            <input type="checkbox" /> 한국
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> 중국
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <input type="checkbox" /> 일본
-          </CheckboxLabel>
-        </CheckboxGroup>
+    <>
+      <Header>
+        <HeaderLogo>
+          <img src={LogoImage} alt="로고" />
+        </HeaderLogo>
+        <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
+      </Header>
 
-        <SectionTitle>카테고리</SectionTitle>
-        <CheckboxGroup>
-          {["architecture", "clothes", "cuisine", "game", "tool"].map((cat) => (
-            <CheckboxLabel key={cat}>
-              <input
-                type="checkbox"
-                onChange={() => handleCategoryChange(cat)}
-                checked={selectedCategories.includes(cat)}
-              />{" "}
-              {cat}
+      <Wrapper>
+        <LeftSidebar>
+          <SectionTitle>국가</SectionTitle>
+          <CheckboxGroup>
+            <CheckboxLabel>
+              <input type="checkbox" /> 한국
             </CheckboxLabel>
-          ))}
-        </CheckboxGroup>
+            <CheckboxLabel>
+              <input type="checkbox" /> 중국
+            </CheckboxLabel>
+            <CheckboxLabel>
+              <input type="checkbox" /> 일본
+            </CheckboxLabel>
+          </CheckboxGroup>
 
-        <SelectButton>SELECT</SelectButton>
-      </LeftSidebar>
+          <SectionTitle>카테고리</SectionTitle>
+          <CheckboxGroup>
+            {["architecture", "clothes", "cuisine", "game", "tool"].map(
+              (cat) => (
+                <CheckboxLabel key={cat}>
+                  <input
+                    type="checkbox"
+                    onChange={() => handleCategoryChange(cat)}
+                    checked={selectedCategories.includes(cat)}
+                  />{" "}
+                  {cat}
+                </CheckboxLabel>
+              )
+            )}
+          </CheckboxGroup>
 
-      <RightContent>
-        <Header>
-          <HeaderLogo>
-            <img src={LogoImage} alt="로고" />
-          </HeaderLogo>
-          <BackButton onClick={() => window.history.back()}>
-            뒤로가기
-          </BackButton>
-        </Header>
+          <SelectButton>SELECT</SelectButton>
+        </LeftSidebar>
 
-        <SurveyContainer>
-          {filteredSurveys.map((item, index) => {
-            const percent = Math.round((item.progress / item.total) * 100);
-            return (
-              <SurveyItem
-                key={index}
-                onClick={() =>
-                  navigate(`/survey/${item.title}`, {
-                    state: {
-                      image: item.image,
-                      caption: item.caption,
-                    },
-                  })
-                }
-              >
-                <SurveyImage src={item.image} alt={item.title} />
-                <SurveyContent>
-                  <strong>{item.title}</strong>
-                  <ProgressText>진행상황</ProgressText>
-                  <ProgressBar value={item.progress} max={item.total} />
-                  <ProgressText>
-                    {percent}% ({item.progress} / {item.total})
-                  </ProgressText>
-                </SurveyContent>
-                <ContinueButton>이어서 진행하기</ContinueButton>
-              </SurveyItem>
-            );
-          })}
-        </SurveyContainer>
-      </RightContent>
-    </Wrapper>
+        <RightContent>
+          <PathAndSortContainer>
+            <CategoryPath>설문조사 &gt; 한국 &gt; cuisine</CategoryPath>
+            <div>
+              <strong>정렬:</strong>{" "}
+              <button onClick={() => setSortOrder("asc")}>오름차순</button>{" "}
+              <button onClick={() => setSortOrder("desc")}>내림차순</button>
+            </div>
+          </PathAndSortContainer>
+
+          <SurveyContainer>
+            {sortedSurveys.map((item, index) => {
+              const percent = Math.round((item.progress / item.total) * 100);
+              return (
+                <SurveyItem
+                  key={index}
+                  onClick={() =>
+                    navigate(`/survey/${item.title}`, {
+                      state: {
+                        image: item.image,
+                        caption: item.caption,
+                        path: `한국 > ${item.category} > ${item.title}`,
+                      },
+                    })
+                  }
+                >
+                  <SurveyImage src={item.image} alt={item.title} />
+                  <SurveyContent>
+                    <strong>{item.title}</strong>
+                    <ProgressText>진행상황</ProgressText>
+                    <ProgressBar value={item.progress} max={item.total} />
+                    <ProgressText>
+                      {percent}% ({item.progress} / {item.total})
+                    </ProgressText>
+                  </SurveyContent>
+                  <ContinueButton>
+                    {item.progress >= item.total ? "완료" : "이어서 진행하기"}
+                  </ContinueButton>
+                </SurveyItem>
+              );
+            })}
+          </SurveyContainer>
+        </RightContent>
+      </Wrapper>
+    </>
   );
 };
 

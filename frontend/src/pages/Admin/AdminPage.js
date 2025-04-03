@@ -1,119 +1,103 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
+import LogoImg from "../../assets/img/logo.png";
 
-// 💄 스타일 컴포넌트
-const Container = styled.div`
+// 💄 스타일 컴포넌트 (MyPage 구조 참고)
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   font-family: 'Pretendard', sans-serif;
-  padding: 0px;
-  background-color: #f0f2f5;
-  min-height: 100vh;
+  height: 100vh;
 `;
 
-const Header = styled.div`
+const FixedHeader = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 15px 20px;
   border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-  background-color: #fff;
+  z-index: 1000;
 `;
 
 const HeaderLogo = styled.h1`
   font-size: 20px;
   font-weight: bold;
+  margin: 0;
+
   img {
     width: 150px;
+    cursor: pointer;
   }
 `;
 
-const Nav = styled.div`
+const NavButtons = styled.div`
   display: flex;
-  gap: 20px;
+  gap: 30px;
+  margin-right: 20px;
 `;
 
-const MainLayout = styled.div`
-  display: flex;
-  margin: 10px;
-  gap: 20px;
-`;
-
-const SideBar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  font-size: 14px;
-`;
-
-const Content = styled.div`
-  flex: 1;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 15px;
-  font-size: 14px;
-  min-height: 600px;
-`;
-
-const FormGroup = styled.div`
-  margin-bottom: 15px;
-`;
-
-const Label = styled.label`
-  font-weight: bold;
-  display: block;
-  margin-bottom: 8px;
-`;
-
-const Input = styled.input`
-  width: 100%;
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  margin-top: 5px;
-`;
-
-const RadioGroup = styled.div`
-  display: flex;
-  gap: 15px;
-`;
-
-const ButtonGroup = styled.div`
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-`;
-
-const Button = styled.button`
+const NavButton = styled(Link)`
   padding: 10px 15px;
-  background-color: #68A0F4;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+  background-color: white;
   border: none;
   border-radius: 6px;
-  font-weight: bold;
-  font-size: 14px;
-  color: white;
-  cursor: pointer;
+  transition: background 0.3s;
+  text-align: center;
 
   &:hover {
-    background-color: #4a82d9;
+    background-color: #68a0f4;
+    color: white;
   }
 `;
 
-const SidebarButton = styled.button`
-  background: none;
-  border: none;
-  padding: 10px 0;
-  text-align: left;
-  width: 100%;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
+const ContentWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  margin-top: 60px;
+  height: calc(100vh - 60px);
+`;
 
-  &:hover {
-    color: #68A0F4;
-    font-weight: bold;
+const LeftSidebar = styled.div`
+  width: 220px;
+  padding: 20px;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #ddd;
+`;
+
+const SidebarButton = styled(Link)`
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+  background-color: #F5F5F5;
+  border-radius: 6px;
+  transition: background 0.3s;
+
+  &:hover,
+  &.active {
+    background-color: #68a0f4;
+    color: white;
   }
+`;
+
+const RightContent = styled.div`
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 `;
 
 const TitleWrapper = styled.div`
@@ -147,6 +131,46 @@ const Popup = styled.div`
   z-index: 100;
 `;
 
+// 👉 기존 Content 안 요소 유지
+const FormGroup = styled.div`
+  margin-bottom: 15px;
+`;
+const Label = styled.label`
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+`;
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+`;
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 15px;
+`;
+const ButtonGroup = styled.div`
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+`;
+const Button = styled.button`
+  padding: 10px 15px;
+  background-color: #68A0F4;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #4a82d9;
+  }
+`;
+
 const AdminPage = () => {
   const navigate = useNavigate();
 
@@ -159,7 +183,7 @@ const AdminPage = () => {
   });
 
   const [showPopup, setShowPopup] = useState(false);
-  const creditCount = 3; // 정적으로 설정된 크레딧 수
+  const creditCount = 3;
 
   const handleChange = (e, index) => {
     const { name, value } = e.target;
@@ -182,9 +206,7 @@ const AdminPage = () => {
     try {
       const res = await fetch("http://localhost:4000/survey", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
@@ -208,31 +230,34 @@ const AdminPage = () => {
   };
 
   return (
-    <Container>
-      <Header>
+    <Wrapper>
+      <FixedHeader>
         <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
+          <Link to="/mainpage">
+            <img src={LogoImg} alt="로고" />
+          </Link>
         </HeaderLogo>
-        <Nav>
-          <Link to="/survey">설문조사 리스트</Link>
-          <Link to="/mainpage">랭킹조회</Link>
-          <strong>관리자 페이지</strong>
-        </Nav>
-      </Header>
+        <NavButtons>
+          <NavButton to="/survey">🔍설문조사</NavButton>
+          <NavButton to="/mainpage">🏅랭킹조회</NavButton>
+          <NavButton to="/mypage">👤</NavButton>
+        </NavButtons>
+      </FixedHeader>
 
-      <MainLayout>
-        <SideBar>
-          <SidebarButton><strong>설문조사 등록</strong></SidebarButton>
-          <SidebarButton onClick={() => navigate("/adminlist")}>설문통계 조회</SidebarButton>
-        </SideBar>
+      <ContentWrapper>
+        <LeftSidebar>
+          <SidebarButton to="/adminpage">➕ 설문조사 등록</SidebarButton>
+          <SidebarButton to="/adminlist">📊 설문통계 조회</SidebarButton>
+        </LeftSidebar>
 
-        <Content>
+        <RightContent>
           <TitleWrapper>
             <h2>설문조사 객체 등록</h2>
             <CreditInfo onClick={() => setShowPopup(!showPopup)}>
               등록 가능한 설문 수 : {creditCount}개
             </CreditInfo>
           </TitleWrapper>
+
           {showPopup && (
             <Popup>
               설문을 등록하려면 크레딧이 필요해요. <br />
@@ -244,6 +269,7 @@ const AdminPage = () => {
             </Popup>
           )}
 
+          {/* 기존 내용 유지 */}
           <form onSubmit={handleSubmit}>
             <FormGroup>
               <Label>나라</Label>
@@ -281,22 +307,12 @@ const AdminPage = () => {
 
             <FormGroup>
               <Label>고유명사</Label>
-              <Input
-                name="entityName"
-                value={formData.entityName}
-                onChange={handleChange}
-              />
+              <Input name="entityName" value={formData.entityName} onChange={handleChange} />
             </FormGroup>
 
             <FormGroup>
               <Label>이미지 URL</Label>
-              <Input
-                name="imageUrl"
-                type="text"
-                placeholder="이미지 주소 입력"
-                value={formData.imageUrl}
-                onChange={handleChange}
-              />
+              <Input name="imageUrl" value={formData.imageUrl} onChange={handleChange} />
             </FormGroup>
 
             <FormGroup>
@@ -316,9 +332,9 @@ const AdminPage = () => {
               <Button type="submit">등록하기</Button>
             </ButtonGroup>
           </form>
-        </Content>
-      </MainLayout>
-    </Container>
+        </RightContent>
+      </ContentWrapper>
+    </Wrapper>
   );
 };
 
