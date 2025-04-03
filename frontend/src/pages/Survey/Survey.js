@@ -1,52 +1,14 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
+import CommonHeader from "../../components/CommonHeader";
 
 import surveyData from "../../data/SurveyData";
 
 const Wrapper = styled.div`
   display: flex;
   font-family: Arial, sans-serif;
-  margin-top: 60px;
-`;
-
-const Header = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 60px;
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 30px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
-`;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  cursor: pointer;
-
-  img {
-    width: 150px;
-  }
-`;
-
-const BackButton = styled.button`
-  background-color: #68a0f4;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-
-  &:hover {
-    background-color: #4a82d9;
-  }
+  padding-top: 100px; /* 상단 고정 헤더 높이 만큼! */
 `;
 
 const LeftSidebar = styled.div`
@@ -207,12 +169,7 @@ const Survey = () => {
 
   return (
     <>
-      <Header>
-        <HeaderLogo onClick={() => navigate("/mainpage")}>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
-      </Header>
+      <CommonHeader />
 
       <Wrapper>
         <LeftSidebar>

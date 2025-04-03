@@ -1,44 +1,11 @@
 import React from "react";
 import styled from "styled-components";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
+import CommonHeader from "../../components/CommonHeader";
 
 const Wrapper = styled.div`
   font-family: Arial, sans-serif;
-`;
-
-const Header = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
-`;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  img {
-    width: 150px;
-  }
-`;
-
-const BackButton = styled.button`
-  background-color: #68a0f4;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    background-color: #4a82d9;
-  }
+  padding-top: 100px;
 `;
 
 const Container = styled.div`
@@ -122,12 +89,7 @@ const SurveyDetail = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
-      </Header>
+      <CommonHeader />
 
       <Container>
         {path && <CategoryPath>{path}</CategoryPath>}
