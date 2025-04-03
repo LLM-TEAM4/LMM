@@ -1,4 +1,5 @@
-import React from "react";
+
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoImg from "../../assets/img/logo.png";
@@ -7,6 +8,7 @@ import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import KoreaFlag from "../../assets/img/korea.png";
 import ChinaFlag from "../../assets/img/china.png";
 import JapanFlag from "../../assets/img/japan.png";
+
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -112,17 +114,21 @@ const LeftSidebar = styled.div`
 `;
 
 const SidebarButton = styled(Link)`
-  display: block;
+  display: flex;
   padding: 12px;
-  text-align: center;
+  
   font-size: 16px;
-  font-weight: bold;
+  font-weight:bold;
   text-decoration: none;
   color: black;
-  background-color: #f5f5f5;
+  background-color:  #F5F5F5;
   border: none;
   border-radius: 6px;
   transition: background 0.3s;
+  text-align: left;
+  align-items: center;
+  justify-content: space-between;
+   
 
   &:hover,
   &.active {
@@ -194,6 +200,10 @@ const countryFlags = {
 const totalResponsesCount = chartData.reduce((sum, { data }) => sum + data[0], 0);
 
 const SurveyParticipation = () => {
+  const [isSurveyMenuOpen, setSurveyMenuOpen] = useState(false);
+  const toggleSurveyMenu = () => {
+    setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
+  };
   return (
     <Wrapper>
       <FixedHeader>
@@ -212,6 +222,20 @@ const SurveyParticipation = () => {
         <LeftSidebar>
           <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
           <SidebarButton className="active" to="/survey-participation">🔍 참여설문</SidebarButton>
+          <SidebarButton as="button" onClick={toggleSurveyMenu}>
+          <span>⚙️ 설문관리</span> 
+          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
+          </SidebarButton>
+          {isSurveyMenuOpen && (
+            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
+              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
+                ➕ 설문 만들기
+              </SidebarButton>
+              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
+                📋 내 설문 목록
+              </SidebarButton>
+            </div>
+          )}
         </LeftSidebar>
         <RightContent>
 

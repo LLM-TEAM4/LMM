@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ProfilePic from "../../assets/img/profile.png";
 import LogoImg from "../../assets/img/logo.png";
+import { useNavigate } from "react-router-dom";
 
 const Wrapper = styled.div`
   display: flex;
@@ -78,9 +79,9 @@ const LeftSidebar = styled.div`
 `;
 
 const SidebarButton = styled(Link)`
-  display: block;
+  display: flex;
   padding: 12px;
-  text-align: center;
+  
   font-size: 16px;
   font-weight:bold;
   text-decoration: none;
@@ -89,6 +90,10 @@ const SidebarButton = styled(Link)`
   border: none;
   border-radius: 6px;
   transition: background 0.3s;
+  text-align: left;
+  align-items: center;
+  justify-content: space-between;
+   
 
   &:hover,
   &.active {
@@ -119,7 +124,8 @@ const SectionTitle = styled.h2`
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 80px;
+  margin-top: 20px; 
   
 `;
 
@@ -228,7 +234,42 @@ const ModalText = styled.p`
   font-size: 14px; 
 `;
 
+const CreditSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f5f5fc;
+  padding: 15px;
+  border-radius: 12px;
+  margin-top: 40px;
+  cursor: pointer;
+  width: 450px;
+`;
 
+const CreditInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #6a6a8a;
+`;
+
+const CreditIcon = styled.div`
+  background-color: #cfcdfb;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+`;
+
+const CreditArrow = styled.span`
+  font-size: 16px;
+  color: #6a6a8a;
+`;
 
 
 
@@ -237,6 +278,12 @@ const MyPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(ProfilePic);
   const [userName, setUserName] = useState("종합설계1");
+  const [isSurveyMenuOpen, setSurveyMenuOpen] = useState(false);
+  const navigate = useNavigate(); 
+
+  const handleDeleteAccount = () => {
+    navigate("/mainpage"); // 🔹 Main.js로 이동
+  };
 
   const handleInputChange = (event) => {
     setUserName(event.target.value); // 입력값 업데이트
@@ -253,6 +300,9 @@ const MyPage = () => {
     }
   };
 
+  const toggleSurveyMenu = () => {
+    setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
+  };
   return (
     <Wrapper>
       <FixedHeader>
@@ -271,6 +321,20 @@ const MyPage = () => {
         <LeftSidebar>
           <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
           <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
+          <SidebarButton as="button" onClick={toggleSurveyMenu}>
+          <span>⚙️ 설문관리</span> 
+          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
+          </SidebarButton>
+          {isSurveyMenuOpen && (
+            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
+              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
+                ➕ 설문 만들기
+              </SidebarButton>
+              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
+                📋 내 설문 목록
+              </SidebarButton>
+            </div>
+          )}
         </LeftSidebar>
         <RightContent>
           <SectionTitle>👤 계정</SectionTitle>
@@ -300,8 +364,17 @@ const MyPage = () => {
                 <ActionButton>저장</ActionButton>
               </ButtonRow>
             </ProfileDetails>
+            
+
 
           </ProfileSection>
+          <CreditSection>
+              <CreditInfo>
+              <CreditIcon>💰</CreditIcon>
+              <span>0 크레딧</span>
+              </CreditInfo>
+              <CreditArrow>크레딧 내역 &gt;</CreditArrow>
+            </CreditSection>
           <SecuritySection>
             <SectionTitle>🔒 계정보안</SectionTitle>
             <SecurityOption>
@@ -326,7 +399,9 @@ const MyPage = () => {
             <p> </p>
             <ButtonRow>
               <ActionButton onClick={() => setModalOpen(false)}>취소</ActionButton>
-              <ActionButton style={{ backgroundColor: "#FF6187" }}>탈퇴</ActionButton>
+              <ActionButton style={{ backgroundColor: "#FF6187" }} onClick={handleDeleteAccount}>
+                탈퇴
+              </ActionButton>
             </ButtonRow>
           </ModalContent>
         </ModalOverlay>
