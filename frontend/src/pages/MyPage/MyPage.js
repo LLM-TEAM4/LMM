@@ -4,6 +4,7 @@ import styled from "styled-components";
 import ProfilePic from "../../assets/img/profile.png";
 import LogoImg from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom";
+import { Outlet } from "react-router-dom"; 
 
 const Wrapper = styled.div`
   display: flex;
@@ -274,8 +275,6 @@ const CreditArrow = styled.span`
   font-size: 16px;
   color: #6a6a8a;
 `;
-
-
 const WarningText = styled.p`
   font-size: 12px;
   color: ${({ isValid }) => (isValid ? "#68A0F4" : "red")};

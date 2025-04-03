@@ -8,11 +8,13 @@ import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
 import MainPage from "./pages/Main/MainPage";
 import Survey from "./pages/Survey/Survey";
-
-import MyPage from "./pages/MyPage/MyPage";  // ✅ MyPage 불러오기!
+import MyPage from "./pages/MyPage/MyPage";  
 import SurveyParticipation from "./pages/MyPage/SurveyParticipation";
 import SurveyDetail from "./pages/Survey/SurveyDetail";
 import SurveyStart from "./pages/Survey/SurveyStart";
+import AdminPage from "./pages/Admin/AdminPage";
+import AdminListPage from "./pages/Admin/AdminListPage"; 
+import AdminDetailPage from "./pages/Admin/AdminDetailPage"; 
 
 
 class AppRoutes extends React.Component {
@@ -39,7 +41,9 @@ class AppRoutes extends React.Component {
           <Route exact path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
-
+          <Route path="/survey-create" element={<AdminPage/>} />
+          <Route path="/survey-statistics" element={<AdminListPage />} />
+          <Route path="/admin/:id" element={<AdminDetailPage />} />
         </Routes>
       </Router>
     );
