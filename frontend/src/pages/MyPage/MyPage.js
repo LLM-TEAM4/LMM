@@ -72,7 +72,7 @@ const ContentWrapper = styled.div`
 const LeftSidebar = styled.div`
   width: 220px;
   padding: 20px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -83,19 +83,18 @@ const LeftSidebar = styled.div`
 const SidebarButton = styled(Link)`
   display: flex;
   padding: 12px;
-  
+
   font-size: 16px;
-  font-weight:bold;
+  font-weight: bold;
   text-decoration: none;
   color: black;
-  background-color:  #F5F5F5;
+  background-color: #f5f5f5;
   border: none;
   border-radius: 6px;
   transition: background 0.3s;
   text-align: left;
   align-items: center;
   justify-content: space-between;
-   
 
   &:hover,
   &.active {
@@ -111,7 +110,7 @@ const RightContent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-left:20px;
+  margin-left: 20px;
 `;
 
 const SectionTitle = styled.h2`
@@ -128,14 +127,12 @@ const ProfileSection = styled.div`
   display: flex;
   align-items: center;
   gap: 80px;
-  margin-top: 20px; 
-  
+  margin-top: 20px;
 `;
 
 const HiddenFileInput = styled.input`
   display: none;
 `;
-
 
 const ProfileImageWrapper = styled.div`
   display: flex;
@@ -148,16 +145,14 @@ const ProfileImage = styled.img`
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 2px solid #F5F5F5;
-  object-fit: cover; 
+  border: 2px solid #f5f5f5;
+  object-fit: cover;
 `;
 
 const ProfileDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  
-  
 `;
 
 const InputField = styled.input`
@@ -165,16 +160,19 @@ const InputField = styled.input`
   padding: 8px;
   font-size: 16px;
   border-radius: 6px;
+
   border: 2px solid #F5F5F5;
-  
+
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   gap: 10px;
-  justify-content: center; 
-  margin-top: 20px; 
-  `;
+  justify-content: center;
+  margin-top: 15px;
+`;
+
+
 
 const ActionButton = styled.button`
   padding: 10px 15px;
@@ -234,9 +232,9 @@ const ModalContent = styled.div`
 `;
 
 const ModalText = styled.p`
-  margin: 0; 
-  line-height: 1.2; 
-  font-size: 14px; 
+  margin: 0;
+  line-height: 1.2;
+  font-size: 14px;
 `;
 
 const CreditSection = styled.div`
@@ -275,20 +273,22 @@ const CreditArrow = styled.span`
   font-size: 16px;
   color: #6a6a8a;
 `;
+
 const WarningText = styled.p`
   font-size: 12px;
   color: ${({ isValid }) => (isValid ? "#68A0F4" : "red")};
   margin-top: 0px;
 `;
 
-///////////////////
 const MyPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(ProfilePic);
   const [userName, setUserName] = useState("종합설계1");
   const [isNameValid, setIsNameValid] = useState(true); 
   const [isSurveyMenuOpen, setSurveyMenuOpen] = useState(false);
-  const navigate = useNavigate(); 
+
+  const navigate = useNavigate();
+
   const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -343,11 +343,11 @@ const MyPage = () => {
   return (
     <Wrapper>
       <FixedHeader>
-      <HeaderLogo>
-        <Link to="/mainpage">
-        <img src={LogoImg} alt="로고" />
-        </Link>
-      </HeaderLogo>
+        <HeaderLogo>
+          <Link to="/mainpage">
+            <img src={LogoImg} alt="로고" />
+          </Link>
+        </HeaderLogo>
         <NavButtons>
           <NavButton to="/survey">🔍설문조사</NavButton>
           <NavButton to="/ranking">🏅랭킹조회</NavButton>
@@ -359,6 +359,7 @@ const MyPage = () => {
           <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
           <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
           <SidebarButton as="button" onClick={toggleSurveyMenu}>
+
           <span>⚙️ 설문관리</span> 
           <span>{isSurveyMenuOpen ? "🔼" : "🔽"}</span> 
           </SidebarButton>
@@ -369,6 +370,7 @@ const MyPage = () => {
               </SidebarButton>
               <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
                 📋    내 설문 목록
+
               </SidebarButton>
             </div>
           )}
@@ -376,20 +378,24 @@ const MyPage = () => {
         <RightContent>
           <SectionTitle>👤 계정</SectionTitle>
 
-
           <ProfileSection>
             <ProfileImageWrapper>
+
               <ProfileImage src={profileImage} alt="Profile" /> 
               <HiddenFileInput 
                 type="file" 
                 accept="image/*" 
+
                 id="fileUpload"
-                onChange={handleImageChange} 
+                onChange={handleImageChange}
               />
-              <ActionButton onClick={() => document.getElementById("fileUpload").click()}>
+              <ActionButton
+                onClick={() => document.getElementById("fileUpload").click()}
+              >
                 사진 변경
               </ActionButton>
             </ProfileImageWrapper>
+
 
             <ProfileDetails style={{ marginTop: "50px" }}>
             <InputField 
@@ -403,18 +409,16 @@ const MyPage = () => {
             <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
             <ActionButton disabled={!isNameValid}>저장</ActionButton> {/* 10글자 초과면 저장 비활성화 가능 */}
             </ButtonRow>
+
             </ProfileDetails>
-            
-
-
           </ProfileSection>
           <CreditSection>
-              <CreditInfo>
+            <CreditInfo>
               <CreditIcon>💰</CreditIcon>
               <span>0 크레딧</span>
-              </CreditInfo>
-              <CreditArrow>크레딧 내역 &gt;</CreditArrow>
-            </CreditSection>
+            </CreditInfo>
+            <CreditArrow>크레딧 내역 &gt;</CreditArrow>
+          </CreditSection>
           <SecuritySection>
             <SectionTitle>🔒 계정보안</SectionTitle>
 
@@ -442,8 +446,13 @@ const MyPage = () => {
             <p> </p>
             <p> </p>
             <ButtonRow>
-              <ActionButton onClick={() => setModalOpen(false)}>취소</ActionButton>
-              <ActionButton style={{ backgroundColor: "#FF6187" }} onClick={handleDeleteAccount}>
+              <ActionButton onClick={() => setModalOpen(false)}>
+                취소
+              </ActionButton>
+              <ActionButton
+                style={{ backgroundColor: "#FF6187" }}
+                onClick={handleDeleteAccount}
+              >
                 탈퇴
               </ActionButton>
             </ButtonRow>

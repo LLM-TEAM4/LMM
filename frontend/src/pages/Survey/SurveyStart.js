@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
+import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 
 const Wrapper = styled.div`
   font-family: Arial, sans-serif;
   max-height: 100vh;
   overflow-y: auto;
+  padding-top: 100px;
 `;
 
 const Header = styled.div`
@@ -137,12 +138,7 @@ const SurveyStart = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
-      </Header>
+      <CommonHeader />
 
       <Container>
         <TopBar>

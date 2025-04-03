@@ -1,35 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom"; // Link 임포트
-import LogoImage from "../../assets/img/logo.png"; // 로고 이미지 경로
+import { useNavigate } from "react-router-dom";
+import surveyData from "../../data/SurveyData";
+import CommonHeader from "../../components/CommonHeader";
 
-// 스타일 정의
 const Container = styled.div`
-  padding: 20px;
+  padding: 100px 20px 20px; /* 상단 고정 헤더 공간 확보 */
   font-family: Arial, sans-serif;
-`;
-
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-`;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-
-  img {
-    width: 150px; /* 로고 크기 동일하게 설정 */
-    margin-right: 10px;
-  }
-`;
-
-const Nav = styled.div`
-  display: flex;
-  gap: 20px;
 `;
 
 const RankingContainer = styled.div`
@@ -49,20 +26,64 @@ const SurveyContainer = styled.div`
   margin-top: 20px;
 `;
 
-const SurveyList = styled.div`
+const SurveyItem = styled.div`
   display: flex;
-  gap: 10px;
+  align-items: center;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  margin-bottom: 15px;
+  background-color: #f9f9f9;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
 `;
 
-const SurveyBox = styled.div`
-  width: 100px;
-  height: 100px;
-  background-color: #ddd;
-  border-radius: 8px;
+const SurveyImage = styled.img`
+  width: 90px;
+  height: 90px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-right: 20px;
+`;
+
+const SurveyContent = styled.div`
+  flex: 1;
+`;
+
+const ProgressText = styled.div`
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+`;
+
+const ProgressBar = styled.progress`
+  width: 95%;
+  height: 16px;
+  margin-bottom: 5px;
+`;
+
+const ContinueButton = styled.button`
+  padding: 8px 12px;
+  background-color: #649eff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  margin-left: auto;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #4a82d9;
+  }
 `;
 
 const MainPage = () => {
-  // 더미 데이터
+  const navigate = useNavigate();
+
   const weeklyRanking = [
     { id: 1, name: "user1", count: 18 },
     { id: 2, name: "user2", count: 16 },
@@ -79,22 +100,13 @@ const MainPage = () => {
     { id: 5, name: "user5", count: 25 },
   ];
 
+  const ongoingSurveys = surveyData.filter(
+    (item) => item.progress < item.total
+  );
+
   return (
     <Container>
-      {/* 상단 네비게이션 */}
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <Nav>
-          <Link to="/survey">설문조사</Link>{" "}
-          {/* 설문조사 버튼 클릭 시 Survey.js로 이동 */}
-          <span>랭킹조회</span>
-          <Link to="/mypage">
-            <span>👤</span>
-          </Link> {/* 클릭 시 MyPage.js로 이동 */}
-        </Nav>
-      </Header>
+      <CommonHeader />
 
       {/* 주간 & 월간 순위 */}
       <RankingContainer>
@@ -119,11 +131,36 @@ const MainPage = () => {
       {/* 진행 중인 설문 */}
       <SurveyContainer>
         <h3>🔍 진행중인 설문</h3>
-        <SurveyList>
-          <SurveyBox />
-          <SurveyBox />
-          <SurveyBox />
-        </SurveyList>
+        {ongoingSurveys.map((item, index) => {
+          const percent = Math.round((item.progress / item.total) * 100);
+          return (
+            <SurveyItem
+              key={index}
+              onClick={() =>
+                navigate(`/survey/${item.title}`, {
+                  state: {
+                    image: item.image,
+                    caption: item.caption,
+                    path: `한국 > ${item.category} > ${item.title}`,
+                  },
+                })
+              }
+            >
+              <SurveyImage src={item.image} alt={item.title} />
+              <SurveyContent>
+                <strong>{item.title}</strong>
+                <ProgressText>진행상황</ProgressText>
+                <ProgressBar value={item.progress} max={item.total} />
+                <ProgressText>
+                  {percent}% ({item.progress} / {item.total})
+                </ProgressText>
+              </SurveyContent>
+              <ContinueButton>
+                {item.progress >= item.total ? "완료" : "이어서 진행하기"}
+              </ContinueButton>
+            </SurveyItem>
+          );
+        })}
       </SurveyContainer>
     </Container>
   );
