@@ -10,6 +10,9 @@ import MainPage from "./pages/Main/MainPage";
 import Survey from "./pages/Survey/Survey";
 import SurveyDetail from "./pages/Survey/SurveyDetail";
 import SurveyStart from "./pages/Survey/SurveyStart";
+import AdminPage from "./pages/Admin/AdminPage";
+import AdminListPage from "./pages/Admin/AdminListPage"; 
+import AdminDetailPage from "./pages/Admin/AdminDetailPage"; 
 
 class AppRoutes extends React.Component {
   render() {
@@ -25,6 +28,9 @@ class AppRoutes extends React.Component {
           <Route exact path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
+          <Route path="/adminpage" element={<AdminPage/>} />
+          <Route path="/adminlist" element={<AdminListPage />} />
+          <Route path="/admin/:id" element={<AdminDetailPage />} />
         </Routes>
       </Router>
     );
