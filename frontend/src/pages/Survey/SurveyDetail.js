@@ -8,11 +8,17 @@ const Wrapper = styled.div`
 `;
 
 const Header = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
   border-bottom: 1px solid #ddd;
+  z-index: 1000;
 `;
 
 const HeaderLogo = styled.h1`
