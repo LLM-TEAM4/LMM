@@ -1,7 +1,8 @@
 import React from "react";
 import styled from "styled-components";
-import { Link } from "react-router-dom"; // Link 임포트
-import LogoImage from "../../assets/img/logo.png"; // 로고 이미지 경로
+import { Link, useNavigate } from "react-router-dom";
+import LogoImage from "../../assets/img/logo.png";
+import surveyData from "../../data/SurveyData"; // 설문 데이터 가져오기
 
 // 스타일 정의
 const Container = styled.div`
@@ -22,7 +23,7 @@ const HeaderLogo = styled.h1`
   font-weight: bold;
 
   img {
-    width: 150px; /* 로고 크기 동일하게 설정 */
+    width: 150px;
     margin-right: 10px;
   }
 `;
@@ -54,15 +55,27 @@ const SurveyList = styled.div`
   gap: 10px;
 `;
 
-const SurveyBox = styled.div`
+const SurveyPreview = styled.div`
   width: 100px;
-  height: 100px;
-  background-color: #ddd;
-  border-radius: 8px;
+  cursor: pointer;
+  text-align: center;
+
+  img {
+    width: 100px;
+    height: 100px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+
+  p {
+    font-size: 14px;
+    margin-top: 5px;
+  }
 `;
 
 const MainPage = () => {
-  // 더미 데이터
+  const navigate = useNavigate();
+
   const weeklyRanking = [
     { id: 1, name: "user1", count: 18 },
     { id: 2, name: "user2", count: 16 },
@@ -79,6 +92,11 @@ const MainPage = () => {
     { id: 5, name: "user5", count: 25 },
   ];
 
+  // 진행 중인 설문만 필터링
+  const ongoingSurveys = surveyData.filter(
+    (item) => item.progress < item.total
+  );
+
   return (
     <Container>
       {/* 상단 네비게이션 */}
@@ -87,12 +105,11 @@ const MainPage = () => {
           <img src={LogoImage} alt="로고" />
         </HeaderLogo>
         <Nav>
-          <Link to="/survey">설문조사</Link>{" "}
-          {/* 설문조사 버튼 클릭 시 Survey.js로 이동 */}
+          <Link to="/survey">설문조사</Link>
           <span>랭킹조회</span>
           <Link to="/mypage">
             <span>👤</span>
-          </Link> {/* 클릭 시 MyPage.js로 이동 */}
+          </Link>
         </Nav>
       </Header>
 
@@ -120,9 +137,23 @@ const MainPage = () => {
       <SurveyContainer>
         <h3>🔍 진행중인 설문</h3>
         <SurveyList>
-          <SurveyBox />
-          <SurveyBox />
-          <SurveyBox />
+          {ongoingSurveys.map((survey, index) => (
+            <SurveyPreview
+              key={index}
+              onClick={() =>
+                navigate(`/survey/${survey.title}`, {
+                  state: {
+                    image: survey.image,
+                    caption: survey.caption,
+                    path: `한국 > ${survey.category} > ${survey.title}`,
+                  },
+                })
+              }
+            >
+              <img src={survey.image} alt={survey.title} />
+              <p>{survey.title}</p>
+            </SurveyPreview>
+          ))}
         </SurveyList>
       </SurveyContainer>
     </Container>

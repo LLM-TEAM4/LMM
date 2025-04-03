@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
-import BulgogiImg from "../../assets/img/bulgogi.png";
-import BibimbabImg from "../../assets/img/bibimbab.png";
-import KimchiImg from "../../assets/img/kimchi.png";
+
+import surveyData from "../../data/SurveyData";
 
 const Wrapper = styled.div`
   display: flex;
   font-family: Arial, sans-serif;
-  margin-top: 60px; /* 헤더 고정으로 인해 여백 추가 */
+  margin-top: 60px;
 `;
 
 const Header = styled.div`
@@ -30,6 +29,7 @@ const Header = styled.div`
 const HeaderLogo = styled.h1`
   font-size: 20px;
   font-weight: bold;
+  cursor: pointer;
 
   img {
     width: 150px;
@@ -172,32 +172,7 @@ const Survey = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const [surveys, setSurveys] = useState([
-    {
-      title: "불고기",
-      progress: 20,
-      total: 20,
-      image: BulgogiImg,
-      category: "cuisine",
-      caption: "...",
-    },
-    {
-      title: "비빔밥",
-      progress: 10,
-      total: 20,
-      image: BibimbabImg,
-      category: "cuisine",
-      caption: "...",
-    },
-    {
-      title: "김치",
-      progress: 0,
-      total: 20,
-      image: KimchiImg,
-      category: "cuisine",
-      caption: "...",
-    },
-  ]);
+  const [surveys, setSurveys] = useState(surveyData);
 
   useEffect(() => {
     if (completedTitle) {
@@ -233,7 +208,7 @@ const Survey = () => {
   return (
     <>
       <Header>
-        <HeaderLogo>
+        <HeaderLogo onClick={() => navigate("/mainpage")}>
           <img src={LogoImage} alt="로고" />
         </HeaderLogo>
         <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
