@@ -56,8 +56,8 @@ const CommonHeader = () => {
         <img src={LogoImage} alt="로고" />
       </HeaderLogo>
       <Nav>
-        <Link to="/survey">설문조사</Link>
-        <Link to="/ranking">랭킹조회</Link>
+        <Link to="/survey">🔍설문조사</Link>
+        <Link to="/ranking">🏅랭킹조회</Link>
         <Link to="/mypage">👤</Link>
       </Nav>
     </HeaderWrapper>
