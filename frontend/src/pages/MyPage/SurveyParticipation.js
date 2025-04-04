@@ -8,6 +8,8 @@ import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import KoreaFlag from "../../assets/img/korea.png";
 import ChinaFlag from "../../assets/img/china.png";
 import JapanFlag from "../../assets/img/japan.png";
+import CommonHeader from "../../components/CommonHeader";
+import MypageSidebar from "../../components/MypageSidebar";
 
 
 ChartJS.register(ArcElement, Tooltip);
@@ -207,11 +209,7 @@ const SurveyParticipation = () => {
   return (
     <Wrapper>
       <FixedHeader>
-        <HeaderLogo>
-          <Link to="/mainpage">
-            <img src={LogoImg} alt="로고" />
-          </Link>
-        </HeaderLogo>
+        <CommonHeader/>
         <NavButtons>
           <NavButton to="/survey">🔍설문조사</NavButton>
           <NavButton to="/ranking">🏅랭킹조회</NavButton>
@@ -219,24 +217,7 @@ const SurveyParticipation = () => {
         </NavButtons>
       </FixedHeader>
       <ContentWrapper>
-        <LeftSidebar>
-          <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
-          <SidebarButton className="active" to="/survey-participation">🔍 참여설문</SidebarButton>
-          <SidebarButton as="button" onClick={toggleSurveyMenu}>
-          <span>⚙️ 설문관리</span> 
-          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
-          </SidebarButton>
-          {isSurveyMenuOpen && (
-            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
-              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
-                ➕ 설문 만들기
-              </SidebarButton>
-              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
-                📋 내 설문 목록
-              </SidebarButton>
-            </div>
-          )}
-        </LeftSidebar>
+      <MypageSidebar/>
         <RightContent>
 
           <div style={{

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
-
 import surveyData from "../../data/SurveyData";
 
 const Wrapper = styled.div`

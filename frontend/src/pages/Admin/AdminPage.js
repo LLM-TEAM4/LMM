@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import LogoImg from "../../assets/img/logo.png";
+import Header from "../../components/CommonHeader";
+import MypageSidebar from "../../components/MypageSidebar";
+
 
 // 💄 스타일 컴포넌트 (MyPage 구조 참고)
 const Wrapper = styled.div`
@@ -209,6 +212,7 @@ const AdminPage = () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+      console.log(res);
 
       if (res.ok) {
         alert("등록 완료!");
@@ -231,24 +235,10 @@ const AdminPage = () => {
 
   return (
     <Wrapper>
-      <FixedHeader>
-        <HeaderLogo>
-          <Link to="/mainpage">
-            <img src={LogoImg} alt="로고" />
-          </Link>
-        </HeaderLogo>
-        <NavButtons>
-          <NavButton to="/survey">🔍설문조사</NavButton>
-          <NavButton to="/mainpage">🏅랭킹조회</NavButton>
-          <NavButton to="/mypage">👤</NavButton>
-        </NavButtons>
-      </FixedHeader>
+      <Header />
 
       <ContentWrapper>
-        <LeftSidebar>
-          <SidebarButton to="/survey-create">➕ 설문조사 등록</SidebarButton>
-          <SidebarButton to="/survey-statistics">📊 설문통계 조회</SidebarButton>
-        </LeftSidebar>
+        <MypageSidebar/>
 
         <RightContent>
           <TitleWrapper>

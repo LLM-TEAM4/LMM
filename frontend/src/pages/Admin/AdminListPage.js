@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import LogoImage from "../../assets/img/logo.png";
+import Header from "../../components/CommonHeader";
+import MypageSidebar from "../../components/MypageSidebar";
+
 
 // 💄 스타일 컴포넌트
 const Container = styled.div`
@@ -10,14 +13,6 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 20px;
-  background-color: #fff;
-`;
 
 const HeaderLogo = styled.h1`
   font-size: 20px;
@@ -38,28 +33,30 @@ const MainLayout = styled.div`
   gap: 20px;
 `;
 
-const SideBar = styled.div`
+const LeftSidebar = styled.div`
   width: 220px;
   padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  font-size: 14px;
-  min-height: 600px;
+  background-color: #F5F5F5;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-right: 1px solid #ddd;
 `;
 
-const SidebarButton = styled.button`
-  background: none;
-  border: none;
-  padding: 10px 0;
-  text-align: left;
-  width: 100%;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
+const SidebarButton = styled(Link)`
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  color: black;
+  background-color: #F5F5F5;
+  border-radius: 6px;
+  transition: background 0.3s;
 
-  &:hover {
-    color: #68A0F4;
-    font-weight: bold;
+  &:hover,
+  &.active {
+    background-color: #68a0f4;
+    color: white;
   }
 `;
 
@@ -104,6 +101,7 @@ const Image = styled.img`
   height: 160px;
   object-fit: cover;
 `;
+
 
 const CardInfo = styled.div`
   padding: 10px;
@@ -185,26 +183,10 @@ const AdminListPage = () => {
 
   return (
     <Container>
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <Nav>
-          <Link to="/survey">설문조사 리스트</Link>
-          <Link to="/mainpage">랭킹조회</Link>
-          <strong>관리자 페이지</strong>
-        </Nav>
-      </Header>
+      <Header/>
 
       <MainLayout>
-        <SideBar>
-          <SidebarButton onClick={() => navigate("/adminpage")}>
-            <strong>설문조사 등록</strong>
-          </SidebarButton>
-          <SidebarButton>
-            <strong>설문통계 조회</strong>
-          </SidebarButton>
-        </SideBar>
+      <MypageSidebar/>
 
         <Content>
           <TitleWrapper>

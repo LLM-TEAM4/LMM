@@ -5,6 +5,9 @@ import ProfilePic from "../../assets/img/profile.png";
 import LogoImg from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
+import MypageSidebar from "../../components/MypageSidebar"; 
+import MypageLayout from "../../layouts/MypageLayout";
+
 
 const Wrapper = styled.div`
   display: flex;
@@ -334,37 +337,8 @@ const MyPage = () => {
     setSurveyMenuOpen((prev) => !prev); 
   };
   return (
-    <Wrapper>
-      <FixedHeader>
-      <CommonHeader />
-        <NavButtons>
-          <NavButton to="/survey">🔍설문조사</NavButton>
-          <NavButton to="/ranking">🏅랭킹조회</NavButton>
-          <NavButton to="/mypage">👤</NavButton>
-        </NavButtons>
-      </FixedHeader>
-      <ContentWrapper>
-        <LeftSidebar>
-          <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
-          <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
-          <SidebarButton as="button" onClick={toggleSurveyMenu}>
-
-          <span>⚙️ 설문관리</span> 
-          <span>{isSurveyMenuOpen ? "🔼" : "🔽"}</span> 
-          </SidebarButton>
-          {isSurveyMenuOpen && (
-            <div style={{ paddingLeft: "10px" }}> 
-              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
-                ➕    설문 만들기
-              </SidebarButton>
-              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
-                📋    내 설문 목록
-
-              </SidebarButton>
-            </div>
-          )}
-        </LeftSidebar>
-        <RightContent>
+    <MypageLayout>
+      
           <SectionTitle>👤 계정</SectionTitle>
 
           <ProfileSection>
@@ -420,10 +394,6 @@ const MyPage = () => {
             </SecurityOption>
 
           </SecuritySection>
-        </RightContent>
-      </ContentWrapper>
-
-    
       {isModalOpen && (
         <ModalOverlay isOpen={isModalOpen}>
           <ModalContent>
@@ -491,7 +461,7 @@ const MyPage = () => {
 
 
 
-    </Wrapper>
+</MypageLayout>
   );
 };
 

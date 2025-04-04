@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import surveyData from "../../data/SurveyData";
-import CommonHeader from "../../components/CommonHeader";
+import Header from "../../components/CommonHeader";
 
 const Container = styled.div`
   padding: 100px 20px 20px; /* 상단 고정 헤더 공간 확보 */
@@ -106,7 +106,7 @@ const MainPage = () => {
 
   return (
     <Container>
-      <CommonHeader />
+      <Header />
 
       {/* 주간 & 월간 순위 */}
       <RankingContainer>

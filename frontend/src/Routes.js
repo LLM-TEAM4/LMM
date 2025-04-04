@@ -29,9 +29,9 @@ class AppRoutes extends React.Component {
           <Route  path="/signupid" element={<SignupID />} />
           <Route  path="/signupsns" element={<SignupSNS />} />
           <Route  path="/login" element={<Login />} />
-          <Route  path="/mypage" element={<MyPage />} /> {/* ✅ MyPage 연결 */}
+          <Route  path="/mypage" element={<MyPage />} /> 
           <Route  path="/survey" element={<Survey />} />
-          <Route path="/survey-participation" element={<SurveyParticipation />} />
+          <Route path="/mypage/survey-participation" element={<SurveyParticipation />} />
           <Route exact path="/" element={<Main />} />
           <Route exact path="/mainpage" element={<Main />} />
           <Route exact path="/signup" element={<Signup />} />
@@ -41,9 +41,9 @@ class AppRoutes extends React.Component {
           <Route exact path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
-          <Route path="/survey-create" element={<AdminPage/>} />
-          <Route path="/survey-statistics" element={<AdminListPage />} />
-          <Route path="/admin/:id" element={<AdminDetailPage />} />
+          <Route path="/mypage/survey-creation" element={<AdminPage/>} />
+          <Route path="/mypage/survey-creation-list" element={<AdminListPage />} />
+          <Route path="/mypage/survey-creation-detail" element={<AdminDetailPage />} />
           <Route exact path="/ranking" element={<Ranking />} />
         </Routes>
       </Router>
