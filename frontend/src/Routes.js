@@ -25,15 +25,15 @@ class AppRoutes extends React.Component {
         <Routes>
           <Route  path="/" element={<Main />} />
           <Route  path="/mainpage" element={<MainPage />} />
-          <Route  path="/signup" element={<Signup />} />
-          <Route  path="/signupid" element={<SignupID />} />
-          <Route  path="/signupsns" element={<SignupSNS />} />
+          
+         
+          
           <Route  path="/login" element={<Login />} />
           <Route  path="/mypage" element={<MyPage />} /> {/* ✅ MyPage 연결 */}
           <Route  path="/survey" element={<Survey />} />
           <Route path="/survey-participation" element={<SurveyParticipation />} />
           <Route exact path="/" element={<Main />} />
-          <Route exact path="/mainpage" element={<Main />} />
+          <Route exact path="/main" element={<Main />} />
           <Route exact path="/signup" element={<Signup />} />
           <Route exact path="/signupid" element={<SignupID />} />
           <Route exact path="/signupsns" element={<SignupSNS />} />
