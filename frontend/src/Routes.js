@@ -15,6 +15,7 @@ import SurveyStart from "./pages/Survey/SurveyStart";
 import AdminPage from "./pages/Admin/AdminPage";
 import AdminListPage from "./pages/Admin/AdminListPage"; 
 import AdminDetailPage from "./pages/Admin/AdminDetailPage"; 
+import Ranking from "./pages/Ranking/Ranking";
 
 
 class AppRoutes extends React.Component {
@@ -43,6 +44,7 @@ class AppRoutes extends React.Component {
           <Route path="/survey-create" element={<AdminPage/>} />
           <Route path="/survey-statistics" element={<AdminListPage />} />
           <Route path="/admin/:id" element={<AdminDetailPage />} />
+          <Route exact path="/ranking" element={<Ranking />} />
         </Routes>
       </Router>
     );
