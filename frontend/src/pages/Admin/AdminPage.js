@@ -219,6 +219,8 @@ const AdminPage = () => {
           imageUrl: "",
           captions: ["", "", "", "", ""],
         });
+
+        window.dispatchEvent(new Event("surveyRegistered"));
       } else {
         const error = await res.json();
         alert("등록 실패: " + error.message);
