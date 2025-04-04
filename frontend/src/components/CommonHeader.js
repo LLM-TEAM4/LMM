@@ -1,8 +1,8 @@
 // src/components/CommonHeader.js
 import React from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { useNavigate, Link } from "react-router-dom";
-import LogoImage from "../assets/img/logo.png";
+import LogoImg from "../assets/img/logo.png";
 
 const HeaderWrapper = styled.header`
   position: fixed;
@@ -19,7 +19,7 @@ const HeaderWrapper = styled.header`
   z-index: 1000;
 `;
 
-const HeaderLogo = styled.h1`
+const HeaderLogo = styled.div`
   font-size: 24px;
   font-weight: bold;
   cursor: pointer;
@@ -31,35 +31,54 @@ const HeaderLogo = styled.h1`
   }
 `;
 
-const Nav = styled.nav`
+const NavButtons = styled.nav`
   display: flex;
   gap: 30px;
+`;
 
-  a {
-    text-decoration: none;
-    font-size: 16px;
-    color: #333;
-    transition: color 0.2s;
+const NavButton = styled(Link)`
+  padding: 10px 15px;
+  font-size: 16px;
+  text-decoration: none;
+  font-weight: bold;
+  color: black;
+  background-color: white;
+  border: none;
+  border-radius: 6px;
+  transition: background 0.3s, color 0.3s;
+  text-align: center;
 
-    &:hover {
-      color: #649eff;
-    }
+  &:hover {
+    background-color: #68a0f4;
+    color: white;
+  }
+
+  &.active {
+    background-color: #68a0f4;
+    color: white;
   }
 `;
 
 const CommonHeader = () => {
+  const location = useLocation();
   const navigate = useNavigate();
 
   return (
     <HeaderWrapper>
       <HeaderLogo onClick={() => navigate("/mainpage")}>
-        <img src={LogoImage} alt="로고" />
+        <img src={LogoImg} alt="로고" />
       </HeaderLogo>
-      <Nav>
-        <Link to="/survey">🔍설문조사</Link>
-        <Link to="/ranking">🏅랭킹조회</Link>
-        <Link to="/mypage">👤</Link>
-      </Nav>
+      <NavButtons>
+        <NavButton to="/survey" className={location.pathname === "/survey" ? "active" : ""}>
+          🔍설문조사
+        </NavButton>
+        <NavButton to="/ranking" className={location.pathname === "/ranking" ? "active" : ""}>
+          🏅랭킹조회
+        </NavButton>
+        <NavButton to="/mypage" className={location.pathname === "/mypage" ? "active" : ""}>
+          👤
+        </NavButton>
+      </NavButtons>
     </HeaderWrapper>
   );
 };
