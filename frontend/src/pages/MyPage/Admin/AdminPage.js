@@ -1,9 +1,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import LogoImg from "../../assets/img/logo.png";
-import Header from "../../components/CommonHeader";
-import MypageSidebar from "../../components/MypageSidebar";
+import MypageLayout from "../../../layouts/MypageLayout";
 
 
 // 💄 스타일 컴포넌트 (MyPage 구조 참고)
@@ -39,29 +37,6 @@ const HeaderLogo = styled.h1`
   }
 `;
 
-const NavButtons = styled.div`
-  display: flex;
-  gap: 30px;
-  margin-right: 20px;
-`;
-
-const NavButton = styled(Link)`
-  padding: 10px 15px;
-  font-size: 16px;
-  text-decoration: none;
-  font-weight: bold;
-  color: black;
-  background-color: white;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.3s;
-  text-align: center;
-
-  &:hover {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
 
 const ContentWrapper = styled.div`
   display: flex;
@@ -234,13 +209,7 @@ const AdminPage = () => {
   };
 
   return (
-    <Wrapper>
-      <Header />
-
-      <ContentWrapper>
-        <MypageSidebar/>
-
-        <RightContent>
+    <MypageLayout>
           <TitleWrapper>
             <h2>설문조사 객체 등록</h2>
             <CreditInfo onClick={() => setShowPopup(!showPopup)}>
@@ -322,9 +291,7 @@ const AdminPage = () => {
               <Button type="submit">등록하기</Button>
             </ButtonGroup>
           </form>
-        </RightContent>
-      </ContentWrapper>
-    </Wrapper>
+          </MypageLayout>
   );
 };
 

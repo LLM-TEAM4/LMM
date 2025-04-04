@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import LogoImage from "../../assets/img/logo.png";
+import MypageLayout from "../../../layouts/MypageLayout";
+
+
+
+
 
 // 💄 스타일 컴포넌트
 const Container = styled.div`
@@ -11,22 +15,8 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #ddd;
-  padding: 10px 20px;
-  background-color: #fff;
-`;
 
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  img {
-    width: 150px;
-  }
-`;
+
 
 const Nav = styled.div`
   display: flex;
@@ -209,23 +199,7 @@ const AdminDetailPage = () => {
   }
 
   return (
-    <Container>
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <Nav>
-          <Link to="/survey">설문조사 리스트</Link>
-          <Link to="/mainpage">랭킹조회</Link>
-          <strong>관리자 페이지</strong>
-        </Nav>
-      </Header>
-
-      <MainLayout>
-        <SideBar>
-          <SidebarButton onClick={() => navigate("/adminpage")}>설문조사 등록</SidebarButton>
-          <SidebarButton onClick={() => navigate("/adminlist")}>설문통계 조회</SidebarButton>
-        </SideBar>
+    <MypageLayout>
 
         <Content>
           <TitleWrapper>
@@ -267,8 +241,7 @@ const AdminDetailPage = () => {
             ))}
           </CaptionList>
         </Content>
-      </MainLayout>
-    </Container>
+        </MypageLayout>
   );
 };
 

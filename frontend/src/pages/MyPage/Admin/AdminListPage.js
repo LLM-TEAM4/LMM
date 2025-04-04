@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
-import Header from "../../components/CommonHeader";
-import MypageSidebar from "../../components/MypageSidebar";
+import MypageLayout from "../../../layouts/MypageLayout";
 
 
 // 💄 스타일 컴포넌트
@@ -182,12 +180,7 @@ const AdminListPage = () => {
   }, [selectedCountry, selectedCategory, surveys]);
 
   return (
-    <Container>
-      <Header/>
-
-      <MainLayout>
-      <MypageSidebar/>
-
+    <MypageLayout>
         <Content>
           <TitleWrapper>
             <h2>내 설문 목록</h2>
@@ -237,8 +230,7 @@ const AdminListPage = () => {
             </SurveyGrid>
           )}
         </Content>
-      </MainLayout>
-    </Container>
+        </MypageLayout>
   );
 };
 

@@ -10,6 +10,7 @@ import ChinaFlag from "../../assets/img/china.png";
 import JapanFlag from "../../assets/img/japan.png";
 import CommonHeader from "../../components/CommonHeader";
 import MypageSidebar from "../../components/MypageSidebar";
+import MypageLayout from "../../\blayouts/MypageLayout";
 
 
 ChartJS.register(ArcElement, Tooltip);

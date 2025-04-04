@@ -12,9 +12,9 @@ import MyPage from "./pages/MyPage/MyPage";
 import SurveyParticipation from "./pages/MyPage/SurveyParticipation";
 import SurveyDetail from "./pages/Survey/SurveyDetail";
 import SurveyStart from "./pages/Survey/SurveyStart";
-import AdminPage from "./pages/Admin/AdminPage";
-import AdminListPage from "./pages/Admin/AdminListPage"; 
-import AdminDetailPage from "./pages/Admin/AdminDetailPage"; 
+import AdminPage from "./pages/MyPage/Admin/AdminPage";
+import AdminListPage from "./pages/MyPage/Admin/AdminListPage"; 
+import AdminDetailPage from "./pages/MyPage/Admin/AdminDetailPage"; 
 import Ranking from "./pages/Ranking/Ranking";
 
 
