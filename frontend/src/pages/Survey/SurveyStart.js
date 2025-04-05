@@ -3,44 +3,25 @@ import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
-
 const Wrapper = styled.div`
-  font-family: Arial, sans-serif;
-  max-height: 100vh;
-  overflow-y: auto;
-  padding-top: 100px;
-`;
-
-const Header = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  border-bottom: 1px solid #ddd;
-`;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow-y: auto;
 
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  img {
-    width: 150px;
+  /* 스크롤바 숨기기 */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
 `;
 
-const BackButton = styled.button`
-  background-color: #68a0f4;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    background-color: #4a82d9;
-  }
-`;
 
 const Container = styled.div`
-  padding: 30px 40px;
+  padding: 80px 80px;
+  min-height: auto;
 `;
 
 const TopBar = styled.div`
@@ -61,47 +42,81 @@ const Progress = styled.div`
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 700px;
+  width: 80%;
+  height: 80%;
   object-fit: cover;
   border-radius: 10px;
-  margin: 20px 0;
+  
+
 `;
 
+
 const Caption = styled.p`
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: bold;
   line-height: 1.6;
   color: #333;
+  margin-bottom: 20px;
+
+  height: 60px; /* ✅ 고정 높이 */
+  overflow: hidden; /* ✅ 넘치는 텍스트 숨김 */
+  text-overflow: ellipsis;
+  word-wrap: break-word; /* ✅ 단어 잘림 방지 */
+  display: -webkit-box;
+  -webkit-line-clamp: 5; /* ✅ 최대 줄 수 지정 */
+  -webkit-box-orient: vertical;
 `;
+
 
 const Options = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* ✅ 세로 정렬 */
+  align-items: flex-start; /* ✅ 왼쪽 정렬 (필요시) */
+  gap: 18px;               /* ✅ 항목 간 간격 */
   margin: 30px 0;
-  flex-wrap: wrap;
+  padding-left: 20px; /* ✅ 오른쪽으로 이동 */
 `;
+
 
 const Option = styled.label`
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin: 10px 15px;
+  flex-direction: row;  /* ✅ 가로 정렬 */
+  align-items: center;  /* ✅ 수직 중앙 정렬 */
+  gap: 10px;            /* ✅ 간격 설정 */
   font-size: 14px;
   cursor: pointer;
+`;
 
-  input[type="radio"] {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 8px;
+
+const ContentBox = styled.div`
+  display: flex;
+  gap: 0px;
+  margin-bottom: 40px;
+  
+  align-items: flex-start;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 `;
+
+const ImageBox = styled.div`
+  flex: 0.9;
+`;
+
+const TextBox = styled.div`
+  flex: 1.3;
+`;
+
+
+
 
 const NextButton = styled.button`
   display: block;
   margin: 0 auto;
   padding: 12px 30px;
   font-size: 16px;
-  background-color: #4a82d9;
+  background-color: #649eff;
   color: white;
   border: none;
   border-radius: 8px;
@@ -110,6 +125,44 @@ const NextButton = styled.button`
     background-color: #3a6fbd;
   }
 `;
+
+const OptionLabel = styled.span`
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+
+`;
+
+
+const RadioCircle = styled.input`
+  appearance: none;
+  border-radius: 50%;
+  border: 2px solid #4a82d9;
+  background-color: white;
+  cursor: pointer;
+  margin-bottom: 8px;
+  
+
+  width: ${(props) => props.size || 20}px;
+  height: ${(props) => props.size || 20}px;
+
+  display: inline-block;         /* ✅ 확실한 크기 적용 */
+  vertical-align: middle;
+  padding: 0;                    /* ✅ 크기 왜곡 방지 */
+  box-sizing: border-box;        /* ✅ 정확한 border 계산 */
+
+  &:checked {
+    background-color: #4a82d9;
+  }
+    &:hover {
+    background-color: #649eff;
+  }
+`;
+
+const sizes = [22, 22, 22, 22, 22]; // 1번, 5번 가장 크고 가운데가 작게
+
+
 
 const SurveyStart = () => {
   const { title } = useParams();
@@ -148,41 +201,52 @@ const SurveyStart = () => {
           </Progress>
         </TopBar>
 
-        <Image src={image || fallbackImage} alt={title} />
+        <ContentBox>
+  <ImageBox>
+    <Image src={image || fallbackImage} alt={title} />
+  </ImageBox>
 
-        <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+  <TextBox>
+    <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
 
-        <Options>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <Option key={num}>
-              <input
-                type="radio"
-                name={`rating-${currentIndex}`}
-                value={num}
-                checked={selected[currentIndex] === num}
-                onChange={() =>
-                  setSelected((prev) => ({ ...prev, [currentIndex]: num }))
-                }
-              />
-              {
-                [
-                  "문화적으로 풍부하다",
-                  "문화적으로 매우 적절하다",
-                  "문화적으로 적절하다",
-                  "중립적 또는 일반적이다",
-                  "문화적으로 부적절하다",
-                ][num - 1]
-              }
-            </Option>
-          ))}
-        </Options>
+    <Options>
+  {[1, 2, 3, 4, 5].map((num, idx) => (
+    <Option key={num}>
+      <RadioCircle
+        type="radio"
+        name={`rating-${currentIndex}`}
+        value={num}
+        size={sizes[idx]} // 👈 크기 props 전달
+        checked={selected[currentIndex] === num}
+        onChange={() =>
+          setSelected((prev) => ({ ...prev, [currentIndex]: num }))
+        }
+      />
+        <OptionLabel>
+    {
+      [
+        "1. 문화적으로 풍부하다",
+        "2. 문화적으로 매우 적절하다",
+        "3. 문화적으로 적절하다",
+        "4. 중립적 또는 일반적이다",
+        "5. 문화적으로 부적절하다",
+      ][num - 1]
+    }
+  </OptionLabel>
+    </Option>
+  ))}
+</Options>
 
-        <NextButton
-          disabled={selected[currentIndex] == null}
-          onClick={handleNext}
-        >
-          다음으로
-        </NextButton>
+
+    <NextButton
+      disabled={selected[currentIndex] == null}
+      onClick={handleNext}
+    >
+      다음으로
+    </NextButton>
+  </TextBox>
+</ContentBox>
+
       </Container>
     </Wrapper>
   );

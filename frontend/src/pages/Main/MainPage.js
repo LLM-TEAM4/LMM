@@ -5,7 +5,7 @@ import surveyData from "../../data/SurveyData";
 import Header from "../../components/CommonHeader";
 
 const Container = styled.div`
-  padding: 100px 20px 20px; /* 상단 고정 헤더 공간 확보 */
+  padding: 70px 20px 20px; /* 상단 고정 헤더 공간 확보 */
   font-family: Arial, sans-serif;
 `;
 
@@ -23,7 +23,8 @@ const RankingBox = styled.div`
 `;
 
 const SurveyContainer = styled.div`
-  margin-top: 20px;
+  margin: 20px 20px;
+  padding: 10px 0px;
 `;
 
 const SurveyItem = styled.div`

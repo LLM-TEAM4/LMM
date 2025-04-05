@@ -1,12 +1,11 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { NavLink } from "react-router-dom";
 import styled from "styled-components";
-import LogoImage from "../assets/img/logo.png"
+import LogoImage from "../assets/img/logo.png";
 
 const HeaderContainer = styled.header`
-  width: 95%;
-  height: 55px; /* 👈 명시적 세로 길이 설정 */
+  width: 100%;
+  height: 44px;
   padding: 16px 25px;
   display: flex;
   justify-content: space-between;
@@ -20,77 +19,74 @@ const HeaderContainer = styled.header`
   box-sizing: border-box;
   min-width: 320px;
 `;
+
 const NavButtons = styled.nav`
   display: flex;
-  gap: 30px;
+  gap: 80px;
 `;
 
-const NavButton = styled(Link)`
+const NavButton = styled(NavLink)`
   padding: 10px 15px;
-  font-size: 16px;
+  font-size: 15px;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: regular;
   color: black;
   background-color: white;
   border: none;
   border-radius: 6px;
-  transition: background 0.3s, color 0.3s;
+  transition: all 0.3s ease;
   text-align: center;
+  position: relative;
 
   &:hover {
-    background-color: #68a0f4;
-    color: white;
+    color: #4a82d9;
+  }
+
+  &:hover::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #a5c8ff;
+    border-radius: 2px;
   }
 
   &.active {
-    background-color: #68a0f4;
-    color: white;
+      font-weight: bold;
+    color: #4a82d9;
+  }
+
+  &.active::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background-color: #a5c8ff;
+    border-radius: 2px;
   }
 `;
 
-const LogoWrapper = styled.div`
+const LogoWrapper = styled(NavLink)`
   display: flex;
   align-items: center;
   gap: 8px;
   flex-shrink: 0;
 `;
 
-
-
 const LogoImageStyled = styled.img`
-  height: 35px; /* 28px → 약 20% 증가 */
+  height: 35px;
 `;
 
-
-const NavLinks = styled.nav`
-  display: flex;
-  gap: 28px; /* 24px → 28px */
-  justify-content: center;
-  flex: 2;
-  min-width: 0;
-  overflow: hidden;
-`;
-
-
-const NavItem = styled(Link)`
-  font-size: 14px; /* 16px → 19px */
-  font-weight: 500;
-  color: #222;
-  text-decoration: none;
-  white-space: nowrap;
-
-  &:hover {
-    color: #000;
-  }
-`;
-
-
-const LoginButton = styled(Link)`
-  padding: 10px 20px; /* 8px 16px → 확대 */
+const LoginButton = styled(NavLink)`
+  padding: 10px 20px;
   border: 1px solid #68a0f4;
   border-radius: 999px;
   font-weight: 600;
-  font-size: 16px; /* 14px → 17px */
+  font-size: 16px;
   color: #000;
   background-color: white;
   text-decoration: none;
@@ -100,49 +96,37 @@ const LoginButton = styled(Link)`
   }
 `;
 
-
 const LoginWrapper = styled.div`
-  display: flex;
+  padding: 10px 10px;
   justify-content: flex-end;
   flex-shrink: 0;
 `;
 
-const StyledNavLink = styled(NavLink)`
-  font-size: 14px;
-  font-weight: 500;
-  color: #222;
-  text-decoration: none;
-  white-space: nowrap;
-
-  &:hover {
-    color: #000;
-  }
-
-  &.active {
-    color: #2b74ff; /* Example active state color */
-    font-weight: 700;
-  }
-`;
-
-
-
 const Header = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
   return (
     <HeaderContainer>
-      <LogoWrapper as={Link} to="/main">
+      <LogoWrapper to="/mainpage">
         <LogoImageStyled src={LogoImage} alt="로고" />
       </LogoWrapper>
 
       <NavButtons>
-        <NavButton to="/survey" className={location.pathname === "/survey" ? "active" : ""}>
+        <NavButton to="/survey">
           진행 중인 설문조사
         </NavButton>
-        <NavButton to="/ranking" className={location.pathname === "/ranking" ? "active" : ""}>
-          사용자 랭킹 조회
+        <NavButton
+          to="/ranking/country"
+          className={({ location }) =>
+            location.pathname.startsWith("/ranking") ? "active" : undefined
+          }
+        >
+          랭킹 조회
         </NavButton>
-        <NavButton to="/mypage" className={location.pathname === "/mypage" || location.pathname === '/mypage/survey-participation' || location.pathname === '/mypage/survey-creation' || location.pathname === '/mypage/survey-creation-list' || location.pathname === '/mypage/survey-creation-detail' ? "active" : ""}>
+        <NavButton
+          to="/mypage"
+          className={({ location }) =>
+            location.pathname.startsWith("/mypage") ? "active" : undefined
+          }
+        >
           마이 페이지
         </NavButton>
       </NavButtons>
@@ -153,6 +137,5 @@ const Header = () => {
     </HeaderContainer>
   );
 };
-
 
 export default Header;

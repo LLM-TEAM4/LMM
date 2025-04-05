@@ -8,10 +8,7 @@ import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import KoreaFlag from "../../assets/img/korea.png";
 import ChinaFlag from "../../assets/img/china.png";
 import JapanFlag from "../../assets/img/japan.png";
-import CommonHeader from "../../components/CommonHeader";
-import MypageSidebar from "../../components/MypageSidebar";
-import MypageLayout from "../../\blayouts/MypageLayout";
-
+import MypageLayout from "../../layouts/MypageLayout";
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -35,7 +32,22 @@ const options = {
     },
   },
 };
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
 
+
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  font-size: 14px;
+  min-height: 600px;
+`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -208,18 +220,8 @@ const SurveyParticipation = () => {
     setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
   };
   return (
-    <Wrapper>
-      <FixedHeader>
-        <CommonHeader/>
-        <NavButtons>
-          <NavButton to="/survey">🔍설문조사</NavButton>
-          <NavButton to="/ranking">🏅랭킹조회</NavButton>
-          <NavButton to="/mypage">👤</NavButton>
-        </NavButtons>
-      </FixedHeader>
-      <ContentWrapper>
-      <MypageSidebar/>
-        <RightContent>
+<MypageLayout>
+      <Content>
 
           <div style={{
              display: "flex", 
@@ -228,13 +230,13 @@ const SurveyParticipation = () => {
              width: "100%",  
              }}>
 
-          <SectionHeader>
-            <SectionTitle>🔍 참여 설문</SectionTitle>
+          <TitleWrapper>
+            <SectionTitle> 참여 설문</SectionTitle>
             <LegendWrapper>
              <LegendItem color="#FF4D4D">응답</LegendItem>
              <LegendItem color="#FFC04D">미응답</LegendItem>
             </LegendWrapper>
-          </SectionHeader>
+          </TitleWrapper>
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: "30px" }}>
             {chartData.map(({ country, data }, index) => (
@@ -262,9 +264,8 @@ const SurveyParticipation = () => {
             ))}
           </div>
           <TotalResponses> ⏩ 종합설계1님이 남긴 총 응답 수는 {totalResponsesCount}개 입니다.</TotalResponses>
-        </RightContent>
-      </ContentWrapper>
-    </Wrapper>
+      </Content>
+      </MypageLayout>
   );
 };
 

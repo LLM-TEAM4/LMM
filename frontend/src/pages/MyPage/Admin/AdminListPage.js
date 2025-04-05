@@ -1,63 +1,16 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import MypageLayout from "../../../layouts/MypageLayout";
+import MypageLayout from "../../../layouts/MypageLayout";
 
 
-// 💄 스타일 컴포넌트
-const Container = styled.div`
-  font-family: 'Pretendard', sans-serif;
-  background-color: #f0f2f5;
-  min-height: 100vh;
-`;
-
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
+const SectionTitle = styled.h2`
+  font-size: 18px;
   font-weight: bold;
-  img {
-    width: 150px;
-  }
+  margin-bottom: 20px;
+  
+  
 `;
-
-const Nav = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-const MainLayout = styled.div`
-  display: flex;
-  margin: 20px;
-  gap: 20px;
-`;
-
-const LeftSidebar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #F5F5F5;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid #ddd;
-`;
-
-const SidebarButton = styled(Link)`
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;
-  color: black;
-  background-color: #F5F5F5;
-  border-radius: 6px;
-  transition: background 0.3s;
-
-  &:hover,
-  &.active {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
 const Content = styled.div`
   flex: 1;
   padding: 20px;
@@ -183,7 +136,7 @@ const AdminListPage = () => {
     <MypageLayout>
         <Content>
           <TitleWrapper>
-            <h2>내 설문 목록</h2>
+            <SectionTitle>내 설문 목록</SectionTitle>
             <SelectWrapper>
               <div>
                 <label htmlFor="country">나라 선택:</label>
@@ -217,7 +170,7 @@ const AdminListPage = () => {
             <SurveyGrid>
               {filteredSurveys.map(({ _id, country, category, entityName, imageUrl }) => (
                 <SurveyCard key={_id}>
-                  <StyledLink to={`/admin/${_id}`}>
+                  <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
                     <Image src={imageUrl} alt={category} />
                     <CardInfo>
                       <InfoItem>🌏 나라: {country}</InfoItem>

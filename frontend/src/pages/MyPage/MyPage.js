@@ -1,122 +1,29 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ProfilePic from "../../assets/img/profile.png";
-import LogoImg from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom";
-import CommonHeader from "../../components/CommonHeader";
-import MypageSidebar from "../../components/MypageSidebar"; 
-import MypageLayout from "../../layouts/MypageLayout";
+import MypageLayout from "../../layouts/MypageLayout";
 
-
-const Wrapper = styled.div`
+const TitleWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
-  height: 100vh;
-`;
-
-const FixedHeader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
 `;
-
-
-const NavButtons = styled.div`
-  display: flex;
-  gap: 30px;
-  margin-right: 20px;
-`;
-
-const NavButton = styled(Link)`
-  padding: 10px 15px;
-  font-size: 16px;
-  text-decoration: none;
-  font-weight: bold;
-  color: black;
-  background-color: white;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.3s;
-  text-align: center;
-
-  &:hover {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  margin-top: 50px;
-  height: calc(100vh - 60px);
-`;
-
-const LeftSidebar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #f5f5f5;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid #ddd;
-
-  a:first-child {
-    margin-top: 40px; // 여기서만 여백!
-  }
-`;
-
-const SidebarButton = styled(Link)`
-  display: flex;
-  padding: 12px;
-
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;
-  color: black;
-  background-color: #f5f5f5;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.3s;
-  text-align: left;
-  align-items: center;
-  justify-content: space-between;
-
-  &:hover,
-  &.active {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
-const RightContent = styled.div`
-  flex: 1;
-  padding: 60px 20px 20px 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left: 20px;
-`;
-
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
-  margin-top:40px;
-  padding-bottom: 10px;
-  width: 100%;
-  border-bottom: 1px solid #ddd;
+  
+`;
+
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  font-size: 14px;
+  min-height: 600px;
 `;
 
 const ProfileSection = styled.div`
@@ -167,6 +74,7 @@ const ButtonRow = styled.div`
   justify-content: center;
   margin-top: 15px;
 `;
+
 
 
 
@@ -338,9 +246,10 @@ const MyPage = () => {
   };
   return (
     <MypageLayout>
-      
-          <SectionTitle>👤 계정</SectionTitle>
-
+      <Content>
+      <TitleWrapper>
+          <SectionTitle>계정 정보</SectionTitle>
+         </TitleWrapper>
           <ProfileSection>
             <ProfileImageWrapper>
 
@@ -459,7 +368,7 @@ const MyPage = () => {
       </ModalOverlay>
 )}
 
-
+</Content>
 
 </MypageLayout>
   );

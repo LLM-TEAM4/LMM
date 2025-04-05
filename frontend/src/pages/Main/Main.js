@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import BannerImg from "../../assets/img/banner.png";
+import BannerImg from "../../assets/img/banner.svg";
 import Header from "../../components/CommonHeader";
 
 const Container = styled.div`
@@ -17,7 +17,7 @@ const HeroSection = styled.section`
   align-items: center;
   height: 100vh; /* 💥 전체 화면 높이 */
   width: 100%;
-  padding-top: 100px; /* 헤더 높이만큼 띄우기 */
+  padding-top: 60px; /* 헤더 높이만큼 띄우기 */
   box-sizing: border-box;
   background: #ffffff;
 
@@ -30,62 +30,7 @@ const HeroSection = styled.section`
 
 
 
-const TextBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  max-width: 600px;
-`;
 
-const Title = styled.h1`
-  font-size: 24px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  color: #000;
-  margin-bottom: -12px;
-
-  span {
-    color: #2b74ff;
-  }
-`;
-
-const Headline = styled.h2`
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 1.5;
-  margin-top: 0;
-  color: #000;
-`;
-
-const Description = styled.p`
-  font-size: 16px;
-  color: #444;
-  line-height: 1.8;
-  margin-bottom: 12px;
-`;
-
-
-const Subtitle = styled.p`
-  font-size: 20px;
-  color: #555;
-  line-height: 1.6;
-`;
-
-const CTAButton = styled(Link)`
-  padding: 16px 30px;
-  background-color: #68a0f4;
-  color: white;
-  font-weight: bold;
-  font-size: 18px;
-  border-radius: 999px;
-  text-decoration: none;
-  width: fit-content;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-
-  &:hover {
-    background-color: #4a82d9;
-  }
-`;
 
 const BearImage = styled.img`
   width: 95%;

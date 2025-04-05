@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
-import MypageLayout from "../../../layouts/MypageLayout";
-
-
+import MypageLayout from "../../../layouts/MypageLayout";
 
 
 
@@ -15,6 +13,11 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
+const SectionTitle = styled.h2`
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+`;
 
 
 
@@ -128,7 +131,6 @@ const TitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
 `;
 
 // 💻 컴포넌트
@@ -200,10 +202,9 @@ const AdminDetailPage = () => {
 
   return (
     <MypageLayout>
-
-        <Content>
+       <Content>
           <TitleWrapper>
-            <h2>설문 세부사항</h2>
+            <SectionTitle>설문 세부사항</SectionTitle>
             <ExportWrapper>
               <ExportButton onClick={() => setShowDropdown(!showDropdown)}>
                 내보내기 ⬇
@@ -240,7 +241,7 @@ const AdminDetailPage = () => {
               </CaptionItem>
             ))}
           </CaptionList>
-        </Content>
+          </Content>
         </MypageLayout>
   );
 };

@@ -5,11 +5,24 @@ import CommonHeader from "../../components/CommonHeader";
 
 const Wrapper = styled.div`
   font-family: Arial, sans-serif;
-  padding-top: 100px;
+  height: auto; /**100vh 해놓으면 스크롤 생김**/
+  overflow-y: scroll; 
+  padding-top: 60px;
+
+  /* ✅ 스크롤바 숨기기 (모든 브라우저 대응) */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE, Edge */
+
+  &::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
 `;
 
+
+
 const Container = styled.div`
-  padding: 40px;
+  padding: 10px 40px;
 `;
 
 const CategoryPath = styled.div`
@@ -44,15 +57,22 @@ const StartButton = styled.button`
   margin-top: 30px;
   padding: 12px 20px;
   font-size: 16px;
-  background-color: #4a82d9;
+  background-color: #649eff;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+
   &:hover {
     background-color: #3a6fbd;
   }
+
+  /* ✅ 가운데 정렬 */
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 `;
+
 
 const SurveyDetail = () => {
   const navigate = useNavigate();

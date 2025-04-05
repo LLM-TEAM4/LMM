@@ -1,88 +1,21 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import MypageLayout from "../../../layouts/MypageLayout";
+import MypageLayout from "../../../layouts/MypageLayout";
 
 
-// 💄 스타일 컴포넌트 (MyPage 구조 참고)
-const Wrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  font-family: 'Pretendard', sans-serif;
-  height: 100vh;
-`;
-
-const FixedHeader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
-`;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
+const SectionTitle = styled.h2`
+  font-size: 18px;
   font-weight: bold;
-  margin: 0;
-
-  img {
-    width: 150px;
-    cursor: pointer;
-  }
+  margin-bottom: 20px;
+  
+  
 `;
-
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  margin-top: 60px;
-  height: calc(100vh - 60px);
-`;
-
-const LeftSidebar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #F5F5F5;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid #ddd;
-`;
-
-const SidebarButton = styled(Link)`
-  padding: 12px;
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;
-  color: black;
-  background-color: #F5F5F5;
-  border-radius: 6px;
-  transition: background 0.3s;
-
-  &:hover,
-  &.active {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
-const RightContent = styled.div`
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-`;
-
 const TitleWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  width: 100%;
 `;
 
 const CreditInfo = styled.span`
@@ -96,6 +29,14 @@ const CreditInfo = styled.span`
   }
 `;
 
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  font-size: 14px;
+  min-height: 600px;
+`;
 const Popup = styled.div`
   position: absolute;
   top: 130px;
@@ -112,6 +53,7 @@ const Popup = styled.div`
 // 👉 기존 Content 안 요소 유지
 const FormGroup = styled.div`
   margin-bottom: 15px;
+  margin-top: 15px;
 `;
 const Label = styled.label`
   font-weight: bold;
@@ -133,6 +75,7 @@ const ButtonGroup = styled.div`
   margin-top: 20px;
   display: flex;
   gap: 10px;
+  justify-content: center;
 `;
 const Button = styled.button`
   padding: 10px 15px;
@@ -210,8 +153,9 @@ const AdminPage = () => {
 
   return (
     <MypageLayout>
+      <Content>
           <TitleWrapper>
-            <h2>설문조사 객체 등록</h2>
+          <SectionTitle> 설문 등록</SectionTitle>
             <CreditInfo onClick={() => setShowPopup(!showPopup)}>
               등록 가능한 설문 수 : {creditCount}개
             </CreditInfo>
@@ -291,6 +235,7 @@ const AdminPage = () => {
               <Button type="submit">등록하기</Button>
             </ButtonGroup>
           </form>
+          </Content>
           </MypageLayout>
   );
 };

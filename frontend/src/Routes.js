@@ -15,36 +15,30 @@ import SurveyStart from "./pages/Survey/SurveyStart";
 import AdminPage from "./pages/MyPage/Admin/AdminPage";
 import AdminListPage from "./pages/MyPage/Admin/AdminListPage"; 
 import AdminDetailPage from "./pages/MyPage/Admin/AdminDetailPage"; 
-import Ranking from "./pages/Ranking/Ranking";
-
+import RankingCountryPage from "./pages/Ranking/RankingCountryPage";
+import RankingCategoryPage from "./pages/Ranking/RankingCategoryPage";
 
 class AppRoutes extends React.Component {
   render() {
     return (
       <Router>
         <Routes>
-          <Route  path="/" element={<Main />} />
-          <Route  path="/mainpage" element={<MainPage />} />
-          <Route  path="/signup" element={<Signup />} />
-          <Route  path="/signupid" element={<SignupID />} />
-          <Route  path="/signupsns" element={<SignupSNS />} />
-          <Route  path="/login" element={<Login />} />
-          <Route  path="/mypage" element={<MyPage />} /> 
-          <Route  path="/survey" element={<Survey />} />
-          <Route path="/mypage/survey-participation" element={<SurveyParticipation />} />
-          <Route exact path="/" element={<Main />} />
-          <Route exact path="/mainpage" element={<Main />} />
-          <Route exact path="/signup" element={<Signup />} />
-          <Route exact path="/signupid" element={<SignupID />} />
-          <Route exact path="/signupsns" element={<SignupSNS />} />
-          <Route exact path="/login" element={<Login />} />
-          <Route exact path="/survey" element={<Survey />} />
+          <Route path="/" element={<Main />} />
+          <Route path="/mainpage" element={<MainPage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signupid" element={<SignupID />} />
+          <Route path="/signupsns" element={<SignupSNS />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/mypage" element={<MyPage />} /> 
+          <Route path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
-          <Route path="/mypage/survey-creation" element={<AdminPage/>} />
+          <Route path="/mypage/survey-participation" element={<SurveyParticipation />} />
+          <Route path="/mypage/survey-creation" element={<AdminPage />} />
           <Route path="/mypage/survey-creation-list" element={<AdminListPage />} />
-          <Route path="/mypage/survey-creation-detail" element={<AdminDetailPage />} />
-          <Route exact path="/ranking" element={<Ranking />} />
+          <Route path="/mypage/survey-creation-detail/:id" element={<AdminDetailPage />} />
+          <Route path="/ranking/country" element={<RankingCountryPage />} />
+          <Route path="/ranking/category" element={<RankingCategoryPage />} />
         </Routes>
       </Router>
     );
