@@ -3,7 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
-import SignupID from "./pages/Signup/SignupID";
+import SignupID from "./pages/Signup/SignupID";  // 경로 수정
+
 import SignupSNS from "./pages/Signup/SignupSNS";
 import Main from "./pages/Main/Main";
 import MainPage from "./pages/Main/MainPage";
