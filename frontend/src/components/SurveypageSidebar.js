@@ -9,25 +9,23 @@ const Sidebar = styled.div`
 `;
 
 const SectionTitle = styled.h3`
-  font-size: 16px; // 🔁 예: 18px 또는 20px
+  font-size: 16px;
   margin-bottom: 10px;
   border-bottom: 1px solid #ccc;
   padding-bottom: 5px;
 `;
 
-
 const CheckboxGroup = styled.div`
-  margin-bottom: 40px; /* 기존 20px → 40px 정도로 */
+  margin-bottom: 40px;
 `;
 
-
 const CheckboxLabel = styled.label`
-  display: flex;              /* 정렬 개선 */
+  display: flex;
   align-items: center;
-  gap: 8px;                   /* ← 체크박스와 텍스트 간격 */
-  margin-bottom: 12px;        /* 각 항목 사이 간격 */
+  gap: 8px;
+  margin-bottom: 12px;
   font-size: 16px;
-  line-height: 24px;          /* 줄 간격 */
+  line-height: 24px;
 `;
 
 const SelectButton = styled.button`
@@ -38,6 +36,8 @@ const SelectButton = styled.button`
   border: none;
   border-radius: 6px;
   cursor: pointer;
+  font-weight: bold;
+    font-size: 16px;
 
   &:hover {
     background-color: #4a82d9;
@@ -68,11 +68,14 @@ const SurveypageSidebar = ({ selectedCategories, handleCategoryChange }) => {
               type="checkbox"
               onChange={() => handleCategoryChange(cat)}
               checked={selectedCategories.includes(cat)}
-            />{" "}
+            />
             {cat}
           </CheckboxLabel>
         ))}
       </CheckboxGroup>
+
+      {/* ✅ 버튼 추가 위치 */}
+      <SelectButton>선택하기</SelectButton>
     </Sidebar>
   );
 };

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
+
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -10,18 +11,15 @@ const Wrapper = styled.div`
   height: 100vh;
   overflow-y: auto;
 
-  /* 스크롤바 숨기기 */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
   &::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    display: none;
   }
 `;
 
-
 const Container = styled.div`
-  padding: 80px 80px;
-  min-height: auto;
+  padding: 80px;
 `;
 
 const TopBar = styled.div`
@@ -32,68 +30,21 @@ const TopBar = styled.div`
 `;
 
 const Breadcrumb = styled.div`
-  font-size: 14px;
+  font-size: 18px;
   color: #666;
 `;
 
 const Progress = styled.div`
-  font-size: 14px;
-  color: #333;
-`;
-
-const Image = styled.img`
-  width: 80%;
-  height: 80%;
-  object-fit: cover;
-  border-radius: 10px;
-  
-
-`;
-
-
-const Caption = styled.p`
   font-size: 18px;
-  font-weight: bold;
-  line-height: 1.6;
   color: #333;
-  margin-bottom: 20px;
-
-  height: 60px; /* ✅ 고정 높이 */
-  overflow: hidden; /* ✅ 넘치는 텍스트 숨김 */
-  text-overflow: ellipsis;
-  word-wrap: break-word; /* ✅ 단어 잘림 방지 */
-  display: -webkit-box;
-  -webkit-line-clamp: 5; /* ✅ 최대 줄 수 지정 */
-  -webkit-box-orient: vertical;
 `;
-
-
-const Options = styled.div`
-  display: flex;
-  flex-direction: column; /* ✅ 세로 정렬 */
-  align-items: flex-start; /* ✅ 왼쪽 정렬 (필요시) */
-  gap: 18px;               /* ✅ 항목 간 간격 */
-  margin: 30px 0;
-  padding-left: 20px; /* ✅ 오른쪽으로 이동 */
-`;
-
-
-const Option = styled.label`
-  display: flex;
-  flex-direction: row;  /* ✅ 가로 정렬 */
-  align-items: center;  /* ✅ 수직 중앙 정렬 */
-  gap: 10px;            /* ✅ 간격 설정 */
-  font-size: 14px;
-  cursor: pointer;
-`;
-
 
 const ContentBox = styled.div`
   display: flex;
+  align-items: flex-stast;
   gap: 0px;
   margin-bottom: 40px;
-  
-  align-items: flex-start;
+  padding-top:30px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -108,8 +59,88 @@ const TextBox = styled.div`
   flex: 1.3;
 `;
 
+const Image = styled.img`
+  width: 98%;
+  height: 98%;
+  object-fit: cover;
+  border-radius: 10px;
+`;
 
+const Caption = styled.p`
+  font-size: 18px;
+  font-weight: bold;
+  line-height: 1.6;
+  color: #333;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+`;
 
+const Options = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  margin: 30px 0;
+  padding-left: 20px;
+`;
+
+const Option = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: transform 0.2s;
+`;
+
+const RadioCircle = styled.input`
+  appearance: none;
+  width: ${(props) => props.size || 22}px;
+  height: ${(props) => props.size || 22}px;
+  border-radius: 50%;
+  border: 2px solid #4a82d9;
+  background-color: white;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+
+  &:checked {
+    background-color: #4a82d9;
+    transform: scale(1.2);
+  }
+
+  &:hover {
+    background-color: #649eff;
+    transform: scale(1.1);
+  }
+`;
+
+const OptionLabel = styled.span`
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin-left:20px;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  ${Option}:hover & {
+    transform: scale(1.05);
+    color: #4a82d9;
+  }
+
+  ${RadioCircle}:checked + & {
+    transform: scale(1.1);
+    font-weight: bold;
+    color: #4a82d9;
+  }
+`;
 
 const NextButton = styled.button`
   display: block;
@@ -121,48 +152,19 @@ const NextButton = styled.button`
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.2s;
+
   &:hover {
     background-color: #3a6fbd;
   }
-`;
 
-const OptionLabel = styled.span`
-  font-size: 16px;
-  font-weight: 500;
-  color: #333;
-  text-align: center;
-
-`;
-
-
-const RadioCircle = styled.input`
-  appearance: none;
-  border-radius: 50%;
-  border: 2px solid #4a82d9;
-  background-color: white;
-  cursor: pointer;
-  margin-bottom: 8px;
-  
-
-  width: ${(props) => props.size || 20}px;
-  height: ${(props) => props.size || 20}px;
-
-  display: inline-block;         /* ✅ 확실한 크기 적용 */
-  vertical-align: middle;
-  padding: 0;                    /* ✅ 크기 왜곡 방지 */
-  box-sizing: border-box;        /* ✅ 정확한 border 계산 */
-
-  &:checked {
-    background-color: #4a82d9;
-  }
-    &:hover {
-    background-color: #649eff;
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
   }
 `;
 
-const sizes = [22, 22, 22, 22, 22]; // 1번, 5번 가장 크고 가운데가 작게
-
-
+const sizes = [22, 22, 22, 22, 22]; // 크기 조절
 
 const SurveyStart = () => {
   const { title } = useParams();
@@ -192,7 +194,6 @@ const SurveyStart = () => {
   return (
     <Wrapper>
       <CommonHeader />
-
       <Container>
         <TopBar>
           <Breadcrumb>{path || `한국 > cuisine > ${title}`}</Breadcrumb>
@@ -202,51 +203,49 @@ const SurveyStart = () => {
         </TopBar>
 
         <ContentBox>
-  <ImageBox>
-    <Image src={image || fallbackImage} alt={title} />
-  </ImageBox>
+          <ImageBox>
+            <Image src={image || fallbackImage} alt={title} />
+          </ImageBox>
 
-  <TextBox>
-    <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+          <TextBox>
+            <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
 
-    <Options>
-  {[1, 2, 3, 4, 5].map((num, idx) => (
-    <Option key={num}>
-      <RadioCircle
-        type="radio"
-        name={`rating-${currentIndex}`}
-        value={num}
-        size={sizes[idx]} // 👈 크기 props 전달
-        checked={selected[currentIndex] === num}
-        onChange={() =>
-          setSelected((prev) => ({ ...prev, [currentIndex]: num }))
-        }
-      />
-        <OptionLabel>
-    {
-      [
-        "1. 문화적으로 풍부하다",
-        "2. 문화적으로 매우 적절하다",
-        "3. 문화적으로 적절하다",
-        "4. 중립적 또는 일반적이다",
-        "5. 문화적으로 부적절하다",
-      ][num - 1]
-    }
-  </OptionLabel>
-    </Option>
-  ))}
-</Options>
+            <Options>
+              {[1, 2, 3, 4, 5].map((num, idx) => (
+                <Option key={num}>
+                  <RadioCircle
+                    type="radio"
+                    name={`rating-${currentIndex}`}
+                    value={num}
+                    size={sizes[idx]}
+                    checked={selected[currentIndex] === num}
+                    onChange={() =>
+                      setSelected((prev) => ({ ...prev, [currentIndex]: num }))
+                    }
+                  />
+                  <OptionLabel>
+                    {
+                      [
+                        "1. 문화적으로 풍부하다",
+                        "2. 문화적으로 매우 적절하다",
+                        "3. 문화적으로 적절하다",
+                        "4. 중립적 또는 일반적이다",
+                        "5. 문화적으로 부적절하다",
+                      ][num - 1]
+                    }
+                  </OptionLabel>
+                </Option>
+              ))}
+            </Options>
 
-
-    <NextButton
-      disabled={selected[currentIndex] == null}
-      onClick={handleNext}
-    >
-      다음으로
-    </NextButton>
-  </TextBox>
-</ContentBox>
-
+            <NextButton
+              disabled={selected[currentIndex] == null}
+              onClick={handleNext}
+            >
+              다음으로
+            </NextButton>
+          </TextBox>
+        </ContentBox>
       </Container>
     </Wrapper>
   );

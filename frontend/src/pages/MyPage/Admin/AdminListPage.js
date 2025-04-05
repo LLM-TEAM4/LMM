@@ -3,14 +3,12 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
 
-
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
-  
-  
 `;
+
 const Content = styled.div`
   flex: 1;
   padding: 20px;
@@ -18,26 +16,34 @@ const Content = styled.div`
   border-radius: 15px;
   font-size: 14px;
   min-height: 600px;
+    margin-bottom: 20px;
 `;
 
 const SurveyGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  grid-template-columns: repeat(3, 1fr); // 2개 고정
   gap: 20px;
   margin-top: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 `;
 
 const SurveyCard = styled.div`
+  display: flex;
+  flex-direction: column;
   border: 1px solid #ddd;
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  background-color: #fafafa;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-  transition: all 0.2s ease;
+  background-color: #fefefe;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 
   &:hover {
     border-color: #4a82d9;
-    box-shadow: 0 4px 8px rgba(74, 130, 217, 0.15);
+    box-shadow: 0 6px 12px rgba(74, 130, 217, 0.2);
+    transform: translateY(-3px);
   }
 `;
 
@@ -45,22 +51,59 @@ const StyledLink = styled(Link)`
   text-decoration: none;
   color: inherit;
   display: block;
+  height: 100%;
 `;
 
 const Image = styled.img`
   width: 100%;
-  height: 160px;
+  height: 180px;
   object-fit: cover;
+  background-color: #eaeaea;
 `;
-
 
 const CardInfo = styled.div`
-  padding: 10px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
-const InfoItem = styled.p`
-  margin: 5px 0;
-  font-weight: 500;
+const EntityName = styled.p`
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0;
+`;
+
+const MetaInfo = styled.p`
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+`;
+
+const ResponseButton = styled.div`
+  margin-top: auto;
+  padding: 12px 16px;
+  background-color: #e8edff;
+  font-size: 14px;
+  border-top: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  transition: background-color 0.2s;
+
+  span:first-child {
+    font-weight: bold;
+    color: #4a82d9;
+  }
+
+  span:last-child {
+    font-weight: normal;
+    color: #555;
+  }
+
+  &:hover {
+    background-color: #d4e1ff;
+  }
 `;
 
 const SelectWrapper = styled.div`
@@ -134,56 +177,59 @@ const AdminListPage = () => {
 
   return (
     <MypageLayout>
-        <Content>
-          <TitleWrapper>
-            <SectionTitle>내 설문 목록</SectionTitle>
-            <SelectWrapper>
-              <div>
-                <label htmlFor="country">나라 선택:</label>
-                <Select id="country" value={selectedCountry} onChange={handleCountryChange}>
-                  <option value="">전체</option>
-                  {countries.map((country) => (
-                    <option key={country} value={country}>
-                      {country}
-                    </option>
-                  ))}
-                </Select>
-              </div>
+      <Content>
+        <TitleWrapper>
+          <SectionTitle>내 설문 목록</SectionTitle>
+          <SelectWrapper>
+            <div>
+              <label htmlFor="country">나라 선택:</label>
+              <Select id="country" value={selectedCountry} onChange={handleCountryChange}>
+                <option value="">전체</option>
+                {countries.map((country) => (
+                  <option key={country} value={country}>
+                    {country}
+                  </option>
+                ))}
+              </Select>
+            </div>
 
-              <div>
-                <label htmlFor="category">카테고리 선택:</label>
-                <Select id="category" value={selectedCategory} onChange={handleCategoryChange}>
-                  <option value="">전체</option>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-            </SelectWrapper>
-          </TitleWrapper>
+            <div>
+              <label htmlFor="category">카테고리 선택:</label>
+              <Select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+                <option value="">전체</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </Select>
+            </div>
+          </SelectWrapper>
+        </TitleWrapper>
 
-          {filteredSurveys.length === 0 ? (
-            <p>등록한 설문조사가 없습니다.</p>
-          ) : (
-            <SurveyGrid>
-              {filteredSurveys.map(({ _id, country, category, entityName, imageUrl }) => (
-                <SurveyCard key={_id}>
-                  <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
-                    <Image src={imageUrl} alt={category} />
-                    <CardInfo>
-                      <InfoItem>🌏 나라: {country}</InfoItem>
-                      <InfoItem>📂 카테고리: {category}</InfoItem>
-                      <InfoItem>📂 고유명사: {entityName}</InfoItem>
-                    </CardInfo>
-                  </StyledLink>
-                </SurveyCard>
-              ))}
-            </SurveyGrid>
-          )}
-        </Content>
-        </MypageLayout>
+        {filteredSurveys.length === 0 ? (
+          <p>등록한 설문조사가 없습니다.</p>
+        ) : (
+          <SurveyGrid>
+            {filteredSurveys.map(({ _id, country, category, entityName, imageUrl }) => (
+              <SurveyCard key={_id}>
+                <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
+                  <Image src={imageUrl} alt={category} />
+                  <CardInfo>
+                    <EntityName>{entityName}</EntityName>
+                    <MetaInfo>{`${country}, ${category}`}</MetaInfo>
+                  </CardInfo>
+                  <ResponseButton>
+                    <span>58명</span>
+                    <span>응답 보러가기</span>
+                  </ResponseButton>
+                </StyledLink>
+              </SurveyCard>
+            ))}
+          </SurveyGrid>
+        )}
+      </Content>
+    </MypageLayout>
   );
 };
 

@@ -7,7 +7,7 @@ const Sidebar = styled.div`
   width: 220px;
   padding: 20px 40px;
   border-right: 1px solid #ddd;
-  background-color: #ffffff;
+  background-color: #f0f8ff;
 `;
 
 // Section 제목 스타일

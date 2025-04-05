@@ -1,61 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import styled from "styled-components";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
 import MypageLayout from "../../../layouts/MypageLayout";
-
-
-
-// 💄 스타일 컴포넌트
-const Container = styled.div`
-  font-family: 'Pretendard', sans-serif;
-  background-color: #f0f2f5;
-  min-height: 100vh;
-`;
-
-const SectionTitle = styled.h2`
-  font-size: 18px;
-  font-weight: bold;
-  margin-bottom: 20px;
-`;
-
-
-
-const Nav = styled.div`
-  display: flex;
-  gap: 20px;
-`;
-
-const MainLayout = styled.div`
-  display: flex;
-  margin: 20px;
-  gap: 20px;
-`;
-
-const SideBar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  font-size: 14px;
-  min-height: 600px;
-`;
-
-const SidebarButton = styled.button`
-  background: none;
-  border: none;
-  padding: 10px 0;
-  text-align: left;
-  width: 100%;
-  font-size: 14px;
-  color: #333;
-  cursor: pointer;
-
-  &:hover {
-    color: #68A0F4;
-    font-weight: bold;
-  }
-`;
 
 const Content = styled.div`
   flex: 1;
@@ -66,40 +19,81 @@ const Content = styled.div`
   min-height: 600px;
 `;
 
-const Image = styled.img`
-  width: 100%;
-  max-height: 400px;
-  object-fit: cover;
+const TitleRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
 `;
 
-const CaptionList = styled.ul`
-  margin-top: 10px;
-  padding-left: 0;
-  list-style: none;
+const SectionTitle = styled.h2`
+  font-size: 18px;
+  font-weight: bold;
 `;
 
-const CaptionItem = styled.li`
-  margin-bottom: 40px;
-  font-weight: 500;
+const ChartGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+  justify-items: center;
 `;
 
-const ChartContainer = styled.div`
-  margin-top: 10px;
-  height: 250px;
+const ChartWrapper = styled.div`
+  text-align: center;
 `;
+
+const DetailRow = styled.div`
+  display: flex;
+  margin-top: 40px;
+  align-items: flex-start;
+  padding-bottom: 30px;
+`;
+
+const TextBlock = styled.div`
+  flex: 2;
+`;
+
+const ImageBlock = styled.div`
+  flex: 1;
+`;
+
+const DetailTitle = styled.h3`
+  font-weight: bold;
+  font-size: 18px;
+  margin-bottom: 8px;
+`;
+
+const DetailSubtitle = styled.p`
+  font-size: 14px;
+  margin-bottom: 16px;
+`;
+
+const CaptionItem = styled.p`
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 8px;
+`;
+
+const Image = styled.img`
+  width:300px;
+  height:300px;
+  border-radius: 10px;
+  object-fit: cover;
+`;
+
+const COLORS = ["#8884d8", "#8dd1e1", "#82ca9d", "#ffc658", "#ff7f50"];
 
 const ExportWrapper = styled.div`
   position: relative;
   display: inline-block;
-  overflow: visible; /* 🔧 드롭다운이 잘리지 않도록 */
+  overflow: visible;
   z-index: 1;
 `;
 
 const ExportButton = styled.button`
   background-color: #4a82d9;
   color: white;
-  padding: 8px 16px; /* 🔧 버튼 조금 넓게 */
+  padding: 8px 16px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
@@ -114,9 +108,9 @@ const Dropdown = styled.div`
   background: white;
   border: 1px solid #ccc;
   border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   z-index: 3;
-  min-width: 150px; /* 🔧 드롭다운이 잘리지 않게 최소 너비 확보 */
+  min-width: 150px;
 `;
 
 const DropdownItem = styled.div`
@@ -127,16 +121,8 @@ const DropdownItem = styled.div`
   }
 `;
 
-const TitleWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-// 💻 컴포넌트
 const AdminDetailPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [survey, setSurvey] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
 
@@ -145,7 +131,16 @@ const AdminDetailPage = () => {
       try {
         const res = await fetch(`http://localhost:4000/survey/${id}`);
         const data = await res.json();
-        setSurvey(data);
+
+        const mockVotes = {
+          0: { 1: 5, 2: 3, 3: 2, 4: 1, 5: 0 },
+          1: { 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 },
+          2: { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 },
+          3: { 1: 1, 2: 1, 3: 2, 4: 2, 5: 10 },
+          4: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 0 },
+        };
+
+        setSurvey({ ...data, votes: mockVotes });
       } catch (err) {
         console.error("❌ 설문 세부 정보 불러오기 실패:", err);
       }
@@ -154,10 +149,10 @@ const AdminDetailPage = () => {
     fetchSurveyDetails();
   }, [id]);
 
-  const formatChartData = (votesArray) => {
+  const formatChartData = (votesObj) => {
     return [1, 2, 3, 4, 5].map((score) => ({
       name: `${score}점`,
-      count: votesArray?.[score] ?? 0
+      value: votesObj?.[score] ?? 0,
     }));
   };
 
@@ -169,11 +164,13 @@ const AdminDetailPage = () => {
       category: survey.category,
       entityName: survey.entityName,
       captions: survey.captions,
-      votes: survey.votes
+      votes: survey.votes,
     };
 
     if (type === "json") {
-      const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(exportObj, null, 2)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -196,53 +193,66 @@ const AdminDetailPage = () => {
     setShowDropdown(false);
   };
 
-  if (!survey) {
-    return <p>설문 정보를 불러오는 중...</p>;
-  }
+  if (!survey) return <p>설문 정보를 불러오는 중...</p>;
 
   return (
     <MypageLayout>
-       <Content>
-          <TitleWrapper>
-            <SectionTitle>설문 세부사항</SectionTitle>
-            <ExportWrapper>
-              <ExportButton onClick={() => setShowDropdown(!showDropdown)}>
-                내보내기 ⬇
-              </ExportButton>
-              {showDropdown && (
-                <Dropdown>
-                  <DropdownItem onClick={() => exportData("csv")}>CSV로 내보내기</DropdownItem>
-                  <DropdownItem onClick={() => exportData("json")}>JSON으로 내보내기</DropdownItem>
-                </Dropdown>
-              )}
-            </ExportWrapper>
-          </TitleWrapper>
+      <Content>
+        <TitleRow>
+          <SectionTitle>캡션별 응답 분포</SectionTitle>
+          <ExportWrapper>
+            <ExportButton onClick={() => setShowDropdown(!showDropdown)}>
+              내보내기 ⬇
+            </ExportButton>
+            {showDropdown && (
+              <Dropdown>
+                <DropdownItem onClick={() => exportData("csv")}>CSV로 내보내기</DropdownItem>
+                <DropdownItem onClick={() => exportData("json")}>JSON으로 내보내기</DropdownItem>
+              </Dropdown>
+            )}
+          </ExportWrapper>
+        </TitleRow>
 
-          <p><strong>나라:</strong> {survey.country}</p>
-          <p><strong>카테고리:</strong> {survey.category}</p>
-          <p><strong>고유명사:</strong> {survey.entityName}</p>
-          <Image src={survey.imageUrl} alt={survey.entityName} />
+        
 
-          <p><strong>캡션별 응답 분포:</strong></p>
-          <CaptionList>
-            {survey.captions.map((caption, index) => (
-              <CaptionItem key={index}>
-                <span><strong>캡션 {index + 1}.</strong> {caption}</span>
-                <ChartContainer>
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={formatChartData(survey.votes?.[index])}>
-                      <XAxis dataKey="name" />
-                      <YAxis hide allowDecimals={false} />
-                      <Tooltip />
-                      <Bar dataKey="count" fill="#4a82d9" />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </CaptionItem>
+        <DetailRow>
+          
+          <ImageBlock>
+            <Image src={survey.imageUrl} alt="entity" />
+          </ImageBlock>
+          <TextBlock>
+            <DetailTitle>{survey.entityName}</DetailTitle>
+            <DetailSubtitle>{survey.country} / {survey.category}</DetailSubtitle>
+            {survey.captions.map((cap, i) => (
+              <CaptionItem key={i}>- {cap}</CaptionItem>
             ))}
-          </CaptionList>
-          </Content>
-        </MypageLayout>
+          </TextBlock>
+        </DetailRow>
+        <ChartGrid>
+          {survey.captions.map((caption, idx) => (
+            <ChartWrapper key={idx}>
+              <h4>캡션 {idx + 1}</h4>
+              <ResponsiveContainer width={180} height={180}>
+                <PieChart>
+                  <Pie
+                    data={formatChartData(survey.votes[idx])}
+                    dataKey="value"
+                    nameKey="name"
+                    outerRadius={70}
+                    label
+                  >
+                    {formatChartData(survey.votes[idx]).map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </ChartWrapper>
+          ))}
+        </ChartGrid>
+      </Content>
+    </MypageLayout>
   );
 };
 

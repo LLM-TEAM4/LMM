@@ -132,7 +132,7 @@ const Header = () => {
       </NavButtons>
 
       <LoginWrapper>
-        <LoginButton to="/login">로그인</LoginButton>
+        <LoginButton to="/login">👤</LoginButton>
       </LoginWrapper>
     </HeaderContainer>
   );

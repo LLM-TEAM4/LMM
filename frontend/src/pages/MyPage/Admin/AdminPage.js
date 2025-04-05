@@ -19,7 +19,7 @@ const TitleWrapper = styled.div`
 `;
 
 const CreditInfo = styled.span`
-  font-size: 14px;
+  font-size: 16px;
   color: #4a82d9;
   font-weight: bold;
   cursor: pointer;
@@ -34,7 +34,7 @@ const Content = styled.div`
   padding: 20px;
   background-color: #ffffff;
   border-radius: 15px;
-  font-size: 14px;
+  font-size: 16px;
   min-height: 600px;
 `;
 const Popup = styled.div`
@@ -72,18 +72,20 @@ const RadioGroup = styled.div`
   gap: 15px;
 `;
 const ButtonGroup = styled.div`
+  
   margin-top: 20px;
   display: flex;
   gap: 10px;
   justify-content: center;
 `;
 const Button = styled.button`
-  padding: 10px 15px;
+  padding: 15px 20px;
+  margin-top:20px;
   background-color: #68A0F4;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 16px;
   color: white;
   cursor: pointer;
 

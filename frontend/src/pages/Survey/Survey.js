@@ -52,10 +52,14 @@ const SurveyItem = styled.div`
   margin-bottom: 20px;
   background-color: #f9f9f9;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 
   &:hover {
-    background-color: #f0f0f0;
+    background-color: #f0f6ff;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(100, 158, 255, 0.2);
+    border-color: #649eff;
   }
 `;
 
@@ -81,6 +85,16 @@ const ProgressBar = styled.progress`
   width: 95%;
   height: 16px;
   margin-bottom: 5px;
+
+  &::-webkit-progress-bar {
+    background-color: #eee;
+    border-radius: 8px;
+  }
+
+  &::-webkit-progress-value {
+    background-color: #649eff;
+    border-radius: 8px;
+  }
 `;
 
 const ContinueButton = styled.button`
@@ -92,6 +106,7 @@ const ContinueButton = styled.button`
   font-size: 14px;
   margin-left: auto;
   cursor: pointer;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: #4a82d9;
