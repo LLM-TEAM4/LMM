@@ -3,7 +3,7 @@ import styled from "styled-components";
 
 const Sidebar = styled.div`
   width: 220px;
-  padding: 20px 40px; 
+  padding: 20px 40px;
   border-right: 1px solid #ddd;
   background-color: #ffffff;
 `;
@@ -37,32 +37,41 @@ const SelectButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-    font-size: 16px;
+  font-size: 16px;
 
   &:hover {
     background-color: #4a82d9;
   }
 `;
 
-const SurveypageSidebar = ({ selectedCategories, handleCategoryChange }) => {
+const countries = ["한국", "중국", "일본"];
+const categories = ["architecture", "clothes", "cuisine", "game", "tool"];
+
+const SurveypageSidebar = ({
+  selectedCountries,
+  handleCountryChange,
+  selectedCategories,
+  handleCategoryChange,
+}) => {
   return (
     <Sidebar>
       <SectionTitle>국가</SectionTitle>
       <CheckboxGroup>
-        <CheckboxLabel>
-          <input type="checkbox" /> 한국
-        </CheckboxLabel>
-        <CheckboxLabel>
-          <input type="checkbox" /> 중국
-        </CheckboxLabel>
-        <CheckboxLabel>
-          <input type="checkbox" /> 일본
-        </CheckboxLabel>
+        {countries.map((country) => (
+          <CheckboxLabel key={country}>
+            <input
+              type="checkbox"
+              onChange={() => handleCountryChange(country)}
+              checked={selectedCountries.includes(country)}
+            />
+            {country}
+          </CheckboxLabel>
+        ))}
       </CheckboxGroup>
 
       <SectionTitle>카테고리</SectionTitle>
       <CheckboxGroup>
-        {["architecture", "clothes", "cuisine", "game", "tool"].map((cat) => (
+        {categories.map((cat) => (
           <CheckboxLabel key={cat}>
             <input
               type="checkbox"
@@ -74,7 +83,6 @@ const SurveypageSidebar = ({ selectedCategories, handleCategoryChange }) => {
         ))}
       </CheckboxGroup>
 
-      {/* ✅ 버튼 추가 위치 */}
       <SelectButton>선택하기</SelectButton>
     </Sidebar>
   );

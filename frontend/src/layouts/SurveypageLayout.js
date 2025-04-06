@@ -26,25 +26,31 @@ const RightContent = styled.div`
   justify-content: flex-start;
   margin-left: 20px;
 
-  /* 스크롤바 숨기기 */
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE, Edge */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+    display: none;
   }
 `;
 
-
-const SurveypageLayout = ({ children, selectedCategories, handleCategoryChange }) => { //surveypagesidebar이 넘겨주는 props
+const SurveypageLayout = ({
+  children,
+  selectedCountries,
+  handleCountryChange,
+  selectedCategories,
+  handleCategoryChange,
+}) => {
   return (
     <Wrapper>
       <CommonHeader />
       <ContentWrapper>
-      <SurveypageSidebar
-     selectedCategories={selectedCategories}
-      handleCategoryChange={handleCategoryChange}
-/>
+        <SurveypageSidebar
+          selectedCountries={selectedCountries}
+          handleCountryChange={handleCountryChange}
+          selectedCategories={selectedCategories}
+          handleCategoryChange={handleCategoryChange}
+        />
 
         <RightContent>{children}</RightContent>
       </ContentWrapper>
