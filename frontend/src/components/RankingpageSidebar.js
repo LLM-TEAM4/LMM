@@ -47,22 +47,29 @@ const MenuButton = styled(Link)`
   padding:10px 10px;
 `;
 
-const MypageSidebar = () => {
+const RankingpageSidebar = () => {
   const location = useLocation();
 
   return (
     <Sidebar>
       <SectionTitle>랭킹조회</SectionTitle>
       <ButtonGroup>
-        <MenuButton to="/ranking/country" className={location.pathname === "/mypage" ? "active" : ""}>
-           나라별
+        <MenuButton
+          to="/ranking/country"
+          className={location.pathname === "/ranking/country" ? "active" : ""}
+        >
+          나라별
         </MenuButton>
-        <MenuButton to="/ranking/category" className={location.pathname === "/mypage/survey-participation" ? "active" : ""}>
-           카테고리별
+        <MenuButton
+          to="/ranking/category"
+          className={location.pathname === "/ranking/category" ? "active" : ""}
+        >
+          카테고리별
         </MenuButton>
       </ButtonGroup>
     </Sidebar>
   );
 };
 
-export default MypageSidebar;
+
+export default RankingpageSidebar;
