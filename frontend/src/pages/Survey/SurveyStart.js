@@ -44,7 +44,7 @@ const ContentBox = styled.div`
   align-items: flex-stast;
   gap: 0px;
   margin-bottom: 40px;
-  padding-top:30px;
+  padding-top: 30px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -126,7 +126,7 @@ const OptionLabel = styled.span`
   font-size: 18px;
   font-weight: 500;
   color: #333;
-  margin-left:20px;
+  margin-left: 20px;
   text-align: center;
   transition: all 0.2s ease;
 
@@ -242,7 +242,9 @@ const SurveyStart = () => {
               disabled={selected[currentIndex] == null}
               onClick={handleNext}
             >
-              다음으로
+              {currentIndex < caption.length - 1
+                ? "다음으로"
+                : "설문조사 끝내기"}
             </NextButton>
           </TextBox>
         </ContentBox>
