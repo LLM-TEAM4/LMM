@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink,useLocation } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../assets/img/logo.png";
 
@@ -103,6 +103,9 @@ const LoginWrapper = styled.div`
 `;
 
 const Header = () => {
+  const location = useLocation();
+  const isRanking = location.pathname.startsWith("/ranking");
+  const isMypage = location.pathname.startsWith("/mypage");
   return (
     <HeaderContainer>
       <LogoWrapper to="/mainpage">
@@ -110,25 +113,23 @@ const Header = () => {
       </LogoWrapper>
 
       <NavButtons>
-        <NavButton to="/survey">
+      <NavButton to="/survey">
           진행 중인 설문조사
         </NavButton>
-        <NavButton
-          to="/ranking/country"
-          className={({ location }) =>
-            location.pathname.startsWith("/ranking") ? "active" : undefined
-          }
-        >
-          랭킹 조회
-        </NavButton>
-        <NavButton
-          to="/mypage"
-          className={({ location }) =>
-            location.pathname.startsWith("/mypage") ? "active" : undefined
-          }
-        >
-          마이 페이지
-        </NavButton>
+      <NavButton
+  to="/ranking/country"
+  className={isRanking ? "active" : undefined}
+>
+  랭킹 조회
+</NavButton>
+
+<NavButton
+  to="/mypage"
+  className={isMypage ? "active" : undefined}
+>
+  마이 페이지
+</NavButton>
+
       </NavButtons>
 
       <LoginWrapper>
