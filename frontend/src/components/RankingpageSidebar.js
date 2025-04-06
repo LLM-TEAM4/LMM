@@ -55,16 +55,16 @@ const RankingpageSidebar = () => {
       <SectionTitle>랭킹조회</SectionTitle>
       <ButtonGroup>
         <MenuButton
-          to="/ranking/country"
-          className={location.pathname === "/ranking/country" ? "active" : ""}
+          to="/ranking/weekly"
+          className={location.pathname === "/ranking/weekly" ? "active" : ""}
         >
-          나라별
+          주간 통합 순위
         </MenuButton>
         <MenuButton
-          to="/ranking/category"
-          className={location.pathname === "/ranking/category" ? "active" : ""}
+          to="/ranking/monthly"
+          className={location.pathname === "/ranking/monthly" ? "active" : ""}
         >
-          카테고리별
+          월간 통합 순위
         </MenuButton>
       </ButtonGroup>
     </Sidebar>

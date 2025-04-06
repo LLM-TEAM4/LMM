@@ -117,7 +117,7 @@ const Header = () => {
           진행 중인 설문조사
         </NavButton>
       <NavButton
-  to="/ranking/country"
+  to="/ranking/weekly"
   className={isRanking ? "active" : undefined}
 >
   랭킹 조회

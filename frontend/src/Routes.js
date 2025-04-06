@@ -16,8 +16,8 @@ import SurveyStart from "./pages/Survey/SurveyStart";
 import AdminPage from "./pages/MyPage/Admin/AdminPage";
 import AdminListPage from "./pages/MyPage/Admin/AdminListPage"; 
 import AdminDetailPage from "./pages/MyPage/Admin/AdminDetailPage"; 
-import RankingCountryPage from "./pages/Ranking/RankingCountryPage";
-import RankingCategoryPage from "./pages/Ranking/RankingCategoryPage";
+import RankingWeeklyPage from "./pages/Ranking/RankingWeeklyPage";
+import RankingMonthlyPage from "./pages/Ranking/RankingMonthlyPage";
 
 class AppRoutes extends React.Component {
   render() {
@@ -38,8 +38,8 @@ class AppRoutes extends React.Component {
           <Route path="/mypage/survey-creation" element={<AdminPage />} />
           <Route path="/mypage/survey-creation-list" element={<AdminListPage />} />
           <Route path="/mypage/survey-creation-detail/:id" element={<AdminDetailPage />} />
-          <Route path="/ranking/country" element={<RankingCountryPage />} />
-          <Route path="/ranking/category" element={<RankingCategoryPage />} />
+          <Route path="/ranking/weekly" element={<RankingWeeklyPage />} />
+          <Route path="/ranking/monthly" element={<RankingMonthlyPage />} />
         </Routes>
       </Router>
     );

@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import RankingpageLayout from "../../layouts/RankingpageLayout";
 
 
-const RankingCountryPage = () => {
+
+const RankingWeeklyPage = () => {
+  
 
   return (
     <RankingpageLayout>
@@ -10,4 +12,4 @@ const RankingCountryPage = () => {
   );
 };
 
-export default RankingCountryPage;
+export default RankingWeeklyPage;
