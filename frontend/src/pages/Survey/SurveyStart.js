@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
@@ -10,7 +10,6 @@ const Wrapper = styled.div`
   font-family: Arial, sans-serif;
   height: 100vh;
   overflow-y: auto;
-
   scrollbar-width: none;
   -ms-overflow-style: none;
   &::-webkit-scrollbar {
@@ -41,7 +40,7 @@ const Progress = styled.div`
 
 const ContentBox = styled.div`
   display: flex;
-  align-items: flex-stast;
+  align-items: flex-start;
   gap: 0px;
   margin-bottom: 40px;
   padding-top: 30px;
@@ -164,7 +163,7 @@ const NextButton = styled.button`
   }
 `;
 
-const sizes = [22, 22, 22, 22, 22]; // 크기 조절
+const sizes = [22, 22, 22, 22, 22];
 
 const SurveyStart = () => {
   const { title } = useParams();
@@ -174,6 +173,14 @@ const SurveyStart = () => {
 
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
+
+  useEffect(() => {
+    const shuffled = caption.map(() => {
+      return [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+    });
+    setShuffledOptions(shuffled);
+  }, [caption]);
 
   const fallbackImage = BulgogiImg;
   const fallbackCaption = "설명이 제공되지 않았습니다.";
@@ -211,7 +218,7 @@ const SurveyStart = () => {
             <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
 
             <Options>
-              {[1, 2, 3, 4, 5].map((num, idx) => (
+              {shuffledOptions[currentIndex]?.map((num, idx) => (
                 <Option key={num}>
                   <RadioCircle
                     type="radio"
@@ -226,11 +233,11 @@ const SurveyStart = () => {
                   <OptionLabel>
                     {
                       [
-                        "1. 문화적으로 풍부하다",
-                        "2. 문화적으로 매우 적절하다",
-                        "3. 문화적으로 적절하다",
-                        "4. 중립적 또는 일반적이다",
-                        "5. 문화적으로 부적절하다",
+                        "문화적으로 풍부하다 (5점)",
+                        "문화적으로 매우 적절하다 (4점)",
+                        "문화적으로 적절하다 (3점)",
+                        "중립적 또는 일반적이다 (2점)",
+                        "문화적으로 부적절하다 (1점)",
                       ][num - 1]
                     }
                   </OptionLabel>
