@@ -1,8 +1,8 @@
-// ✅ MyPage.js 로그인 사용자 정보 표시 및 세션 연동
+// ✅ MyPage.js 로그인 사용자 정보 + 프로필 업로드 연동
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import ProfilePic from "../../assets/img/profile.png";
+import DefaultProfile from "../../assets/img/profile.png";
 import MypageLayout from "../../layouts/MypageLayout";
 
 const InputField = styled.input`
@@ -41,8 +41,8 @@ const ButtonRow = styled.div`
 
 const MyPage = () => {
   const [userName, setUserName] = useState("");
-  const [isNameValid, setIsNameValid] = useState(true); 
-  const [profileImage, setProfileImage] = useState(ProfilePic);
+  const [isNameValid, setIsNameValid] = useState(true);
+  const [profileImage, setProfileImage] = useState(DefaultProfile);
   const navigate = useNavigate();
 
   // ✅ 로그인 사용자 정보 불러오기
@@ -52,7 +52,7 @@ const MyPage = () => {
     })
       .then(res => {
         if (res.status === 401) {
-          navigate("/login"); // 비로그인 시 로그인 페이지로
+          navigate("/login");
           return null;
         }
         return res.json();
@@ -60,6 +60,9 @@ const MyPage = () => {
       .then(data => {
         if (data && data.user) {
           setUserName(data.user.id);
+          if (data.user.profileImage) {
+            setProfileImage(data.user.profileImage);
+          }
         }
       });
   }, []);
@@ -74,10 +77,35 @@ const MyPage = () => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setProfileImage(reader.result);
+      reader.onloadend = () => {
+        const base64 = reader.result;
+        setProfileImage(base64); // ✅ 화면에는 즉시 반영됨
+  
+        // ✅ 여기 요청이 없으면 DB 저장 안 됨!
+        fetch("http://localhost:4000/api/auth/profile", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include", // 세션 필요!
+          body: JSON.stringify({ profileImage: base64 }),
+        })
+          .then((res) => {
+            if (!res.ok) throw new Error("업로드 실패");
+            return res.json();
+          })
+          .then((data) => {
+            console.log("✅ 서버 응답:", data);
+          })
+          .catch((err) => {
+            console.error("❌ 서버 요청 실패:", err);
+          });
+      };
+  
       reader.readAsDataURL(file);
     }
   };
+  
 
   return (
     <MypageLayout>
@@ -112,9 +140,7 @@ const MyPage = () => {
               value={userName}
               onChange={handleInputChange}
             />
-            <WarningText isValid={isNameValid}>
-              닉네임은 10글자 초과 불가
-            </WarningText>
+            <WarningText isValid={isNameValid}>닉네임은 10글자 초과 불가</WarningText>
             <ButtonRow>
               <ActionButton disabled={!isNameValid}>저장</ActionButton>
             </ButtonRow>
