@@ -1,3 +1,4 @@
+// ✅ SignupID.js 회원가입 처리 코드 반영
 import React, { useState } from "react";
 import styled from "styled-components";
 import LogoImage from "../../assets/img/logo.png";
@@ -96,7 +97,7 @@ const ModalBackground = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-   backdrop-filter: blur(5px); 
+  backdrop-filter: blur(5px); 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -124,8 +125,6 @@ const ModalButton = styled.button`
   }
 `;
 
-
-
 const SignupID = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -142,6 +141,7 @@ const SignupID = () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, password }),
+        credentials: "include",
       });
       console.log(response);
   
@@ -149,17 +149,14 @@ const SignupID = () => {
         const errorData = await response.json();
         throw new Error("서버 응답이 올바르지 않습니다.");
       }
-  
-      const data = await response.json(); // ✅ 중복 제거
-      console.log("회원가입 성공:", data);
 
+      const data = await response.json();
+      console.log("회원가입 성공:", data);
 
       setModalMessage("🎉 회원가입 성공! 메인화면으로 이동합니다.");
       setIsError(false);
       setShowModal(true);
-
-      console.log("메인인페이지로 이동");
-      
+    
     } catch (error) {
       console.error("회원가입 실패:", error);
       setModalMessage("회원가입 실패! 다른 아이디를 사용하세요");
@@ -171,19 +168,18 @@ const SignupID = () => {
   const handleModalClose = () => {
     setShowModal(false);
     if (!isError) {
-      navigate("/"); // 성공 시에만 이동
+      navigate("/mainpage"); // 회원가입 성공 시 메인페이지로 이동
     }
   };
 
   return (
     <Container>
       <HeaderLogo>
-        <img src={LogoImage} alt="로고" /> {/* 이미지 소스 변경 */}
+        <img src={LogoImage} alt="로고" />
       </HeaderLogo>
 
       <p>빠르고 쉽게 계정을 만들어보세요!</p>
 
-      {/* 회원가입 폼 */}
       <Form onSubmit={handleSubmit}>
         <label>아이디</label>
         <Input
@@ -208,20 +204,16 @@ const SignupID = () => {
       <LoginText>
         이미 계정이 있으신가요? <a href="/login">로그인하기</a>
       </LoginText>
-      
+
       {showModal && (
-      <ModalBackground>
-        <ModalBox>
-          <h3>{isError ? "❌ 회원가입 실패" : "회원가입 성공"}</h3>
-          <p style={{ whiteSpace: "pre-line" }}>{modalMessage}</p>
-
-          <ModalButton onClick={handleModalClose}>확인</ModalButton>
-        </ModalBox>
-      </ModalBackground>
+        <ModalBackground>
+          <ModalBox>
+            <h3>{isError ? "❌ 회원가입 실패" : "회원가입 성공"}</h3>
+            <p style={{ whiteSpace: "pre-line" }}>{modalMessage}</p>
+            <ModalButton onClick={handleModalClose}>확인</ModalButton>
+          </ModalBox>
+        </ModalBackground>
       )}
-
-
-
     </Container>
   );
 };
