@@ -1,7 +1,8 @@
-// ✅ MyPage.js 로그인 사용자 정보 + 프로필 업로드 연동
+// ✅ MyPage.js 로그인 사용자 정보 + 프로필/닉네임 업로드 연동 + 중복검사 + 아이디 표시 + 닉네임 수정 아이콘
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
+import { FaPencilAlt } from "react-icons/fa";
 import DefaultProfile from "../../assets/img/profile.png";
 import MypageLayout from "../../layouts/MypageLayout";
 
@@ -39,13 +40,30 @@ const ButtonRow = styled.div`
   margin-top: 15px;
 `;
 
+const InfoText = styled.p`
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 8px;
+`;
+
+const NicknameLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  margin-bottom: 4px;
+`;
+
 const MyPage = () => {
-  const [userName, setUserName] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [originalNickname, setOriginalNickname] = useState("");
+  const [userId, setUserId] = useState("");
   const [isNameValid, setIsNameValid] = useState(true);
   const [profileImage, setProfileImage] = useState(DefaultProfile);
   const navigate = useNavigate();
 
-  // ✅ 로그인 사용자 정보 불러오기
   useEffect(() => {
     fetch("http://localhost:4000/api/auth/me", {
       credentials: "include",
@@ -59,7 +77,10 @@ const MyPage = () => {
       })
       .then(data => {
         if (data && data.user) {
-          setUserName(data.user.id);
+          const name = data.user.nickname || data.user.id;
+          setNickname(name);
+          setOriginalNickname(name);
+          setUserId(data.user.id);
           if (data.user.profileImage) {
             setProfileImage(data.user.profileImage);
           }
@@ -69,7 +90,7 @@ const MyPage = () => {
 
   const handleInputChange = (event) => {
     const newName = event.target.value;
-    setUserName(newName);
+    setNickname(newName);
     setIsNameValid(newName.length <= 10);
   };
 
@@ -79,15 +100,14 @@ const MyPage = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const base64 = reader.result;
-        setProfileImage(base64); // ✅ 화면에는 즉시 반영됨
-  
-        // ✅ 여기 요청이 없으면 DB 저장 안 됨!
+        setProfileImage(base64);
+
         fetch("http://localhost:4000/api/auth/profile", {
           method: "PATCH",
           headers: {
             "Content-Type": "application/json",
           },
-          credentials: "include", // 세션 필요!
+          credentials: "include",
           body: JSON.stringify({ profileImage: base64 }),
         })
           .then((res) => {
@@ -101,11 +121,44 @@ const MyPage = () => {
             console.error("❌ 서버 요청 실패:", err);
           });
       };
-  
       reader.readAsDataURL(file);
     }
   };
-  
+
+  const handleNicknameSave = () => {
+    if (nickname === originalNickname) {
+      alert("닉네임이 변경되지 않았습니다.");
+      return;
+    }
+
+    fetch(`http://localhost:4000/api/auth/check-nickname/${nickname}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.exists) {
+          alert("이미 존재하는 닉네임입니다.");
+          return;
+        }
+
+        fetch("http://localhost:4000/api/auth/nickname", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ nickname }),
+        })
+          .then(res => {
+            if (!res.ok) throw new Error("변경 실패");
+            return res.json();
+          })
+          .then(data => {
+            alert("✅ 닉네임이 변경되었습니다.");
+            setOriginalNickname(nickname);
+          })
+          .catch(err => {
+            alert("❌ 닉네임 변경 중 오류 발생");
+            console.error(err);
+          });
+      });
+  };
 
   return (
     <MypageLayout>
@@ -135,14 +188,19 @@ const MyPage = () => {
           </div>
 
           <div>
+            <InfoText>아이디: <strong>{userId}</strong></InfoText>
+
+            <NicknameLabel>
+              <FaPencilAlt style={{ color: "#649eff" }} /> 닉네임
+            </NicknameLabel>
             <InputField
               type="text"
-              value={userName}
+              value={nickname}
               onChange={handleInputChange}
             />
             <WarningText isValid={isNameValid}>닉네임은 10글자 초과 불가</WarningText>
             <ButtonRow>
-              <ActionButton disabled={!isNameValid}>저장</ActionButton>
+              <ActionButton onClick={handleNicknameSave} disabled={!isNameValid}>저장</ActionButton>
             </ButtonRow>
           </div>
         </div>
