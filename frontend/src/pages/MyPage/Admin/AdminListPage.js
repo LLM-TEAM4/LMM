@@ -141,7 +141,7 @@ const AdminListPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const res = await fetch("http://localhost:4000/survey");
+        const res = await fetch("https://backend-culturelens.shop/survey");
         const data = await res.json();
         setSurveys(data);
         setFilteredSurveys(data);
