@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
 
+// 백엔드 응답에 status 필드 추가해서 승인/거절/대기 구분되게
+
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
@@ -16,7 +18,7 @@ const Content = styled.div`
   border-radius: 15px;
   font-size: 14px;
   min-height: 600px;
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 `;
 
 const SurveyGrid = styled.div`
@@ -134,9 +136,11 @@ const AdminListPage = () => {
   const [filteredSurveys, setFilteredSurveys] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
 
   const countries = ["한국", "중국", "일본"];
   const categories = ["architecture", "cuisine", "tool", "clothes", "game"];
+  const statuses = ["approved", "pending", "rejected"];
 
   useEffect(() => {
     const fetchSurveys = async () => {
@@ -165,15 +169,39 @@ const AdminListPage = () => {
     let filtered = surveys;
 
     if (selectedCountry) {
-      filtered = filtered.filter((survey) => survey.country === selectedCountry);
+      filtered = filtered.filter(
+        (survey) => survey.country === selectedCountry
+      );
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter((survey) => survey.category === selectedCategory);
+      filtered = filtered.filter(
+        (survey) => survey.category === selectedCategory
+      );
     }
 
     setFilteredSurveys(filtered);
   }, [selectedCountry, selectedCategory, surveys]);
+
+  useEffect(() => {
+    let filtered = surveys;
+
+    if (selectedCountry) {
+      filtered = filtered.filter(
+        (survey) => survey.country === selectedCountry
+      );
+    }
+    if (selectedCategory) {
+      filtered = filtered.filter(
+        (survey) => survey.category === selectedCategory
+      );
+    }
+    if (selectedStatus) {
+      filtered = filtered.filter((survey) => survey.status === selectedStatus);
+    }
+
+    setFilteredSurveys(filtered);
+  }, [selectedCountry, selectedCategory, selectedStatus, surveys]);
 
   return (
     <MypageLayout>
@@ -183,7 +211,11 @@ const AdminListPage = () => {
           <SelectWrapper>
             <div>
               <label htmlFor="country">나라 선택:</label>
-              <Select id="country" value={selectedCountry} onChange={handleCountryChange}>
+              <Select
+                id="country"
+                value={selectedCountry}
+                onChange={handleCountryChange}
+              >
                 <option value="">전체</option>
                 {countries.map((country) => (
                   <option key={country} value={country}>
@@ -195,11 +227,34 @@ const AdminListPage = () => {
 
             <div>
               <label htmlFor="category">카테고리 선택:</label>
-              <Select id="category" value={selectedCategory} onChange={handleCategoryChange}>
+              <Select
+                id="category"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+              >
                 <option value="">전체</option>
                 {categories.map((category) => (
                   <option key={category} value={category}>
                     {category}
+                  </option>
+                ))}
+              </Select>
+            </div>
+            <div>
+              <label htmlFor="status">승인 상태:</label>
+              <Select
+                id="status"
+                value={selectedStatus}
+                onChange={(e) => setSelectedStatus(e.target.value)}
+              >
+                <option value="">전체</option>
+                {statuses.map((status) => (
+                  <option key={status} value={status}>
+                    {status === "approved"
+                      ? "승인됨"
+                      : status === "pending"
+                      ? "대기 중"
+                      : "거절됨"}
                   </option>
                 ))}
               </Select>
@@ -211,21 +266,23 @@ const AdminListPage = () => {
           <p>등록한 설문조사가 없습니다.</p>
         ) : (
           <SurveyGrid>
-            {filteredSurveys.map(({ _id, country, category, entityName, imageUrl }) => (
-              <SurveyCard key={_id}>
-                <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
-                  <Image src={imageUrl} alt={category} />
-                  <CardInfo>
-                    <EntityName>{entityName}</EntityName>
-                    <MetaInfo>{`${country}, ${category}`}</MetaInfo>
-                  </CardInfo>
-                  <ResponseButton>
-                    <span>58명</span>
-                    <span>응답 보러가기</span>
-                  </ResponseButton>
-                </StyledLink>
-              </SurveyCard>
-            ))}
+            {filteredSurveys.map(
+              ({ _id, country, category, entityName, imageUrl }) => (
+                <SurveyCard key={_id}>
+                  <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
+                    <Image src={imageUrl} alt={category} />
+                    <CardInfo>
+                      <EntityName>{entityName}</EntityName>
+                      <MetaInfo>{`${country}, ${category}`}</MetaInfo>
+                    </CardInfo>
+                    <ResponseButton>
+                      <span>58명</span>
+                      <span>응답 보러가기</span>
+                    </ResponseButton>
+                  </StyledLink>
+                </SurveyCard>
+              )
+            )}
           </SurveyGrid>
         )}
       </Content>
