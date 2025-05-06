@@ -1,4 +1,4 @@
-// ✅ MyPage.js 로그인 사용자 정보 + 프로필/닉네임 업로드 연동 + 중복검사 + 아이디 표시 + 닉네임 수정 아이콘
+// ✅ MyPage.js 로그인 사용자 정보 + 프로필/닉네임 업로드 연동 + 중복검사 + 아이디 표시 + 닉네임 수정 아이콘 + 기본 이미지 복원
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -94,6 +94,27 @@ const MyPage = () => {
     setIsNameValid(newName.length <= 10);
   };
 
+  const uploadProfileImage = (base64) => {
+    fetch("http://localhost:4000/api/auth/profile", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify({ profileImage: base64 }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("업로드 실패");
+        return res.json();
+      })
+      .then((data) => {
+        console.log("✅ 서버 응답:", data);
+      })
+      .catch((err) => {
+        console.error("❌ 서버 요청 실패:", err);
+      });
+  };
+
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -101,28 +122,24 @@ const MyPage = () => {
       reader.onloadend = () => {
         const base64 = reader.result;
         setProfileImage(base64);
-
-        fetch("http://localhost:4000/api/auth/profile", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify({ profileImage: base64 }),
-        })
-          .then((res) => {
-            if (!res.ok) throw new Error("업로드 실패");
-            return res.json();
-          })
-          .then((data) => {
-            console.log("✅ 서버 응답:", data);
-          })
-          .catch((err) => {
-            console.error("❌ 서버 요청 실패:", err);
-          });
+        uploadProfileImage(base64);
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleResetToDefaultImage = () => {
+    setProfileImage(DefaultProfile);
+    fetch(DefaultProfile) // fetch하여 base64 변환
+      .then(res => res.blob())
+      .then(blob => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64 = reader.result;
+          uploadProfileImage(base64);
+        };
+        reader.readAsDataURL(blob);
+      });
   };
 
   const handleNicknameSave = () => {
@@ -184,6 +201,12 @@ const MyPage = () => {
               style={{ marginTop: 10 }}
             >
               사진 변경
+            </ActionButton>
+            <ActionButton
+              onClick={handleResetToDefaultImage}
+              style={{ marginTop: 10, marginLeft: 10 }}
+            >
+              기본 이미지로 변경
             </ActionButton>
           </div>
 
