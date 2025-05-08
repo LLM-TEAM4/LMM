@@ -3,6 +3,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import LogoImage from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom"; 
+// 회원가입하면 자동으로 프로필이미지 기본이미지로 설정정
+import DefaultProfile from "../../assets/img/profile.png";
+
 
 const Container = styled.div`
   display: flex;
@@ -134,13 +137,26 @@ const SignupID = () => {
   const navigate = useNavigate();  
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
+
+    const blob = await fetch(DefaultProfile).then(res => res.blob());
+    const base64 = await new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+    });
   
     try {
       const response = await fetch("http://localhost:4000/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id, password }),
+        body: JSON.stringify({
+          id,
+          password,
+          profileImage: base64, // 기본 이미지 포함!
+        }),
         credentials: "include",
       });
       console.log(response);

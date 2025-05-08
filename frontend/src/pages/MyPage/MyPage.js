@@ -65,28 +65,44 @@ const MyPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/auth/me", {
-      credentials: "include",
-    })
-      .then(res => {
-        if (res.status === 401) {
-          navigate("/login");
-          return null;
-        }
-        return res.json();
-      })
-      .then(data => {
-        if (data && data.user) {
-          const name = data.user.nickname || data.user.id;
-          setNickname(name);
-          setOriginalNickname(name);
-          setUserId(data.user.id);
-          if (data.user.profileImage) {
-            setProfileImage(data.user.profileImage);
-          }
-        }
+    const fetchUser = async () => {
+      const res = await fetch("http://localhost:4000/api/auth/me", {
+        credentials: "include",
       });
+  
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+  
+      const data = await res.json();
+  
+      if (data && data.user) {
+        const name = data.user.nickname || data.user.id;
+        setNickname(name);
+        setOriginalNickname(name);
+        setUserId(data.user.id);
+  
+        if (!data.user.profileImage || data.user.profileImage === "") {
+          const blob = await fetch(DefaultProfile).then(res => res.blob());
+          const base64 = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(blob);
+          });
+  
+          setProfileImage(base64);
+          uploadProfileImage(base64);
+        } else {
+          setProfileImage(data.user.profileImage);
+        }
+      }
+    };
+  
+    fetchUser();
   }, []);
+  
 
   const handleInputChange = (event) => {
     const newName = event.target.value;
