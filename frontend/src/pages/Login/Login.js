@@ -96,11 +96,14 @@ class Login extends Component {
     e.preventDefault();
     const { email, password } = this.state;
 
+
     try {
       const response = await fetch("http://localhost:4000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id: email, password }),
+        body: JSON.stringify({ 
+          id: email.trim(),
+          password: password.trim().replace(/\n/g, ""), }),
         credentials: "include",
       });
 
@@ -112,8 +115,19 @@ class Login extends Component {
 
       const data = await response.json();
       console.log("✅ 로그인 성공:", data);
-      alert("로그인에 성공했습니다.");
-      this.props.navigate("/mainpage");
+
+      
+
+      if (data.role === "admin") {
+        console.log("관리자 로그인 성공!");
+        alert("관리자로 로그인되었습니다.");
+        this.props.navigate("/administrator");
+      } else {
+        alert("로그인에 성공했습니다.");
+        this.props.navigate("/mainpage");
+      }
+      
+
     } catch (error) {
       console.error("❌ 로그인 오류:", error);
       alert("서버 오류로 로그인에 실패했습니다.");
