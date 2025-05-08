@@ -1,4 +1,4 @@
-// ✅ SurveyStart.js (surveyId로 응답 저장)
+//surveyId로 응답 저장
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
@@ -10,7 +10,7 @@ const SurveyStart = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { image, caption = [], path, surveyId } = location.state || {};
-  console.log("surveyId:", surveyId); 
+  console.log("surveyId:", surveyId);
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shuffledOptions, setShuffledOptions] = useState([]);
@@ -114,7 +114,7 @@ const SurveyStart = () => {
   );
 };
 
-
+export default SurveyStart;
 
 // ✅ Styled Components 아래 동일하게 유지됨
 const Wrapper = styled.div`
@@ -275,5 +275,3 @@ const NextButton = styled.button`
     cursor: not-allowed;
   }
 `;
-
-export default SurveyStart;
