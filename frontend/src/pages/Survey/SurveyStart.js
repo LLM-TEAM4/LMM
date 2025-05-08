@@ -1,45 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import LogoImage from "../../assets/img/logo.png";
+import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 
 const Wrapper = styled.div`
-  font-family: Arial, sans-serif;
-  max-height: 100vh;
-  overflow-y: auto;
-`;
-
-const Header = styled.div`
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px 40px;
-  border-bottom: 1px solid #ddd;
-`;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  img {
-    width: 150px;
-  }
-`;
-
-const BackButton = styled.button`
-  background-color: #68a0f4;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 5px;
-  border: none;
-  cursor: pointer;
-  &:hover {
-    background-color: #4a82d9;
+  flex-direction: column;
+  font-family: Arial, sans-serif;
+  height: 100vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
   }
 `;
 
 const Container = styled.div`
-  padding: 30px 40px;
+  padding: 80px;
 `;
 
 const TopBar = styled.div`
@@ -50,48 +29,115 @@ const TopBar = styled.div`
 `;
 
 const Breadcrumb = styled.div`
-  font-size: 14px;
+  font-size: 18px;
   color: #666;
 `;
 
 const Progress = styled.div`
-  font-size: 14px;
+  font-size: 18px;
   color: #333;
+`;
+
+const ContentBox = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 0px;
+  margin-bottom: 40px;
+  padding-top: 30px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
+const ImageBox = styled.div`
+  flex: 0.9;
+`;
+
+const TextBox = styled.div`
+  flex: 1.3;
 `;
 
 const Image = styled.img`
-  width: 100%;
-  height: 700px;
+  width: 98%;
+  height: 98%;
   object-fit: cover;
   border-radius: 10px;
-  margin: 20px 0;
 `;
 
 const Caption = styled.p`
-  font-size: 15px;
+  font-size: 18px;
+  font-weight: bold;
   line-height: 1.6;
   color: #333;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  height: 60px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-wrap: break-word;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
 `;
 
 const Options = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
   margin: 30px 0;
-  flex-wrap: wrap;
+  padding-left: 20px;
 `;
 
 const Option = styled.label`
   display: flex;
-  flex-direction: column;
   align-items: center;
-  margin: 10px 15px;
+  gap: 12px;
   font-size: 14px;
   cursor: pointer;
+  transition: transform 0.2s;
+`;
 
-  input[type="radio"] {
-    width: 24px;
-    height: 24px;
-    margin-bottom: 8px;
+const RadioCircle = styled.input`
+  appearance: none;
+  width: ${(props) => props.size || 22}px;
+  height: ${(props) => props.size || 22}px;
+  border-radius: 50%;
+  border: 2px solid #4a82d9;
+  background-color: white;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.25s ease;
+
+  &:checked {
+    background-color: #4a82d9;
+    transform: scale(1.2);
+  }
+
+  &:hover {
+    background-color: #649eff;
+    transform: scale(1.1);
+  }
+`;
+
+const OptionLabel = styled.span`
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  margin-left: 20px;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  ${Option}:hover & {
+    transform: scale(1.05);
+    color: #4a82d9;
+  }
+
+  ${RadioCircle}:checked + & {
+    transform: scale(1.1);
+    font-weight: bold;
+    color: #4a82d9;
   }
 `;
 
@@ -100,15 +146,24 @@ const NextButton = styled.button`
   margin: 0 auto;
   padding: 12px 30px;
   font-size: 16px;
-  background-color: #4a82d9;
+  background-color: #649eff;
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 0.2s;
+
   &:hover {
     background-color: #3a6fbd;
   }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
+
+const sizes = [22, 22, 22, 22, 22];
 
 const SurveyStart = () => {
   const { title } = useParams();
@@ -118,6 +173,14 @@ const SurveyStart = () => {
 
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [shuffledOptions, setShuffledOptions] = useState([]);
+
+  useEffect(() => {
+    const shuffled = caption.map(() => {
+      return [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
+    });
+    setShuffledOptions(shuffled);
+  }, [caption]);
 
   const fallbackImage = BulgogiImg;
   const fallbackCaption = "설명이 제공되지 않았습니다.";
@@ -137,13 +200,7 @@ const SurveyStart = () => {
 
   return (
     <Wrapper>
-      <Header>
-        <HeaderLogo>
-          <img src={LogoImage} alt="로고" />
-        </HeaderLogo>
-        <BackButton onClick={() => window.history.back()}>뒤로가기</BackButton>
-      </Header>
-
+      <CommonHeader />
       <Container>
         <TopBar>
           <Breadcrumb>{path || `한국 > cuisine > ${title}`}</Breadcrumb>
@@ -152,41 +209,52 @@ const SurveyStart = () => {
           </Progress>
         </TopBar>
 
-        <Image src={image || fallbackImage} alt={title} />
+        <ContentBox>
+          <ImageBox>
+            <Image src={image || fallbackImage} alt={title} />
+          </ImageBox>
 
-        <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+          <TextBox>
+            <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
 
-        <Options>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <Option key={num}>
-              <input
-                type="radio"
-                name={`rating-${currentIndex}`}
-                value={num}
-                checked={selected[currentIndex] === num}
-                onChange={() =>
-                  setSelected((prev) => ({ ...prev, [currentIndex]: num }))
-                }
-              />
-              {
-                [
-                  "문화적으로 풍부하다",
-                  "문화적으로 매우 적절하다",
-                  "문화적으로 적절하다",
-                  "중립적 또는 일반적이다",
-                  "문화적으로 부적절하다",
-                ][num - 1]
-              }
-            </Option>
-          ))}
-        </Options>
+            <Options>
+              {shuffledOptions[currentIndex]?.map((num, idx) => (
+                <Option key={num}>
+                  <RadioCircle
+                    type="radio"
+                    name={`rating-${currentIndex}`}
+                    value={num}
+                    size={sizes[idx]}
+                    checked={selected[currentIndex] === num}
+                    onChange={() =>
+                      setSelected((prev) => ({ ...prev, [currentIndex]: num }))
+                    }
+                  />
+                  <OptionLabel>
+                    {
+                      [
+                        "문화적으로 풍부하다 (5점)",
+                        "문화적으로 매우 적절하다 (4점)",
+                        "문화적으로 적절하다 (3점)",
+                        "중립적 또는 일반적이다 (2점)",
+                        "문화적으로 부적절하다 (1점)",
+                      ][num - 1]
+                    }
+                  </OptionLabel>
+                </Option>
+              ))}
+            </Options>
 
-        <NextButton
-          disabled={selected[currentIndex] == null}
-          onClick={handleNext}
-        >
-          다음으로
-        </NextButton>
+            <NextButton
+              disabled={selected[currentIndex] == null}
+              onClick={handleNext}
+            >
+              {currentIndex < caption.length - 1
+                ? "다음으로"
+                : "설문조사 끝내기"}
+            </NextButton>
+          </TextBox>
+        </ContentBox>
       </Container>
     </Wrapper>
   );

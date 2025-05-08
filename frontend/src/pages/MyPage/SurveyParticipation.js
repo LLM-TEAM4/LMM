@@ -2,13 +2,12 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
-import LogoImg from "../../assets/img/logo.png";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip } from "chart.js";
 import KoreaFlag from "../../assets/img/korea.png";
 import ChinaFlag from "../../assets/img/china.png";
 import JapanFlag from "../../assets/img/japan.png";
-
+import MypageLayout from "../../layouts/MypageLayout";
 
 ChartJS.register(ArcElement, Tooltip);
 
@@ -32,7 +31,22 @@ const options = {
     },
   },
 };
+const TitleWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+`;
 
+
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  font-size: 14px;
+  min-height: 600px;
+`;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -205,39 +219,8 @@ const SurveyParticipation = () => {
     setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
   };
   return (
-    <Wrapper>
-      <FixedHeader>
-        <HeaderLogo>
-          <Link to="/mainpage">
-            <img src={LogoImg} alt="로고" />
-          </Link>
-        </HeaderLogo>
-        <NavButtons>
-          <NavButton to="/survey">🔍설문조사</NavButton>
-          <NavButton to="/ranking">🏅랭킹조회</NavButton>
-          <NavButton to="/mypage">👤</NavButton>
-        </NavButtons>
-      </FixedHeader>
-      <ContentWrapper>
-        <LeftSidebar>
-          <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
-          <SidebarButton className="active" to="/survey-participation">🔍 참여설문</SidebarButton>
-          <SidebarButton as="button" onClick={toggleSurveyMenu}>
-          <span>⚙️ 설문관리</span> 
-          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
-          </SidebarButton>
-          {isSurveyMenuOpen && (
-            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
-              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
-                ➕ 설문 만들기
-              </SidebarButton>
-              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
-                📋 내 설문 목록
-              </SidebarButton>
-            </div>
-          )}
-        </LeftSidebar>
-        <RightContent>
+<MypageLayout>
+      <Content>
 
           <div style={{
              display: "flex", 
@@ -246,13 +229,13 @@ const SurveyParticipation = () => {
              width: "100%",  
              }}>
 
-          <SectionHeader>
-            <SectionTitle>🔍 참여 설문</SectionTitle>
+          <TitleWrapper>
+            <SectionTitle> 참여 설문</SectionTitle>
             <LegendWrapper>
              <LegendItem color="#FF4D4D">응답</LegendItem>
              <LegendItem color="#FFC04D">미응답</LegendItem>
             </LegendWrapper>
-          </SectionHeader>
+          </TitleWrapper>
           </div>
           <div style={{ display: "flex", justifyContent: "center", gap: "30px" }}>
             {chartData.map(({ country, data }, index) => (
@@ -280,9 +263,8 @@ const SurveyParticipation = () => {
             ))}
           </div>
           <TotalResponses> ⏩ 종합설계1님이 남긴 총 응답 수는 {totalResponsesCount}개 입니다.</TotalResponses>
-        </RightContent>
-      </ContentWrapper>
-    </Wrapper>
+      </Content>
+      </MypageLayout>
   );
 };
 

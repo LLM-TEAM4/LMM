@@ -1,138 +1,41 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
 import ProfilePic from "../../assets/img/profile.png";
-import LogoImg from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom";
+import MypageLayout from "../../layouts/MypageLayout";
 
-const Wrapper = styled.div`
+const TitleWrapper = styled.div`
   display: flex;
-  flex-direction: column;
-  font-family: Arial, sans-serif;
-  height: 100vh;
-`;
-
-const FixedHeader = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
+  justify-content: space-between;
+  align-items: center;
   width: 100%;
-  background-color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 20px;
-  border-bottom: 1px solid #ddd;
-  z-index: 1000;
 `;
-
-const HeaderLogo = styled.h1`
-  font-size: 20px;
-  font-weight: bold;
-  margin: 0;
-
-  img {
-    width: 150px;
-    cursor: pointer;
-  }
-`;
-
-const NavButtons = styled.div`
-  display: flex;
-  gap: 30px;
-  margin-right: 20px;
-`;
-
-const NavButton = styled(Link)`
-  padding: 10px 15px;
-  font-size: 16px;
-  text-decoration: none;
-  font-weight: bold;
-  color: black;
-  background-color: white;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.3s;
-  text-align: center;
-
-  &:hover {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
-const ContentWrapper = styled.div`
-  display: flex;
-  flex: 1;
-  margin-top: 50px;
-  height: calc(100vh - 60px);
-`;
-
-const LeftSidebar = styled.div`
-  width: 220px;
-  padding: 20px;
-  background-color: #F5F5F5;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  border-right: 1px solid #ddd;
-`;
-
-const SidebarButton = styled(Link)`
-  display: flex;
-  padding: 12px;
-  
-  font-size: 16px;
-  font-weight:bold;
-  text-decoration: none;
-  color: black;
-  background-color:  #F5F5F5;
-  border: none;
-  border-radius: 6px;
-  transition: background 0.3s;
-  text-align: left;
-  align-items: center;
-  justify-content: space-between;
-   
-
-  &:hover,
-  &.active {
-    background-color: #68a0f4;
-    color: white;
-  }
-`;
-
-const RightContent = styled.div`
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-left:20px;
-`;
-
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
   margin-bottom: 20px;
-  padding-bottom: 10px;
-  width: 100%;
-  border-bottom: 1px solid #ddd;
+  
+`;
+
+const Content = styled.div`
+  flex: 1;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 15px;
+  font-size: 14px;
+  min-height: 600px;
 `;
 
 const ProfileSection = styled.div`
   display: flex;
   align-items: center;
   gap: 80px;
-  margin-top: 20px; 
-  
+  margin-top: 20px;
 `;
 
 const HiddenFileInput = styled.input`
   display: none;
 `;
-
 
 const ProfileImageWrapper = styled.div`
   display: flex;
@@ -145,16 +48,14 @@ const ProfileImage = styled.img`
   width: 150px;
   height: 150px;
   border-radius: 50%;
-  border: 2px solid #F5F5F5;
-  object-fit: cover; 
+  border: 2px solid #f5f5f5;
+  object-fit: cover;
 `;
 
 const ProfileDetails = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  
-  
 `;
 
 const InputField = styled.input`
@@ -162,15 +63,20 @@ const InputField = styled.input`
   padding: 8px;
   font-size: 16px;
   border-radius: 6px;
+
   border: 2px solid #F5F5F5;
+
 `;
 
 const ButtonRow = styled.div`
   display: flex;
   gap: 10px;
-  justify-content: center; 
-  margin-top: 15px; 
-  `;
+  justify-content: center;
+  margin-top: 15px;
+`;
+
+
+
 
 const ActionButton = styled.button`
   padding: 10px 15px;
@@ -222,16 +128,17 @@ const ModalContent = styled.div`
   transform: translate(-50%, -50%);
   background: white;
   padding: 20px;
-  width: 300px;
+  width: 100%;
+  max-width: 350px;
   text-align: center;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
 const ModalText = styled.p`
-  margin: 0; 
-  line-height: 1.2; 
-  font-size: 14px; 
+  margin: 0;
+  line-height: 1.2;
+  font-size: 14px;
 `;
 
 const CreditSection = styled.div`
@@ -271,22 +178,56 @@ const CreditArrow = styled.span`
   color: #6a6a8a;
 `;
 
+const WarningText = styled.p`
+  font-size: 12px;
+  color: ${({ isValid }) => (isValid ? "#68A0F4" : "red")};
+  margin-top: 0px;
+`;
 
-
-///////////////////
 const MyPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [profileImage, setProfileImage] = useState(ProfilePic);
   const [userName, setUserName] = useState("종합설계1");
+  const [isNameValid, setIsNameValid] = useState(true); 
   const [isSurveyMenuOpen, setSurveyMenuOpen] = useState(false);
-  const navigate = useNavigate(); 
+
+  const navigate = useNavigate();
+
+  const [isPasswordModalOpen, setPasswordModalOpen] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleDeleteAccount = () => {
-    navigate("/mainpage"); // 🔹 Main.js로 이동
+    navigate("/"); // 🔹 Main.js로 이동
   };
 
+
+  const handleOpenPasswordModal = () => {
+    setPasswordModalOpen(true);
+  };
+  
+  const handleClosePasswordModal = () => {
+    setPasswordModalOpen(false);
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+  
+  const handleChangePassword = () => {
+    if (newPassword !== confirmPassword) {
+      alert("새 비밀번호가 일치하지 않습니다.");
+      return;
+    }
+    alert("비밀번호가 변경되었습니다.");
+    handleClosePasswordModal();
+  };
+
+
   const handleInputChange = (event) => {
-    setUserName(event.target.value); // 입력값 업데이트
+    const newName = event.target.value;
+    setUserName(newName);
+    setIsNameValid(newName.length <= 10); // 10글자 이하일 때만 true
   };
 
   const handleImageChange = (event) => {
@@ -301,92 +242,67 @@ const MyPage = () => {
   };
 
   const toggleSurveyMenu = () => {
-    setSurveyMenuOpen((prev) => !prev); // 🔹 토글 기능
+    setSurveyMenuOpen((prev) => !prev); 
   };
   return (
-    <Wrapper>
-      <FixedHeader>
-      <HeaderLogo>
-        <Link to="/mainpage">
-        <img src={LogoImg} alt="로고" />
-        </Link>
-      </HeaderLogo>
-        <NavButtons>
-          <NavButton to="/survey">🔍설문조사</NavButton>
-          <NavButton to="/ranking">🏅랭킹조회</NavButton>
-          <NavButton to="/mypage">👤</NavButton>
-        </NavButtons>
-      </FixedHeader>
-      <ContentWrapper>
-        <LeftSidebar>
-          <SidebarButton to="/mypage">🗒️ 계정정보</SidebarButton>
-          <SidebarButton to="/survey-participation">🔍 참여설문</SidebarButton>
-          <SidebarButton as="button" onClick={toggleSurveyMenu}>
-          <span>⚙️ 설문관리</span> 
-          <span>{isSurveyMenuOpen ? "🔺" : "🔻"}</span> 
-          </SidebarButton>
-          {isSurveyMenuOpen && (
-            <div style={{ paddingLeft: "10px" }}> {/* 🔹 서브 메뉴 추가 */}
-              <SidebarButton to="/survey-create" style={{ fontSize: "14px", padding: "8px"}}>
-                ➕ 설문 만들기
-              </SidebarButton>
-              <SidebarButton to="/survey-list" style={{ fontSize: "14px", padding: "8px"}}>
-                📋 내 설문 목록
-              </SidebarButton>
-            </div>
-          )}
-        </LeftSidebar>
-        <RightContent>
-          <SectionTitle>👤 계정</SectionTitle>
-
-
+    <MypageLayout>
+      <Content>
+      <TitleWrapper>
+          <SectionTitle>계정 정보</SectionTitle>
+         </TitleWrapper>
           <ProfileSection>
             <ProfileImageWrapper>
-              <ProfileImage src={profileImage} alt="Profile" /> {/* ✅ 상태 적용 */}
+
+              <ProfileImage src={profileImage} alt="Profile" /> 
               <HiddenFileInput 
                 type="file" 
                 accept="image/*" 
+
                 id="fileUpload"
-                onChange={handleImageChange} 
+                onChange={handleImageChange}
               />
-              <ActionButton onClick={() => document.getElementById("fileUpload").click()}>
+              <ActionButton
+                onClick={() => document.getElementById("fileUpload").click()}
+              >
                 사진 변경
               </ActionButton>
             </ProfileImageWrapper>
 
-            <ProfileDetails style={{ marginTop: "103px" }}>
-              <InputField 
-                type="text" 
-                value={userName} 
-                onChange={handleInputChange} 
-              />
-              <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
-                <ActionButton>저장</ActionButton>
-              </ButtonRow>
+
+            <ProfileDetails style={{ marginTop: "50px" }}>
+            <InputField 
+              type="text" 
+              value={userName} 
+              onChange={handleInputChange} 
+            />
+            <WarningText isValid={isNameValid}>
+              닉네임은 10글자를 초과하면 안됩니다!
+            </WarningText> 
+            <ButtonRow style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+            <ActionButton disabled={!isNameValid}>저장</ActionButton> {/* 10글자 초과면 저장 비활성화 가능 */}
+            </ButtonRow>
+
             </ProfileDetails>
-            
-
-
           </ProfileSection>
           <CreditSection>
-              <CreditInfo>
+            <CreditInfo>
               <CreditIcon>💰</CreditIcon>
               <span>0 크레딧</span>
-              </CreditInfo>
-              <CreditArrow>크레딧 내역 &gt;</CreditArrow>
-            </CreditSection>
+            </CreditInfo>
+            <CreditArrow>크레딧 내역 &gt;</CreditArrow>
+          </CreditSection>
           <SecuritySection>
             <SectionTitle>🔒 계정보안</SectionTitle>
-            <SecurityOption>
+
+            <SecurityOption onClick={handleOpenPasswordModal}>
               비밀번호 변경 <span>&gt;</span>
             </SecurityOption>
+
             <SecurityOption onClick={() => setModalOpen(true)}>
               회원 탈퇴 <span>&gt;</span>
             </SecurityOption>
-          </SecuritySection>
-        </RightContent>
-      </ContentWrapper>
 
+          </SecuritySection>
       {isModalOpen && (
         <ModalOverlay isOpen={isModalOpen}>
           <ModalContent>
@@ -398,15 +314,63 @@ const MyPage = () => {
             <p> </p>
             <p> </p>
             <ButtonRow>
-              <ActionButton onClick={() => setModalOpen(false)}>취소</ActionButton>
-              <ActionButton style={{ backgroundColor: "#FF6187" }} onClick={handleDeleteAccount}>
+              <ActionButton onClick={() => setModalOpen(false)}>
+                취소
+              </ActionButton>
+              <ActionButton
+                style={{ backgroundColor: "#FF6187" }}
+                onClick={handleDeleteAccount}
+              >
                 탈퇴
               </ActionButton>
             </ButtonRow>
           </ModalContent>
         </ModalOverlay>
       )}
-    </Wrapper>
+
+
+
+      {isPasswordModalOpen && (
+        <ModalOverlay isOpen={isPasswordModalOpen}>  
+        <ModalContent>
+          <h3>비밀번호 변경</h3>
+
+          <InputField
+            type="password"
+            placeholder="현재 비밀번호"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+          <InputField
+            type="password"
+            placeholder="새 비밀번호"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+          <InputField
+            type="password"
+            placeholder="새 비밀번호 확인"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            style={{ marginBottom: "15px", padding: "12px" }} 
+          />
+
+          <ButtonRow>
+            <ActionButton onClick={handleClosePasswordModal}>취소</ActionButton>
+            <ActionButton onClick={handleChangePassword}>
+              비밀번호 변경
+            </ActionButton>
+        </ButtonRow>
+        </ModalContent>
+
+      </ModalOverlay>
+)}
+
+</Content>
+
+</MypageLayout>
   );
 };
 
