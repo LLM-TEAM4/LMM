@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Axios 추가
+import surveyData from "../../data/SurveyData";
 import Header from "../../components/CommonHeader";
 
 const Container = styled.div`
-  padding: 70px 20px 20px;
+  padding: 70px 20px 20px; /* 상단 고정 헤더 공간 확보 */
   font-family: Arial, sans-serif;
 `;
 
@@ -84,22 +84,6 @@ const ContinueButton = styled.button`
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [surveyData, setSurveyData] = useState([]); // 설문 데이터를 저장할 상태
-
-  useEffect(() => {
-    const fetchSurveys = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/api/home");
-        console.log("서버 응답:", response.data); // 응답 데이터 구조 확인
-        setSurveyData(response.data);
-      } catch (error) {
-        console.error("설문 데이터를 불러오는 데 실패했습니다.", error);
-      }
-    };
-  
-    fetchSurveys();
-  }, []);
-  
 
   const weeklyRanking = [
     { id: 1, name: "user1", count: 18 },
@@ -117,7 +101,9 @@ const MainPage = () => {
     { id: 5, name: "user5", count: 25 },
   ];
 
-  const ongoingSurveys = surveyData.filter(item => item.approved);
+  const ongoingSurveys = surveyData.filter(
+    (item) => item.progress < item.total
+  );
 
   return (
     <Container>
@@ -146,41 +132,36 @@ const MainPage = () => {
       {/* 진행 중인 설문 */}
       <SurveyContainer>
         <h3>🔍 진행중인 설문</h3>
-        {ongoingSurveys.length === 0 ? (
-          <div>승인된 설문이 없습니다.</div>
-        ) : (
-          ongoingSurveys.map((item, index) => {
-            const goal = 20;
-            const responses = Array.isArray(item.responses) ? item.responses : [];
-            const percent = Math.round((responses.length / goal) * 100);
-          
-            return (
-              <SurveyItem
-                key={index}
-                onClick={() =>
-                  navigate(`/survey/${item._id}`, {
-                    state: {
-                      image: item.imageUrl,
-                      caption: item.captions?.[0] || "",
-                      path: `한국 > ${item.category} > ${item.entityName}`,
-                    },
-                  })
-                }
-              >
-                <SurveyImage src={item.imageUrl} alt={item.entityName} />
-                <SurveyContent>
-                  <strong>{item.entityName}</strong>
-                  <ProgressText>진행상황</ProgressText>
-                  <ProgressBar value={responses.length} max={goal} />
-                  <ProgressText>
-                    {percent}% ({responses.length} / {goal})
-                  </ProgressText>
-                </SurveyContent>
-                <ContinueButton>이어서 진행하기</ContinueButton>
-              </SurveyItem>
-            );
-          })          
-        )}
+        {ongoingSurveys.map((item, index) => {
+          const percent = Math.round((item.progress / item.total) * 100);
+          return (
+            <SurveyItem
+              key={index}
+              onClick={() =>
+                navigate(`/survey/${item.title}`, {
+                  state: {
+                    image: item.image,
+                    caption: item.caption,
+                    path: `한국 > ${item.category} > ${item.title}`,
+                  },
+                })
+              }
+            >
+              <SurveyImage src={item.image} alt={item.title} />
+              <SurveyContent>
+                <strong>{item.title}</strong>
+                <ProgressText>진행상황</ProgressText>
+                <ProgressBar value={item.progress} max={item.total} />
+                <ProgressText>
+                  {percent}% ({item.progress} / {item.total})
+                </ProgressText>
+              </SurveyContent>
+              <ContinueButton>
+                {item.progress >= item.total ? "완료" : "이어서 진행하기"}
+              </ContinueButton>
+            </SurveyItem>
+          );
+        })}
       </SurveyContainer>
     </Container>
   );
