@@ -1,9 +1,9 @@
+// ✅ Login.js - 서버 연동 로그인 구현
 import React, { Component } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import LoginLogoImage from "../../assets/img/loginlogo.png"; // 이미지 변수명 변경
+import LoginLogoImage from "../../assets/img/loginlogo.png";
 
-// 네비게이션 기능을 클래스형 컴포넌트에서 사용하도록 HOC 생성
 function withRouter(Component) {
   return (props) => {
     const navigate = useNavigate();
@@ -11,7 +11,6 @@ function withRouter(Component) {
   };
 }
 
-// 전체 컨테이너
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -21,7 +20,6 @@ const Container = styled.div`
   background-color: #fff;
 `;
 
-// 로고 스타일
 const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
@@ -32,19 +30,17 @@ const HeaderLogo = styled.div`
   margin-bottom: 30px;
 
   img {
-    width: 150px; /* 로고 크기 키움 */
+    width: 150px;
     margin-right: 10px;
   }
 `;
 
-// 입력 폼 스타일
 const Form = styled.form`
   display: flex;
   flex-direction: column;
   width: 300px;
 `;
 
-// 입력 필드 스타일
 const Input = styled.input`
   padding: 12px;
   margin-bottom: 10px;
@@ -58,7 +54,6 @@ const Input = styled.input`
   }
 `;
 
-// 버튼 스타일
 const Button = styled.button`
   padding: 15px;
   background-color: #68a0f4;
@@ -75,7 +70,6 @@ const Button = styled.button`
   }
 `;
 
-// 하단 회원가입 문구
 const SignupText = styled.p`
   margin-top: 20px;
   font-size: 14px;
@@ -98,37 +92,55 @@ class Login extends Component {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = this.state;
 
-    // 임시 로그인 검증 (실제 API 요청으로 대체 가능)
-    // 관리자 계정 먼저 확인
-    if (email === "admin@admin.com" && password === "1234") {
-      console.log("관리자 로그인 성공!");
-      alert("관리자로 로그인되었습니다.");
-      this.props.navigate("/administrator");
-    }
-    // 일반 사용자 확인
-    else if (email === "test@test.com" && password === "1234") {
-      console.log("로그인 성공!");
-      this.props.navigate("/mainpage");
-    }
-    // 둘 다 아닐 경우 경고
-    else {
-      alert("아이디 또는 비밀번호가 올바르지 않습니다.");
+
+    try {
+      const response = await fetch("http://localhost:4000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          id: email.trim(),
+          password: password.trim().replace(/\n/g, ""), }),
+        credentials: "include",
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(errorData.message || "로그인 실패");
+        return;
+      }
+
+      const data = await response.json();
+      console.log("✅ 로그인 성공:", data);
+
+      
+
+      if (data.role === "admin") {
+        console.log("관리자 로그인 성공!");
+        alert("관리자로 로그인되었습니다.");
+        this.props.navigate("/administrator");
+      } else {
+        alert("로그인에 성공했습니다.");
+        this.props.navigate("/mainpage");
+      }
+      
+
+    } catch (error) {
+      console.error("❌ 로그인 오류:", error);
+      alert("서버 오류로 로그인에 실패했습니다.");
     }
   };
 
   render() {
     return (
       <Container>
-        {/* 로고 */}
         <HeaderLogo>
           <img src={LoginLogoImage} alt="로고" />
         </HeaderLogo>
 
-        {/* 로그인 폼 */}
         <Form onSubmit={this.handleSubmit}>
           <label>아이디</label>
           <Input
@@ -151,7 +163,6 @@ class Login extends Component {
           <Button type="submit">시작하기</Button>
         </Form>
 
-        {/* 회원가입 안내 */}
         <SignupText>
           계정이 없으신가요? <Link to="/signup">계정 만들기</Link>
         </SignupText>
