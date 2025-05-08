@@ -202,6 +202,19 @@ const Administrator = () => {
                   </RejectButton>
                 </ButtonGroup>
               )}
+
+              {activeTab === "approved" && (
+                <ButtonGroup>
+                  <ApproveButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/administrator/result/${item.id}`);
+                    }}
+                  >
+                    결과 보기
+                  </ApproveButton>
+                </ButtonGroup>
+              )}
             </SurveyItem>
           ))}
           {filteredSurveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
