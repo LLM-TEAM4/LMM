@@ -17,18 +17,22 @@ const Survey = () => {
   useEffect(() => {
     fetch("http://localhost:4000/survey", {
       credentials: "include",
-      
     })
       .then((res) => res.json())
       .then((data) => setSurveys(data));
   }, []);
 
-  const filtered = surveys.filter(
-    (item) =>
-      ((selectedCountries.length === 0 || selectedCountries.includes(item.country)) &&
-        (selectedCategories.length === 0 || selectedCategories.includes(item.category))) ||
-      item.title === completedTitle
-  );
+  const filtered = surveys.filter((item) => {
+    const countryMatch =
+      selectedCountries.length === 0 || selectedCountries.includes(item.country);
+
+    const categoryMatch =
+      selectedCategories.length === 0 || selectedCategories.includes(item.category);
+
+    const titleMatch = item.title === completedTitle;
+
+    return (countryMatch && categoryMatch) || titleMatch;
+  });
 
   const sorted = [...filtered].sort((a, b) => {
     const titleA = a.title || "";
@@ -74,7 +78,9 @@ const Survey = () => {
 
       <SurveyContainer>
         {sorted.map((item) => {
-          const percent = item.total ? Math.round((item.progress / item.total) * 100) : 0;
+          const answered = item.progress || 0;
+          const total = 20; // 고정값
+          const percent = Math.round((answered / total) * 100);
           return (
             <SurveyItem
               key={item._id}
@@ -94,15 +100,16 @@ const Survey = () => {
             >
               <SurveyImage src={item.imageUrl} alt={item.title} />
               <SurveyContent>
-                <strong style={{ fontSize: "17px" }}>{item.title}</strong>
-                <ProgressText>진행상황</ProgressText>
-                <ProgressBar value={item.progress || 0} max={item.total || 1} />
+                <strong style={{ fontSize: "17px" }}>
+                  {`${item.country} > ${item.category} > ${item.entityName}`}
+                </strong>
+                <ProgressBar value={answered} max={total} />
                 <ProgressText>
-                  {percent}% ({item.progress || 0} / {item.total || 1})
+                  {`${answered} / ${total} (${percent}%)`}
                 </ProgressText>
               </SurveyContent>
               <ContinueButton>
-                {item.progress >= item.total ? "완료" : "이어서 진행하기"}
+                {answered >= total ? "완료" : "이어서 진행하기"}
               </ContinueButton>
             </SurveyItem>
           );

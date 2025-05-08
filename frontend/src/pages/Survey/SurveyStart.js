@@ -5,38 +5,71 @@ import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 
+const QUESTIONS_PER_SESSION = 5;
+
 const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const { image, caption = [], path, surveyId } = location.state || {};
-  console.log("surveyId:", surveyId);
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [shuffledOptions, setShuffledOptions] = useState([]);
+  const [isSurveyComplete, setIsSurveyComplete] = useState(false);
 
   useEffect(() => {
     const shuffled = caption.map(() => {
       return [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
     });
     setShuffledOptions(shuffled);
+
+    const fetchProgress = async () => {
+      try {
+        const res = await fetch(`http://localhost:4000/survey/${surveyId}/progress`, {
+          credentials: "include",
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          setCurrentIndex(data.progress);
+          if (data.progress >= caption.length) {
+            setIsSurveyComplete(true);
+          }
+        }
+      } catch (err) {
+        console.error("❌ 진행도 불러오기 실패:", err);
+      }
+    };
+
+    fetchProgress();
   }, [caption]);
 
   const fallbackImage = BulgogiImg;
   const fallbackCaption = "설명이 제공되지 않았습니다.";
 
   const handleNext = async () => {
-    if (currentIndex < caption.length - 1) {
+    // ✅ 응답한 것만 추려서 저장
+    const filteredAnswers = Object.entries(selected)
+      .filter(([_, value]) => value > 0) // 0 제외
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .map(([_, value]) => value);
+
+
+    const isLastInThisSession =
+      currentIndex === caption.length - 1 ||
+      (currentIndex + 1) % QUESTIONS_PER_SESSION === 0;
+
+    if (!isLastInThisSession) {
       setCurrentIndex((prev) => prev + 1);
     } else {
-      const answers = caption.map((_, index) => selected[index] || 0);
+      
 
       try {
         const res = await fetch(`http://localhost:4000/survey/${surveyId}/answer`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ answers }),
+          body: JSON.stringify({  answers: filteredAnswers }),
         });
 
         if (!res.ok) throw new Error("응답 저장 실패");
@@ -71,42 +104,52 @@ const SurveyStart = () => {
           </ImageBox>
 
           <TextBox>
-            <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+            {isSurveyComplete ? (
+              <CompleteMessage>
+                해당 설문의 모든 문항을 완료했습니다.
+              </CompleteMessage>
+            ) : (
+              <>
+                <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+                <Options>
+                  {shuffledOptions[currentIndex]?.map((num) => (
+                    <Option key={num}>
+                      <RadioCircle
+                        type="radio"
+                        name={`rating-${currentIndex}`}
+                        value={num}
+                        size={22}
+                        checked={selected[currentIndex] === num}
+                        onChange={() =>
+                          setSelected((prev) => ({ ...prev, [currentIndex]: num }))
+                        }
+                      />
+                      <OptionLabel>
+                        {
+                          [
+                            "문화적으로 풍부하다 (5점)",
+                            "문화적으로 매우 적절하다 (4점)",
+                            "문화적으로 적절하다 (3점)",
+                            "중립적 또는 일반적이다 (2점)",
+                            "문화적으로 부적절하다 (1점)",
+                          ][num - 1]
+                        }
+                      </OptionLabel>
+                    </Option>
+                  ))}
+                </Options>
 
-            <Options>
-              {shuffledOptions[currentIndex]?.map((num, idx) => (
-                <Option key={num}>
-                  <RadioCircle
-                    type="radio"
-                    name={`rating-${currentIndex}`}
-                    value={num}
-                    size={22}
-                    checked={selected[currentIndex] === num}
-                    onChange={() =>
-                      setSelected((prev) => ({ ...prev, [currentIndex]: num }))
-                    }
-                  />
-                  <OptionLabel>
-                    {
-                      [
-                        "문화적으로 풍부하다 (5점)",
-                        "문화적으로 매우 적절하다 (4점)",
-                        "문화적으로 적절하다 (3점)",
-                        "중립적 또는 일반적이다 (2점)",
-                        "문화적으로 부적절하다 (1점)",
-                      ][num - 1]
-                    }
-                  </OptionLabel>
-                </Option>
-              ))}
-            </Options>
-
-            <NextButton
-              disabled={selected[currentIndex] == null}
-              onClick={handleNext}
-            >
-              {currentIndex < caption.length - 1 ? "다음으로" : "설문조사 끝내기"}
-            </NextButton>
+                <NextButton
+                  disabled={selected[currentIndex] == null}
+                  onClick={handleNext}
+                >
+                  {(currentIndex + 1) % QUESTIONS_PER_SESSION === 0 ||
+                  currentIndex === caption.length - 1
+                    ? "설문조사 끝내기"
+                    : "다음으로"}
+                </NextButton>
+              </>
+            )}
           </TextBox>
         </ContentBox>
       </Container>
@@ -116,7 +159,6 @@ const SurveyStart = () => {
 
 export default SurveyStart;
 
-// ✅ Styled Components 아래 동일하게 유지됨
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -274,4 +316,12 @@ const NextButton = styled.button`
     background-color: #ccc;
     cursor: not-allowed;
   }
+`;
+
+const CompleteMessage = styled.div`
+  font-size: 20px;
+  color: #4a82d9;
+  font-weight: bold;
+  padding: 40px;
+  text-align: center;
 `;
