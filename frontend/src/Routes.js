@@ -20,6 +20,7 @@ import RankingWeeklyPage from "./pages/Ranking/RankingWeeklyPage";
 import RankingMonthlyPage from "./pages/Ranking/RankingMonthlyPage";
 import Administrator from "./pages/Administrator/Administrator";
 import AdminSurveyDetail from "./pages/Administrator/AdminSurveyDetail";
+import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
 
 class AppRoutes extends React.Component {
   render() {
@@ -53,6 +54,10 @@ class AppRoutes extends React.Component {
           <Route path="/ranking/monthly" element={<RankingMonthlyPage />} />
           <Route path="/administrator" element={<Administrator />} />
           <Route path="/administrator/detail" element={<AdminSurveyDetail />} />
+          <Route
+            path="/administrator/result/:id"
+            element={<SurveyResultPage />}
+          />
         </Routes>
       </Router>
     );
