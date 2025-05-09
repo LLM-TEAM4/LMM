@@ -26,6 +26,13 @@ const surveys = [
       "(5) Bulgogi, a classic Korean cuisine, features marinated beef that has been grilled or stir-fried.",
     ],
     admin: "최휘윤",
+    votes: {
+      0: { 1: 2, 2: 4, 3: 3, 4: 1, 5: 0 },
+      1: { 1: 1, 2: 3, 3: 4, 4: 2, 5: 0 },
+      2: { 1: 0, 2: 2, 3: 3, 4: 4, 5: 1 },
+      3: { 1: 0, 2: 1, 3: 2, 4: 5, 5: 2 },
+      4: { 1: 3, 2: 3, 3: 2, 4: 1, 5: 1 },
+    },
   },
   {
     _id: 2,
@@ -41,6 +48,13 @@ const surveys = [
       "(5) A healthy Korean rice bowl called bibimbap balances flavor and nutrition.",
     ],
     admin: "최휘윤",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 3,
@@ -56,6 +70,13 @@ const surveys = [
       "(5) Kimchi is known for its spicy, sour taste and is a staple in Korean meals.",
     ],
     admin: "이수연",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 4,
@@ -71,6 +92,13 @@ const surveys = [
       "(5) Hanbok is commonly worn during Korean celebrations and festivals.",
     ],
     admin: "이수연",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 5,
@@ -86,6 +114,13 @@ const surveys = [
       "(5) Gyeongbokgung was the main royal palace during the Joseon Dynasty.",
     ],
     admin: "이경은",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 6,
@@ -101,6 +136,13 @@ const surveys = [
       "(5) The Great Wall is recognized as one of the world's great architectural achievements.",
     ],
     admin: "이경은",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 7,
@@ -116,6 +158,13 @@ const surveys = [
       "(5) Jajangmyeon is commonly eaten on special occasions and delivery meals in Korea.",
     ],
     admin: "장선우",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 8,
@@ -131,6 +180,13 @@ const surveys = [
       "(5) Cheongsam is often worn for cultural events and formal occasions in China.",
     ],
     admin: "장선우",
+    votes: {
+      0: { 1: 1, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 0, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 2, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 1, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 0, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 9,
@@ -146,6 +202,13 @@ const surveys = [
       "(5) Sushi includes varieties such as nigiri, maki, and sashimi.",
     ],
     admin: "최휘윤",
+    votes: {
+      0: { 1: 2, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 1, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 1, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 3, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 4, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 10,
@@ -161,6 +224,13 @@ const surveys = [
       "(5) Kimono is traditionally worn at ceremonies, festivals, and cultural events in Japan.",
     ],
     admin: "이수연",
+    votes: {
+      0: { 1: 3, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 4, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 1, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 2, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 2, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
   {
     _id: 11,
@@ -176,6 +246,13 @@ const surveys = [
       "(5) Tokyo Tower serves as a popular tourist destination and cultural symbol in Japan.",
     ],
     admin: "장선우",
+    votes: {
+      0: { 1: 4, 2: 2, 3: 4, 4: 2, 5: 1 },
+      1: { 1: 3, 2: 1, 3: 3, 4: 4, 5: 2 },
+      2: { 1: 1, 2: 3, 3: 2, 4: 2, 5: 1 },
+      3: { 1: 2, 2: 2, 3: 2, 4: 3, 5: 2 },
+      4: { 1: 3, 2: 2, 3: 4, 4: 3, 5: 1 },
+    },
   },
 ];
 

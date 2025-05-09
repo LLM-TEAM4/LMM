@@ -1,3 +1,4 @@
+// 📄 Administrator.js
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -17,8 +18,14 @@ const Title = styled.h1`
 
 const TabsContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   border-bottom: 2px solid #ccc;
   margin-bottom: 20px;
+`;
+
+const TabLeft = styled.div`
+  display: flex;
 `;
 
 const Tab = styled.button`
@@ -125,13 +132,12 @@ const RejectButton = styled.button`
 
 const DropdownWrapper = styled.div`
   position: relative;
-  display: inline-block;
 `;
 
 const DropdownMenu = styled.div`
   position: absolute;
   top: 110%;
-  left: 0;
+  right: 0;
   background-color: white;
   border: none;
   border-radius: 8px;
@@ -197,24 +203,60 @@ const Administrator = () => {
       <Container>
         <Title>관리자 설문 승인 페이지</Title>
         <TabsContainer>
-          <Tab
-            $active={activeTab === "approved"}
-            onClick={() => setActiveTab("approved")}
-          >
-            승인됨
-          </Tab>
-          <Tab
-            $active={activeTab === "rejected"}
-            onClick={() => setActiveTab("rejected")}
-          >
-            거절됨
-          </Tab>
-          <Tab
-            $active={activeTab === "pending"}
-            onClick={() => setActiveTab("pending")}
-          >
-            대기 중
-          </Tab>
+          <TabLeft>
+            <Tab
+              $active={activeTab === "approved"}
+              onClick={() => setActiveTab("approved")}
+            >
+              승인됨
+            </Tab>
+            <Tab
+              $active={activeTab === "rejected"}
+              onClick={() => setActiveTab("rejected")}
+            >
+              거절됨
+            </Tab>
+            <Tab
+              $active={activeTab === "pending"}
+              onClick={() => setActiveTab("pending")}
+            >
+              대기 중
+            </Tab>
+          </TabLeft>
+          <DropdownWrapper>
+            <StatisticsButton
+              onClick={() =>
+                setOpenMenuId(openMenuId === "global" ? null : "global")
+              }
+            >
+              📊 통합 통계 보기 ⬇
+            </StatisticsButton>
+            {openMenuId === "global" && (
+              <DropdownMenu>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/country")
+                  }
+                >
+                  ▶ 국가별 통계
+                </DropdownButton>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/category")
+                  }
+                >
+                  ▶ 카테고리별 통계
+                </DropdownButton>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/overall")
+                  }
+                >
+                  ▶ 전체 설문 요약
+                </DropdownButton>
+              </DropdownMenu>
+            )}
+          </DropdownWrapper>
         </TabsContainer>
 
         <SurveyList>
@@ -223,15 +265,7 @@ const Administrator = () => {
               key={item.id}
               onClick={() =>
                 navigate(`/administrator/detail/${item.id}`, {
-                  state: {
-                    id: item._id,
-                    country: item.country,
-                    category: item.category,
-                    entityName: item.entityName,
-                    imageUrl: item.imageUrl,
-                    captions: item.captions || [],
-                    createdBy: item.admin,
-                  },
+                  state: item,
                 })
               }
             >
@@ -280,65 +314,10 @@ const Administrator = () => {
                   >
                     결과 보기
                   </ApproveButton>
-
-                  <DropdownWrapper>
-                    <StatisticsButton
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpenMenuId(openMenuId === item.id ? null : item.id);
-                      }}
-                    >
-                      📊 통계 보기 ⬇
-                    </StatisticsButton>
-
-                    {openMenuId === item.id && (
-                      <DropdownMenu>
-                        <DropdownButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(`/administrator/statistics/${item.id}`);
-                          }}
-                        >
-                          ▶ 캡션별 통계
-                        </DropdownButton>
-                        <DropdownButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(
-                              "/administrator/statistics/summary/country"
-                            );
-                          }}
-                        >
-                          ▶ 국가별 통계
-                        </DropdownButton>
-                        <DropdownButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(
-                              "/administrator/statistics/summary/category"
-                            );
-                          }}
-                        >
-                          ▶ 카테고리별 통계
-                        </DropdownButton>
-                        <DropdownButton
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(
-                              "/administrator/statistics/summary/overall"
-                            );
-                          }}
-                        >
-                          ▶ 전체 설문 요약
-                        </DropdownButton>
-                      </DropdownMenu>
-                    )}
-                  </DropdownWrapper>
                 </ButtonGroup>
               )}
             </SurveyItem>
           ))}
-
           {filteredSurveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
         </SurveyList>
       </Container>

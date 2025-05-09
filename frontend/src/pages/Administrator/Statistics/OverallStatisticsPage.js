@@ -1,9 +1,19 @@
-// 전체 설문 항목 요약
-// 📄 OverallStatisticsPage.js
 import React from "react";
 import styled from "styled-components";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
+import { useNavigate } from "react-router-dom";
+
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Cell,
+} from "recharts";
 
 const Container = styled.div`
   padding: 100px 40px;
@@ -12,56 +22,137 @@ const Container = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: 24px;
+  font-size: 26px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 15px;
+  color: #666;
   margin-bottom: 30px;
 `;
 
-const StatItem = styled.div`
-  background: #fff;
-  padding: 20px;
-  margin-bottom: 20px;
+const ChartWrapper = styled.div`
+  width: 100%;
+  height: 450px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 30px;
+`;
+
+const HighlightBox = styled.div`
+  background-color: #fff4f4;
+  border-left: 6px solid #f44336;
+  padding: 20px 25px;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+`;
+
+const HighlightTitle = styled.h2`
+  font-size: 20px;
+  color: #d32f2f;
+  margin-bottom: 10px;
+`;
+
+const HighlightText = styled.p`
+  font-size: 16px;
+  color: #555;
+`;
+
+const BackButton = styled.button`
+  margin-top: 30px;
+  padding: 10px 20px;
+  background-color: #649eff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  &:hover {
+    background-color: #4a82d9;
+  }
 `;
 
 const OverallStatisticsPage = () => {
-  const total = surveyData.length;
-  const byCountry = {};
-  const byCategory = {};
+  const countryStats = {};
+  const navigate = useNavigate();
 
-  surveyData.forEach((item) => {
-    byCountry[item.country] = (byCountry[item.country] || 0) + 1;
-    byCategory[item.category] = (byCategory[item.category] || 0) + 1;
+  surveyData.forEach((s) => {
+    const votes = Object.values(s.votes || {}).flatMap((voteObj) =>
+      Object.entries(voteObj).flatMap(([score, count]) =>
+        Array(Number(count)).fill(Number(score))
+      )
+    );
+    const avg =
+      votes.length > 0 ? votes.reduce((a, b) => a + b, 0) / votes.length : 0;
+
+    if (!countryStats[s.country]) countryStats[s.country] = [];
+    countryStats[s.country].push(avg);
   });
+
+  const countryAverages = Object.entries(countryStats).map(
+    ([country, avgs]) => ({
+      country,
+      average: Number(
+        (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2)
+      ),
+    })
+  );
+
+  const sorted = [...countryAverages].sort((a, b) => a.average - b.average);
+
+  const getColor = (value) => {
+    if (value < 2.5) return "#f44336";
+    if (value < 3.5) return "#ff9800";
+    return "#4caf50";
+  };
 
   return (
     <>
       <Header />
       <Container>
         <Title>전체 설문 요약 통계</Title>
-        <StatItem>
-          <h3>총 설문 수: {total}</h3>
-        </StatItem>
-        <StatItem>
-          <h3>국가별</h3>
-          <ul>
-            {Object.entries(byCountry).map(([country, count]) => (
-              <li key={country}>
-                {country}: {count}개
-              </li>
-            ))}
-          </ul>
-        </StatItem>
-        <StatItem>
-          <h3>카테고리별</h3>
-          <ul>
-            {Object.entries(byCategory).map(([cat, count]) => (
-              <li key={cat}>
-                {cat}: {count}개
-              </li>
-            ))}
-          </ul>
-        </StatItem>
+        <Subtitle>
+          국가별 평균 응답 점수를 기반으로 생성형 AI의 문화적 편향 정도를
+          시각화합니다. 평균 점수가 낮을수록 편향성이 더 큽니다.
+        </Subtitle>
+
+        {/* 가장 편향성 높은 국가 강조 */}
+        <HighlightBox>
+          <HighlightTitle>📉 가장 편향성이 큰 국가</HighlightTitle>
+          <HighlightText>
+            <strong>{sorted[0]?.country}</strong> — 평균 점수{" "}
+            <strong>{sorted[0]?.average}</strong>점
+          </HighlightText>
+        </HighlightBox>
+
+        {/* 국가별 평균 응답 점수 그래프 */}
+        <ChartWrapper>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={sorted}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="country" />
+              <YAxis domain={[0, 5]} tickCount={6} />
+              <Tooltip
+                formatter={(value) => `${value}점`}
+                labelFormatter={(label) => `국가: ${label}`}
+              />
+              <Bar dataKey="average" barSize={40}>
+                {sorted.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={getColor(entry.average)} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartWrapper>
+        <BackButton onClick={() => navigate(-1)}>
+          ← 목록으로 돌아가기
+        </BackButton>
       </Container>
     </>
   );
