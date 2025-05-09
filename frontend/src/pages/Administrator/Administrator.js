@@ -3,7 +3,6 @@ import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
-import surveyData from "../../data/SurveyData"
 
 const Container = styled.div`
   padding: 100px 20px 40px;
@@ -100,13 +99,12 @@ const ApproveButton = styled.button`
 
 const StatisticsButton = styled.button`
   padding: 8px 12px;
-  background-color: #ff9800; /* 주황색 */
+  background-color: #ff9800;
   color: white;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-
   &:hover {
     background-color: #f57c00;
   }
@@ -127,34 +125,8 @@ const RejectButton = styled.button`
 const Administrator = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
+  const [surveys, setSurveys] = useState([]);
 
-  const [surveys, setSurveys] = useState(
-    surveyData.map((survey, index) => ({
-      ...survey,
-      id: index + 1,
-      status: "pending",
-      rejectReason: "", // 거절 사유
-    }))
-  );
-
-  const handleStatusChange = (id, status) => {
-    if (status === "rejected") {
-      const reason = prompt("거절 사유를 입력하세요:");
-      if (!reason) return; // 입력 없으면 취소
-
-      setSurveys((prev) =>
-        prev.map((s) =>
-          s.id === id ? { ...s, status, rejectReason: reason } : s
-        )
-      );
-    } else {
-      setSurveys((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, status } : s))
-      );
-    }
-  };
-
-  // 설문 목록 불러오기
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
@@ -167,38 +139,43 @@ const Administrator = () => {
     fetchSurveys();
   }, [activeTab]);
 
+  const handleStatusChange = async (id, status) => {
+    if (status === "rejected") {
+      const reason = prompt("거절 사유를 입력하세요:");
+      if (!reason) return;
+      try {
+        await axios.post(`/admin/detail/surveys/${id}/reject`, { reason });
+        setSurveys(prev => prev.filter(s => s._id !== id));
+      } catch (err) {
+        alert("거절 실패");
+      }
+    } else {
+      try {
+        await axios.post(`/admin/detail/surveys/${id}/approve`);
+        setSurveys(prev => prev.filter(s => s._id !== id));
+      } catch (err) {
+        alert("승인 실패");
+      }
+    }
+  };
+
   return (
     <>
       <Header />
       <Container>
         <Title>관리자 설문 승인 페이지</Title>
         <TabsContainer>
-          <Tab
-            $active={activeTab === "approved"}
-            onClick={() => setActiveTab("approved")}
-          >
-            승인됨
-          </Tab>
-          <Tab
-            $active={activeTab === "rejected"}
-            onClick={() => setActiveTab("rejected")}
-          >
-            거절됨
-          </Tab>
-          <Tab
-            $active={activeTab === "pending"}
-            onClick={() => setActiveTab("pending")}
-          >
-            대기 중
-          </Tab>
+          <Tab $active={activeTab === "approved"} onClick={() => setActiveTab("approved")}>승인됨</Tab>
+          <Tab $active={activeTab === "rejected"} onClick={() => setActiveTab("rejected")}>거절됨</Tab>
+          <Tab $active={activeTab === "pending"} onClick={() => setActiveTab("pending")}>대기 중</Tab>
         </TabsContainer>
 
         <SurveyList>
-          {surveys.map((item) => (
+          {surveys.map((item, index) => (
             <SurveyItem
-              key={item._id}
+              key={item._id || index}
               onClick={() =>
-                navigate(`/administrator/detail/${item.id}`, {
+                navigate(`/administrator/detail/${item._id}`, {
                   state: {
                     id: item._id,
                     country: item.country,
@@ -241,13 +218,12 @@ const Administrator = () => {
                   </RejectButton>
                 </ButtonGroup>
               )}
-
               {activeTab === "approved" && (
                 <ButtonGroup>
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/administrator/result/${item.id}`);
+                      navigate(`/administrator/result/${item._id}`);
                     }}
                   >
                     결과 보기
@@ -255,7 +231,7 @@ const Administrator = () => {
                   <StatisticsButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/administrator/statistics/${item.id}`);
+                      navigate(`/administrator/statistics/${item._id}`);
                     }}
                   >
                     통계 보기

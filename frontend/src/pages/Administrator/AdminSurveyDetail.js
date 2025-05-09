@@ -129,26 +129,35 @@ const AdminSurveyDetail = () => {
 
   const handleApprove = async () => {
     try {
-      await axios.post(`/admin/surveys/${data.id}/approve`);
+      await axios.post(`/admin/detail/surveys/${data.id}/approve`, {}, {
+        withCredentials: true
+      });
       alert("해당 설문이 승인되었습니다.");
       navigate(-1);
     } catch (err) {
+      console.error(err);
       alert("승인 중 오류가 발생했습니다.");
     }
   };
+
+
 
   const handleReject = async () => {
     const reason = prompt("거절 사유를 입력하세요:");
     if (!reason) return;
 
     try {
-      await axios.patch(`/admin/surveys/${id}/reject`, { reason });
+      await axios.post(`/admin/detail/surveys/${data.id}/reject`, { reason }, {
+        withCredentials: true
+      });
       alert("해당 설문이 거절되었습니다.");
       navigate(-1);
     } catch (err) {
+      console.error(err);
       alert("거절 중 오류가 발생했습니다.");
     }
   };
+
 
 
   return (
