@@ -89,7 +89,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/home");
+        const response = await axios.get("http://localhost:4000/api/survey");
         console.log("서버 응답:", response.data); // 응답 데이터 구조 확인
         setSurveyData(response.data);
       } catch (error) {
