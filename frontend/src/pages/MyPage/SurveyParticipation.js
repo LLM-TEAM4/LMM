@@ -17,9 +17,11 @@ const SurveyParticipation = () => {
       .then((res) => res.json())
       .then((data) => {
         setResponses(data.user.responses || []);
-      });
+      }); 
 
-    fetch("http://localhost:4000/survey")
+    fetch("http://localhost:4000/survey",{
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((data) => setSurveys(data));
   }, []);
