@@ -118,10 +118,7 @@ const AdminPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 등록 버튼 클릭됨");
-    if (!imageFile) {
-      alert("이미지를 선택해주세요.");
-      return;
-    } 
+
 
     const formDataToSend = new FormData();
     formDataToSend.append("admin", "admin@admin.com");
@@ -133,9 +130,10 @@ const AdminPage = () => {
   
     try {
       console.log("📡 FormData 전송 시작");
-      const res = await fetch("https://backend-culturelens.shop/survey", {
+      const res = await fetch("http://localhost:4000/survey", {
         method: "POST",
         body: formDataToSend,
+        credentials: "include",
       });
   
       console.log("📥 응답 수신됨", res);
@@ -147,7 +145,7 @@ const AdminPage = () => {
           entityName: "",
           captions: ["", "", "", "", ""],
         });
-        setImageFile(null);
+        //setImageFile(null);
         window.dispatchEvent(new Event("surveyRegistered"));
       } else {
         const error = await res.json();
