@@ -117,9 +117,9 @@ const MainPage = () => {
     { id: 5, name: "user5", count: 25 },
   ];
 
-  const ongoingSurveys = surveyData.filter(item => item.approved);
-
-  return (
+  const ongoingSurveys = surveyData.filter(
+    (item) => item.status && item.status.toLowerCase() === "approved"
+  );  return (
     <Container>
       <Header />
 

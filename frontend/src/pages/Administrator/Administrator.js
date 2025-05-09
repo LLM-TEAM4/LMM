@@ -1,9 +1,7 @@
-// 📄 Administrator.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
-import surveyData from "../../data/SurveyData";
 
 const Container = styled.div`
   padding: 100px 20px 40px;
@@ -104,20 +102,6 @@ const ApproveButton = styled.button`
   }
 `;
 
-const StatisticsButton = styled.button`
-  padding: 8px 12px;
-  background-color: #ff9800;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: bold;
-
-  &:hover {
-    background-color: #f57c00;
-  }
-`;
-
 const RejectButton = styled.button`
   padding: 8px 12px;
   background-color: #f44336;
@@ -127,6 +111,19 @@ const RejectButton = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #e53935;
+  }
+`;
+
+const StatisticsButton = styled.button`
+  padding: 8px 12px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  &:hover {
+    background-color: #f57c00;
   }
 `;
 
@@ -166,33 +163,52 @@ const DropdownButton = styled.button`
 const Administrator = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
+  const [surveys, setSurveys] = useState([]);
   const [openMenuId, setOpenMenuId] = useState(null);
 
-  const [surveys, setSurveys] = useState(
-    surveyData.map((survey, index) => ({
-      ...survey,
-      id: index + 1,
-      status: "pending",
-      rejectReason: "",
-    }))
-  );
+  useEffect(() => {
+    const fetchSurveys = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/survey/all/posted", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("서버 응답 오류");
+        const data = await res.json();
+        setSurveys(data);
+      } catch (err) {
+        console.error("❌ 관리자 설문 불러오기 실패:", err);
+        alert("설문 데이터를 불러오는 데 실패했습니다.");
+      }
+    };
 
-  const handleStatusChange = (id, status) => {
+    fetchSurveys();
+  }, []);
+
+  const handleStatusChange = async (id, status) => {
+    let reason = "";
     if (status === "rejected") {
-      const reason = prompt("거절 사유를 입력하세요:");
+      reason = prompt("거절 사유를 입력하세요:");
       if (!reason) return;
-
-      setSurveys((prev) =>
-        prev.map((s) =>
-          s.id === id ? { ...s, status: "rejected", rejectReason: reason } : s
-        )
-      );
-    } else {
-      setSurveys((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, status: "approved" } : s))
-      );
     }
-    setOpenMenuId(null);
+
+    try {
+      const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status, rejectReason: reason }),
+      });
+
+      if (!res.ok) throw new Error("상태 변경 실패");
+
+      const updatedSurvey = await res.json();
+      setSurveys((prev) =>
+        prev.map((s) => (s._id === id ? updatedSurvey : s))
+      );
+    } catch (err) {
+      console.error("❌ 상태 변경 오류:", err);
+      alert("설문 상태 변경에 실패했습니다.");
+    }
   };
 
   const filteredSurveys = surveys.filter((s) => s.status === activeTab);
@@ -204,54 +220,29 @@ const Administrator = () => {
         <Title>관리자 설문 승인 페이지</Title>
         <TabsContainer>
           <TabLeft>
-            <Tab
-              $active={activeTab === "approved"}
-              onClick={() => setActiveTab("approved")}
-            >
+            <Tab $active={activeTab === "approved"} onClick={() => setActiveTab("approved")}>
               승인됨
             </Tab>
-            <Tab
-              $active={activeTab === "rejected"}
-              onClick={() => setActiveTab("rejected")}
-            >
+            <Tab $active={activeTab === "rejected"} onClick={() => setActiveTab("rejected")}>
               거절됨
             </Tab>
-            <Tab
-              $active={activeTab === "pending"}
-              onClick={() => setActiveTab("pending")}
-            >
+            <Tab $active={activeTab === "pending"} onClick={() => setActiveTab("pending")}>
               대기 중
             </Tab>
           </TabLeft>
           <DropdownWrapper>
-            <StatisticsButton
-              onClick={() =>
-                setOpenMenuId(openMenuId === "global" ? null : "global")
-              }
-            >
+            <StatisticsButton onClick={() => setOpenMenuId(openMenuId ? null : "global")}>
               📊 통합 통계 보기 ⬇
             </StatisticsButton>
             {openMenuId === "global" && (
               <DropdownMenu>
-                <DropdownButton
-                  onClick={() =>
-                    navigate("/administrator/statistics/summary/country")
-                  }
-                >
+                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/country")}>
                   ▶ 국가별 통계
                 </DropdownButton>
-                <DropdownButton
-                  onClick={() =>
-                    navigate("/administrator/statistics/summary/category")
-                  }
-                >
+                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/category")}>
                   ▶ 카테고리별 통계
                 </DropdownButton>
-                <DropdownButton
-                  onClick={() =>
-                    navigate("/administrator/statistics/summary/overall")
-                  }
-                >
+                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/overall")}>
                   ▶ 전체 설문 요약
                 </DropdownButton>
               </DropdownMenu>
@@ -262,12 +253,8 @@ const Administrator = () => {
         <SurveyList>
           {filteredSurveys.map((item) => (
             <SurveyItem
-              key={item.id}
-              onClick={() =>
-                navigate(`/administrator/detail/${item.id}`, {
-                  state: item,
-                })
-              }
+              key={item._id}
+              onClick={() => navigate(`/administrator/detail/${item._id}`, { state: item })}
             >
               <SurveyImage src={item.imageUrl} alt={item.entityName} />
               <SurveyContent>
@@ -276,7 +263,7 @@ const Administrator = () => {
                   국가: {item.country} / 분류: {item.category}
                 </SurveyText>
                 <SurveyText>
-                  등록자: <strong>{item.admin || "알 수 없음"}</strong>
+                  등록자: <strong>{item.user?.id || "알 수 없음"}</strong>
                 </SurveyText>
                 {activeTab === "rejected" && item.rejectReason && (
                   <SurveyText>❌ 거절 사유: {item.rejectReason}</SurveyText>
@@ -288,7 +275,7 @@ const Administrator = () => {
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item.id, "approved");
+                      handleStatusChange(item._id, "approved");
                     }}
                   >
                     승인
@@ -296,7 +283,7 @@ const Administrator = () => {
                   <RejectButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item.id, "rejected");
+                      handleStatusChange(item._id, "rejected");
                     }}
                   >
                     거절
@@ -309,7 +296,7 @@ const Administrator = () => {
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      navigate(`/administrator/result/${item.id}`);
+                      navigate(`/administrator/result/${item._id}`);
                     }}
                   >
                     결과 보기

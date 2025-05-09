@@ -9,6 +9,7 @@ const Survey = () => {
   const surveyRefs = useRef({});
   const { completedTitle } = location.state || {};
 
+  
   const [surveys, setSurveys] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -30,7 +31,7 @@ const Survey = () => {
       selectedCategories.length === 0 || selectedCategories.includes(item.category);
 
     const titleMatch = item.title === completedTitle;
-
+    const approvedMatch = item.status === "approved"; // ✅ 이 부분 추가
     return (countryMatch && categoryMatch) || titleMatch;
   });
 
