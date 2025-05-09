@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
-import surveyData from "../../data/SurveyData"
+import surveyData from "../../data/SurveyData";
 
 const Container = styled.div`
   padding: 100px 20px 40px;
@@ -52,7 +51,7 @@ const SurveyItem = styled.div`
   border-radius: 12px;
   padding: 20px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  position: relative;
 
   &:hover {
     background-color: #f0f0f0;
@@ -100,7 +99,7 @@ const ApproveButton = styled.button`
 
 const StatisticsButton = styled.button`
   padding: 8px 12px;
-  background-color: #ff9800; /* 주황색 */
+  background-color: #ff9800;
   color: white;
   border: none;
   border-radius: 6px;
@@ -124,48 +123,73 @@ const RejectButton = styled.button`
   }
 `;
 
+const DropdownWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background-color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+`;
+
+const DropdownButton = styled.button`
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 10px;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #f0f4ff;
+  }
+`;
+
 const Administrator = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
+  const [openMenuId, setOpenMenuId] = useState(null);
 
   const [surveys, setSurveys] = useState(
     surveyData.map((survey, index) => ({
       ...survey,
       id: index + 1,
       status: "pending",
-      rejectReason: "", // 거절 사유
+      rejectReason: "",
     }))
   );
 
   const handleStatusChange = (id, status) => {
     if (status === "rejected") {
       const reason = prompt("거절 사유를 입력하세요:");
-      if (!reason) return; // 입력 없으면 취소
+      if (!reason) return;
 
       setSurveys((prev) =>
         prev.map((s) =>
-          s.id === id ? { ...s, status, rejectReason: reason } : s
+          s.id === id ? { ...s, status: "rejected", rejectReason: reason } : s
         )
       );
     } else {
       setSurveys((prev) =>
-        prev.map((s) => (s.id === id ? { ...s, status } : s))
+        prev.map((s) => (s.id === id ? { ...s, status: "approved" } : s))
       );
     }
+    setOpenMenuId(null);
   };
 
-  // 설문 목록 불러오기
-  useEffect(() => {
-    const fetchSurveys = async () => {
-      try {
-        const res = await axios.get(`/admin/surveys?status=${activeTab}`);
-        setSurveys(res.data);
-      } catch (err) {
-        console.error("설문 조회 실패", err);
-      }
-    };
-    fetchSurveys();
-  }, [activeTab]);
+  const filteredSurveys = surveys.filter((s) => s.status === activeTab);
 
   return (
     <>
@@ -194,9 +218,9 @@ const Administrator = () => {
         </TabsContainer>
 
         <SurveyList>
-          {surveys.map((item) => (
+          {filteredSurveys.map((item) => (
             <SurveyItem
-              key={item._id}
+              key={item.id}
               onClick={() =>
                 navigate(`/administrator/detail/${item.id}`, {
                   state: {
@@ -220,13 +244,17 @@ const Administrator = () => {
                 <SurveyText>
                   등록자: <strong>{item.admin || "알 수 없음"}</strong>
                 </SurveyText>
+                {activeTab === "rejected" && item.rejectReason && (
+                  <SurveyText>❌ 거절 사유: {item.rejectReason}</SurveyText>
+                )}
               </SurveyContent>
+
               {activeTab === "pending" && (
                 <ButtonGroup>
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item._id, "approved");
+                      handleStatusChange(item.id, "approved");
                     }}
                   >
                     승인
@@ -234,7 +262,7 @@ const Administrator = () => {
                   <RejectButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item._id, "rejected");
+                      handleStatusChange(item.id, "rejected");
                     }}
                   >
                     거절
@@ -252,22 +280,66 @@ const Administrator = () => {
                   >
                     결과 보기
                   </ApproveButton>
-                  <StatisticsButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate(`/administrator/statistics/${item.id}`);
-                    }}
-                  >
-                    통계 보기
-                  </StatisticsButton>
+
+                  <DropdownWrapper>
+                    <StatisticsButton
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpenMenuId(openMenuId === item.id ? null : item.id);
+                      }}
+                    >
+                      📊 통계 보기 ⬇
+                    </StatisticsButton>
+
+                    {openMenuId === item.id && (
+                      <DropdownMenu>
+                        <DropdownButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/administrator/statistics/${item.id}`);
+                          }}
+                        >
+                          ▶ 캡션별 통계
+                        </DropdownButton>
+                        <DropdownButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(
+                              "/administrator/statistics/summary/country"
+                            );
+                          }}
+                        >
+                          ▶ 국가별 통계
+                        </DropdownButton>
+                        <DropdownButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(
+                              "/administrator/statistics/summary/category"
+                            );
+                          }}
+                        >
+                          ▶ 카테고리별 통계
+                        </DropdownButton>
+                        <DropdownButton
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(
+                              "/administrator/statistics/summary/overall"
+                            );
+                          }}
+                        >
+                          ▶ 전체 설문 요약
+                        </DropdownButton>
+                      </DropdownMenu>
+                    )}
+                  </DropdownWrapper>
                 </ButtonGroup>
-              )}
-              {activeTab === "rejected" && item.rejectReason && (
-                <SurveyText>❌ 거절 사유: {item.rejectReason}</SurveyText>
               )}
             </SurveyItem>
           ))}
-          {surveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
+
+          {filteredSurveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
         </SurveyList>
       </Container>
     </>
