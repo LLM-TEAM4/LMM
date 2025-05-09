@@ -3,6 +3,9 @@ import React from "react";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
+import { useParams } from "react-router-dom";
+import surveyData from "../../data/SurveyData";
+import axios from "axios";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -108,19 +111,22 @@ const RejectButton = styled.button`
 `;
 
 const AdminSurveyDetail = () => {
+  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const data = location.state;
 
-  if (!data) {
+  const survey = surveyData[Number(id) - 1]; // index로 직접 접근
+
+  if (!survey) {
     return (
       <Container>
-        <p>설문 정보가 없습니다.</p>
+        <p>설문 데이터를 찾을 수 없습니다.</p>
       </Container>
     );
   }
 
-  const { country, category, entityName, imageUrl, captions, createdBy } = data;
+  const { country, category, title, image, caption, createdBy } = survey;
 
   const handleApprove = async () => {
     try {
@@ -133,14 +139,18 @@ const AdminSurveyDetail = () => {
   };
 
   const handleReject = async () => {
+    const reason = prompt("거절 사유를 입력하세요:");
+    if (!reason) return;
+
     try {
-      await axios.post(`/admin/surveys/${data.id}/reject`);
+      await axios.patch(`/admin/surveys/${id}/reject`, { reason });
       alert("해당 설문이 거절되었습니다.");
       navigate(-1);
     } catch (err) {
       alert("거절 중 오류가 발생했습니다.");
     }
   };
+
 
   return (
     <>
@@ -164,15 +174,15 @@ const AdminSurveyDetail = () => {
           </InfoRow>
 
           <InfoRow>
-            <Label>고유명사</Label>
-            <Text>{entityName}</Text>
+            <Label>주제</Label>
+            <Text>{title}</Text>
           </InfoRow>
 
           <InfoRow
             style={{ flexDirection: "column", alignItems: "flex-start" }}
           >
             <Label style={{ marginBottom: "10px" }}>이미지</Label>
-            {imageUrl && <Image src={imageUrl} alt={entityName} />}
+            {image && <Image src={image} alt={title} />}
           </InfoRow>
 
           <InfoRow
@@ -180,7 +190,7 @@ const AdminSurveyDetail = () => {
           >
             <Label style={{ marginBottom: "10px" }}>캡션</Label>
             <CaptionList>
-              {(captions || []).map((cap, idx) => (
+              {(caption || []).map((cap, idx) => (
                 <CaptionItem key={idx}>{cap}</CaptionItem>
               ))}
             </CaptionList>

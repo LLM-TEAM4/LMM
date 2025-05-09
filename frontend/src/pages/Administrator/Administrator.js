@@ -37,7 +37,6 @@ const Tab = styled.button`
   }
 `;
 
-
 const SurveyList = styled.div`
   display: flex;
   flex-direction: column;
@@ -98,6 +97,20 @@ const ApproveButton = styled.button`
   }
 `;
 
+const StatisticsButton = styled.button`
+  padding: 8px 12px;
+  background-color: #ff9800; /* 주황색 */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #f57c00;
+  }
+`;
+
 const RejectButton = styled.button`
   padding: 8px 12px;
   background-color: #f44336;
@@ -113,7 +126,32 @@ const RejectButton = styled.button`
 const Administrator = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
-  const [surveys, setSurveys] = useState([]);
+
+  const [surveys, setSurveys] = useState(
+    surveyData.map((survey, index) => ({
+      ...survey,
+      id: index + 1,
+      status: "pending",
+      rejectReason: "", // 거절 사유
+    }))
+  );
+
+  const handleStatusChange = (id, status) => {
+    if (status === "rejected") {
+      const reason = prompt("거절 사유를 입력하세요:");
+      if (!reason) return; // 입력 없으면 취소
+
+      setSurveys((prev) =>
+        prev.map((s) =>
+          s.id === id ? { ...s, status, rejectReason: reason } : s
+        )
+      );
+    } else {
+      setSurveys((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status } : s))
+      );
+    }
+  };
 
   // 설문 목록 불러오기
   useEffect(() => {
@@ -127,21 +165,6 @@ const Administrator = () => {
     };
     fetchSurveys();
   }, [activeTab]);
-
-  // 승인/거절 처리
-  const handleStatusChange = async (id, status) => {
-    try {
-      const endpoint =
-        status === "approved"
-          ? `/admin/surveys/${id}/approve`
-          : `/admin/surveys/${id}/reject`;
-      await axios.post(endpoint);
-      // 목록에서 제거
-      setSurveys((prev) => prev.filter((s) => s._id !== id));
-    } catch (err) {
-      alert("상태 변경 실패");
-    }
-  };
 
   return (
     <>
@@ -174,7 +197,7 @@ const Administrator = () => {
             <SurveyItem
               key={item._id}
               onClick={() =>
-                navigate("/administrator/detail", {
+                navigate(`/administrator/detail/${item.id}`, {
                   state: {
                     id: item._id,
                     country: item.country,
@@ -228,7 +251,18 @@ const Administrator = () => {
                   >
                     결과 보기
                   </ApproveButton>
+                  <StatisticsButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/administrator/statistics/${item.id}`);
+                    }}
+                  >
+                    통계 보기
+                  </StatisticsButton>
                 </ButtonGroup>
+              )}
+              {activeTab === "rejected" && item.rejectReason && (
+                <SurveyText>❌ 거절 사유: {item.rejectReason}</SurveyText>
               )}
             </SurveyItem>
           ))}

@@ -15,6 +15,7 @@ import TokyoTowerImg from "../assets/img/tokyo_tower.png";
 
 const surveys = [
   {
+    id: 1,
     title: "불고기",
     country: "한국",
     category: "cuisine",
@@ -31,6 +32,7 @@ const surveys = [
     ],
   },
   {
+    id: 2,
     title: "비빔밥",
     country: "한국",
     category: "cuisine",
@@ -47,6 +49,7 @@ const surveys = [
     ],
   },
   {
+    id: 3,
     title: "김치",
     country: "한국",
     category: "cuisine",
@@ -63,6 +66,7 @@ const surveys = [
     ],
   },
   {
+    id: 4,
     title: "한복",
     country: "한국",
     category: "clothes",
@@ -79,6 +83,7 @@ const surveys = [
     ],
   },
   {
+    id: 5,
     title: "경복궁",
     country: "한국",
     category: "architecture",
@@ -95,6 +100,7 @@ const surveys = [
     ],
   },
   {
+    id: 5,
     title: "만리장성",
     country: "중국",
     category: "architecture",
@@ -111,6 +117,7 @@ const surveys = [
     ],
   },
   {
+    id: 6,
     title: "짜장면",
     country: "중국",
     category: "cuisine",
@@ -127,6 +134,7 @@ const surveys = [
     ],
   },
   {
+    id: 7,
     title: "치파오",
     country: "중국",
     category: "clothes",
@@ -143,6 +151,7 @@ const surveys = [
     ],
   },
   {
+    id: 8,
     title: "스시",
     country: "일본",
     category: "cuisine",
@@ -159,6 +168,7 @@ const surveys = [
     ],
   },
   {
+    id: 9,
     title: "기모노",
     country: "일본",
     category: "clothes",
@@ -175,6 +185,7 @@ const surveys = [
     ],
   },
   {
+    id: 10,
     title: "도쿄 타워",
     country: "일본",
     category: "architecture",
