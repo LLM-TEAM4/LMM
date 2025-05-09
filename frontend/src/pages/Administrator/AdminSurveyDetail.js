@@ -1,10 +1,11 @@
+import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
 import { useParams } from "react-router-dom";
 import surveyData from "../../data/SurveyData";
-//import axios from "axios";
+import axios from "axios";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -127,36 +128,29 @@ const AdminSurveyDetail = () => {
 
   const { country, category, title, image, caption, createdBy } = survey;
 
-  const handleApprove = () => {
-    alert("해당 설문이 승인되었습니다.");
-    navigate(-1); // 이전 페이지로 이동
+  const handleApprove = async () => {
+    try {
+      await axios.post(`/admin/surveys/${data.id}/approve`);
+      alert("해당 설문이 승인되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      alert("승인 중 오류가 발생했습니다.");
+    }
   };
 
-  const handleReject = () => {
+  const handleReject = async () => {
     const reason = prompt("거절 사유를 입력하세요:");
-    if (!reason) return; // 취소 또는 입력 안 하면 아무 작업 안 함
+    if (!reason) return;
 
-    // 나중에 이 rejectReason을 백엔드에 전송하거나 상태로 넘길 수도 있음
-    alert(`거절 사유: ${reason}`);
-    navigate(-1); // 이전 화면으로 돌아가기
+    try {
+      await axios.patch(`/admin/surveys/${id}/reject`, { reason });
+      alert("해당 설문이 거절되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      alert("거절 중 오류가 발생했습니다.");
+    }
   };
 
-  // const handleReject = async () => {
-  //   const reason = prompt("거절 사유를 입력하세요:");
-  //   if (!reason) return;
-
-  //   try {
-  //     await axios.patch(`http://localhost:4000/survey/${id}/reject`, {
-  //       reason,
-  //     });
-
-  //     alert("거절되었습니다.");
-  //     navigate(-1);
-  //   } catch (err) {
-  //     console.error("거절 요청 실패:", err);
-  //     alert("거절 처리 중 오류가 발생했습니다.");
-  //   }
-  // };
 
   return (
     <>

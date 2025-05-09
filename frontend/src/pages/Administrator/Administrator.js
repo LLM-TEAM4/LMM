@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
-import surveyData from "../../data/SurveyData";
 
 const Container = styled.div`
   padding: 100px 20px 40px;
@@ -24,10 +24,10 @@ const TabsContainer = styled.div`
 const Tab = styled.button`
   padding: 10px 20px;
   border: none;
-  background: ${({ active }) => (active ? "#68a0f4" : "transparent")};
-  color: ${({ active }) => (active ? "#fff" : "#000")};
+  background: ${({ $active }) => ($active ? "#68a0f4" : "transparent")};
+  color: ${({ $active }) => ($active ? "#fff" : "#000")};
   cursor: pointer;
-  font-weight: ${({ active }) => (active ? "bold" : "normal")};
+  font-weight: ${({ $active }) => ($active ? "bold" : "normal")};
   border-radius: 6px 6px 0 0;
   margin-right: 5px;
 
@@ -126,6 +126,7 @@ const RejectButton = styled.button`
 const Administrator = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("pending");
+
   const [surveys, setSurveys] = useState(
     surveyData.map((survey, index) => ({
       ...survey,
@@ -152,9 +153,18 @@ const Administrator = () => {
     }
   };
 
-  const filteredSurveys = surveys.filter(
-    (survey) => survey.status === activeTab
-  );
+  // 설문 목록 불러오기
+  useEffect(() => {
+    const fetchSurveys = async () => {
+      try {
+        const res = await axios.get(`/admin/surveys?status=${activeTab}`);
+        setSurveys(res.data);
+      } catch (err) {
+        console.error("설문 조회 실패", err);
+      }
+    };
+    fetchSurveys();
+  }, [activeTab]);
 
   return (
     <>
@@ -163,19 +173,19 @@ const Administrator = () => {
         <Title>관리자 설문 승인 페이지</Title>
         <TabsContainer>
           <Tab
-            active={activeTab === "approved"}
+            $active={activeTab === "approved"}
             onClick={() => setActiveTab("approved")}
           >
             승인됨
           </Tab>
           <Tab
-            active={activeTab === "rejected"}
+            $active={activeTab === "rejected"}
             onClick={() => setActiveTab("rejected")}
           >
             거절됨
           </Tab>
           <Tab
-            active={activeTab === "pending"}
+            $active={activeTab === "pending"}
             onClick={() => setActiveTab("pending")}
           >
             대기 중
@@ -183,31 +193,31 @@ const Administrator = () => {
         </TabsContainer>
 
         <SurveyList>
-          {filteredSurveys.map((item) => (
+          {surveys.map((item) => (
             <SurveyItem
-              key={item.id}
+              key={item._id}
               onClick={() =>
                 navigate(`/administrator/detail/${item.id}`, {
                   state: {
-                    id: item.id,
+                    id: item._id,
                     country: item.country,
                     category: item.category,
-                    entityName: item.title,
-                    imageUrl: item.image,
-                    captions: item.caption || [],
-                    createdBy: item.createdBy,
+                    entityName: item.entityName,
+                    imageUrl: item.imageUrl,
+                    captions: item.captions || [],
+                    createdBy: item.admin,
                   },
                 })
               }
             >
-              <SurveyImage src={item.image} alt={item.title} />
+              <SurveyImage src={item.imageUrl} alt={item.entityName} />
               <SurveyContent>
-                <SurveyTitle>{item.title}</SurveyTitle>
+                <SurveyTitle>{item.entityName}</SurveyTitle>
                 <SurveyText>
                   국가: {item.country} / 분류: {item.category}
                 </SurveyText>
                 <SurveyText>
-                  등록자: <strong>{item.createdBy || "알 수 없음"}</strong>
+                  등록자: <strong>{item.admin || "알 수 없음"}</strong>
                 </SurveyText>
               </SurveyContent>
               {activeTab === "pending" && (
@@ -215,7 +225,7 @@ const Administrator = () => {
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item.id, "approved");
+                      handleStatusChange(item._id, "approved");
                     }}
                   >
                     승인
@@ -223,7 +233,7 @@ const Administrator = () => {
                   <RejectButton
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleStatusChange(item.id, "rejected");
+                      handleStatusChange(item._id, "rejected");
                     }}
                   >
                     거절
@@ -256,7 +266,7 @@ const Administrator = () => {
               )}
             </SurveyItem>
           ))}
-          {filteredSurveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
+          {surveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
         </SurveyList>
       </Container>
     </>

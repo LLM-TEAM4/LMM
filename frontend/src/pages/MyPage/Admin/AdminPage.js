@@ -117,7 +117,12 @@ const AdminPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    console.log("🚀 등록 버튼 클릭됨");
+    if (!imageFile) {
+      alert("이미지를 선택해주세요.");
+      return;
+    } 
+
     const formDataToSend = new FormData();
     formDataToSend.append("admin", "admin@admin.com");
     formDataToSend.append("country", formData.country);
@@ -127,11 +132,13 @@ const AdminPage = () => {
     formDataToSend.append("image", imageFile); // File 객체
   
     try {
-      const res = await fetch("http://localhost:4000/survey", {
+      console.log("📡 FormData 전송 시작");
+      const res = await fetch("https://backend-culturelens.shop/survey", {
         method: "POST",
         body: formDataToSend,
       });
   
+      console.log("📥 응답 수신됨", res);
       if (res.ok) {
         alert("등록 완료!");
         setFormData({
@@ -159,7 +166,8 @@ const AdminPage = () => {
         <TitleWrapper>
           <SectionTitle>설문 등록</SectionTitle>
           <CreditInfo onClick={() => setShowPopup(!showPopup)}>
-            등록 가능한 설문 수 : {creditCount}개
+            등록 가능한 설문 수 : {creditCount}
+
           </CreditInfo>
         </TitleWrapper>
 
