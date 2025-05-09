@@ -98,7 +98,7 @@ const SurveyResultPage = () => {
   // 가짜 응답 수
   const fakeCounts = [18, 12, 5, 3, 22];
 
-  const options = (survey.caption || []).map((cap, i) => ({
+  const options = (survey.captions || []).map((cap, i) => ({
     text: cap,
     count: fakeCounts[i] || 0,
   }));
@@ -109,7 +109,7 @@ const SurveyResultPage = () => {
     <>
       <Header />
       <Container>
-        <Title>설문 결과 - {survey.title}</Title>
+        <Title>설문 결과 - {survey.entityName}</Title>
         <ResultBox>
           <Question>각 캡션별 결과는 아래와 같습니다.</Question>
 

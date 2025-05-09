@@ -21,7 +21,10 @@ import RankingMonthlyPage from "./pages/Ranking/RankingMonthlyPage";
 import Administrator from "./pages/Administrator/Administrator";
 import AdminSurveyDetail from "./pages/Administrator/AdminSurveyDetail";
 import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
-import SurveyStatisticsPage from "./pages/Administrator/SurveyStatisticsPage";
+import SurveyStatisticsPage from "./pages/Administrator/Statistics/SurveyStatisticsPage";
+import CountryStatisticsPage from "./pages/Administrator/Statistics/CountryStatisticsPage";
+import CategoryStatisticsPage from "./pages/Administrator/Statistics/CategoryStatisticsPage";
+import OverallStatisticsPage from "./pages/Administrator/Statistics/OverallStatisticsPage";
 
 class AppRoutes extends React.Component {
   render() {
@@ -65,6 +68,18 @@ class AppRoutes extends React.Component {
           <Route
             path="/administrator/statistics/:id"
             element={<SurveyStatisticsPage />}
+          />
+          <Route
+            path="/administrator/statistics/summary/country"
+            element={<CountryStatisticsPage />}
+          />
+          <Route
+            path="/administrator/statistics/summary/category"
+            element={<CategoryStatisticsPage />}
+          />
+          <Route
+            path="/administrator/statistics/summary/overall"
+            element={<OverallStatisticsPage />}
           />
         </Routes>
       </Router>
