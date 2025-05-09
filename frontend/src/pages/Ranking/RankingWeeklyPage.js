@@ -4,6 +4,8 @@ import koreaImage from '../../assets/img/Koreaprofile.png';
 import chinaImage from '../../assets/img/Chinaprofile.png';
 import japanImage from '../../assets/img/Japanprofile.png';
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const countryImages = {
   한국: koreaImage,
   중국: chinaImage,
