@@ -3,6 +3,7 @@ import React, { Component } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import LoginLogoImage from "../../assets/img/loginlogo.png";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function withRouter(Component) {
   return (props) => {
@@ -98,7 +99,7 @@ class Login extends Component {
 
 
     try {
-      const response = await fetch("http://localhost:4000/api/auth/login", {
+      const response = await fetch(`${BASE_URL}/survey`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 

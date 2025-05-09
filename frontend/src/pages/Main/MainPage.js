@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // Axios 추가
 import Header from "../../components/CommonHeader";
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const Container = styled.div`
   padding: 70px 20px 20px;
   font-family: Arial, sans-serif;
@@ -89,7 +89,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/survey");
+        const response = await axios.get(`${BASE_URL}/survey`);
         console.log("서버 응답:", response.data); // 응답 데이터 구조 확인
         setSurveyData(response.data);
       } catch (error) {

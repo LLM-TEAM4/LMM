@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
 
 // 백엔드 응답에 status 필드 추가해서 승인/거절/대기 구분되게
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
@@ -145,7 +145,7 @@ const AdminListPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const res = await fetch("http://localhost:4000/survey/posted", {
+        const res = await fetch("https://backend-culturelens.shop/survey/posted", {
           credentials: "include", // ✅ 세션 쿠키 포함
         });
         const data = await res.json();

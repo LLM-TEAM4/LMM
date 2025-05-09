@@ -10,6 +10,7 @@ import {
 } from "recharts";
 import MypageLayout from "../../../layouts/MypageLayout";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const Content = styled.div`
   flex: 1;
   padding: 20px;
@@ -129,7 +130,7 @@ const AdminDetailPage = () => {
   useEffect(() => {
     const fetchSurveyDetails = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/survey/${id}`);
+        const res = await fetch(`${BASE_URL}/survey/${id}`);
         const data = await res.json();
 
         const mockVotes = {

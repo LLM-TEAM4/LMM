@@ -6,7 +6,7 @@ import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
 
 const QUESTIONS_PER_SESSION = 5;
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
@@ -17,6 +17,7 @@ const SurveyStart = () => {
   const [shuffledOptions, setShuffledOptions] = useState([]);
   const [isSurveyComplete, setIsSurveyComplete] = useState(false);
 
+
   useEffect(() => {
     const shuffled = caption.map(() => {
       return [1, 2, 3, 4, 5].sort(() => Math.random() - 0.5);
@@ -25,7 +26,7 @@ const SurveyStart = () => {
 
     const fetchProgress = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/survey/${surveyId}/progress`, {
+        const res = await fetch(`${BASE_URL}/${surveyId}/progress`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -65,7 +66,7 @@ const SurveyStart = () => {
       
 
       try {
-        const res = await fetch(`http://localhost:4000/survey/${surveyId}/answer`, {
+        const res = await fetch(`${BASE_URL}/${surveyId}/answer`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

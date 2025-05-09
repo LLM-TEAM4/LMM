@@ -16,7 +16,7 @@ const RankingMonthlyPage = () => {
   const countries = ["한국", "중국", "일본"];
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/ranking/monthly")
+    fetch(`${BASE_URL}/api/ranking/monthly`)
       .then(res => res.json())
       .then(data => setRankingData(data))
       .catch(err => console.error("\u274c 랭킹 데이터 오류:", err));

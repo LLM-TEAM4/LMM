@@ -16,7 +16,7 @@ const RankingWeeklyPage = () => {
   const countries = ["한국", "중국", "일본"];
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/ranking/weekly")
+    fetch(`${BASE_URL}/api/ranking/weekly`)
       .then(res => res.json())
       .then(data => setRankingData(data))
       .catch(err => console.error("❌ 랭킹 데이터 오류:", err));

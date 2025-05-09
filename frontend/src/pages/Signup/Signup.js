@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../../assets/img/logo.png";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 // 전체 컨테이너
 const Container = styled.div`
   display: flex;

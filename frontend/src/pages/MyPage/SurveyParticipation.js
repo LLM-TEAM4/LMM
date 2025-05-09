@@ -5,13 +5,13 @@ import CommonHeader from "../../components/CommonHeader";
 import MypageLayout from "../../layouts/MypageLayout";
 
 const COLORS = ["#0088FE", "#FF8042"];
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SurveyParticipation = () => {
   const [responses, setResponses] = useState([]);
   const [surveys, setSurveys] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/survey/my", {
+    fetch(`${BASE_URL}/survey/my`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -19,7 +19,7 @@ const SurveyParticipation = () => {
         setResponses(data);
       }); 
 
-    fetch("http://localhost:4000/survey",{
+    fetch(`${BASE_URL}/survey`,{
       credentials: "include",
     })
       .then((res) => res.json())
@@ -30,8 +30,14 @@ const SurveyParticipation = () => {
   surveys.forEach((s) => surveyMap.set(s._id.toString(), s));
   
   const participatedSurveys = responses
-    .map((r) => surveyMap.get(r.surveyId._id.toString()))
-    .filter(Boolean);
+  .map((r) => {
+    if (r.surveyId && r.surveyId._id) {
+      return surveyMap.get(r.surveyId._id.toString());
+    }
+    return null;
+  })
+  .filter(Boolean);
+
 
   // ✅ 나라별 참여/미참여 차트 데이터 구성
   const countryGroups = {};

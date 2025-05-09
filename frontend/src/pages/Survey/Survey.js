@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import SurveypageLayout from "../../layouts/SurveypageLayout";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const Survey = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,7 +17,7 @@ const Survey = () => {
   const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
-    fetch("http://localhost:4000/survey", {
+    fetch(`${BASE_URL}/survey`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -31,7 +32,6 @@ const Survey = () => {
       selectedCategories.length === 0 || selectedCategories.includes(item.category);
 
     const titleMatch = item.title === completedTitle;
-    const approvedMatch = item.status === "approved"; // ✅ 이 부분 추가
     return (countryMatch && categoryMatch) || titleMatch;
   });
 

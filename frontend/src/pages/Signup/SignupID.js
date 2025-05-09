@@ -5,7 +5,7 @@ import LogoImage from "../../assets/img/logo.png";
 import { useNavigate } from "react-router-dom"; 
 // 회원가입하면 자동으로 프로필이미지 기본이미지로 설정정
 import DefaultProfile from "../../assets/img/profile.png";
-
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Container = styled.div`
   display: flex;
@@ -149,7 +149,7 @@ const SignupID = () => {
     });
   
     try {
-      const response = await fetch("http://localhost:4000/api/auth/signup", {
+      const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SurveyDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();

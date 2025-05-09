@@ -6,6 +6,7 @@ import { FaPencilAlt } from "react-icons/fa";
 import DefaultProfile from "../../assets/img/profile.png";
 import MypageLayout from "../../layouts/MypageLayout";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const InputField = styled.input`
   width: 200px;
   padding: 8px;
@@ -66,7 +67,7 @@ const MyPage = () => {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch("http://localhost:4000/api/auth/me", {
+      const res = await fetch(`${BASE_URL}/api/auth/me`, {
         credentials: "include",
       });
   

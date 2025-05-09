@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
@@ -103,7 +104,7 @@ const AdminPage = () => {
   const [userCredit, setUserCredit] = useState("");
   useEffect(() => {
     const fetchUser = async () => {
-      const res = await fetch("http://localhost:4000/api/auth/me", {
+      const res = await fetch(`${BASE_URL}/api/auth/me`, {
         credentials: "include",
       });
   
@@ -164,7 +165,7 @@ const AdminPage = () => {
 
     try {
       console.log("📡 FormData 전송 시작");
-      const res = await fetch("http://localhost:4000/survey", {
+      const res = await fetch("https://backend-culturelens.shop/survey", {
         method: "POST",
         body: formDataToSend,
         credentials: "include",
@@ -190,6 +191,7 @@ const AdminPage = () => {
     }
   };
 
+  
   return (
     <MypageLayout>
       <Content>
