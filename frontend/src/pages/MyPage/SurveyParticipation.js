@@ -11,29 +11,31 @@ const SurveyParticipation = () => {
   const [surveys, setSurveys] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/survey/my", {
-      credentials: "include",
-    })
+    fetch("http://localhost:4000/survey/my", { credentials: "include" })
       .then((res) => res.json())
-      .then((data) => {
-        setResponses(data);
-      }); 
+      .then((data) => setResponses(data));
 
-    fetch("http://localhost:4000/survey",{
-      credentials: "include",
-    })
+    fetch("http://localhost:4000/survey", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setSurveys(data));
   }, []);
 
   const surveyMap = new Map();
   surveys.forEach((s) => surveyMap.set(s._id.toString(), s));
-  
-  const participatedSurveys = responses
-    .map((r) => surveyMap.get(r.surveyId._id.toString()))
-    .filter(Boolean);
 
-  // ✅ 나라별 참여/미참여 차트 데이터 구성
+  // ✅ 중복 제거된 응답 목록
+  const uniqueResponsesMap = new Map();
+  responses
+  .filter((r) => r.surveyId && r.surveyId._id)  // ✅ Null 체크 추가
+  .forEach((r) => {
+    const key = r.surveyId._id.toString();
+    if (!uniqueResponsesMap.has(key)) {
+      uniqueResponsesMap.set(key, r);
+    }
+  });
+
+
+  // ✅ 나라별 참여/미참여 카운트 초기화
   const countryGroups = {};
   surveys.forEach((s) => {
     if (!countryGroups[s.country]) {
@@ -42,7 +44,8 @@ const SurveyParticipation = () => {
     countryGroups[s.country].total += 1;
   });
 
-  responses.forEach((r) => {
+  // ✅ 중복 없는 응답 기준으로 참여 카운트
+  [...uniqueResponsesMap.values()].forEach((r) => {
     const surveyKey = r.surveyId && r.surveyId._id && r.surveyId._id.toString();
     const s = surveyMap.get(surveyKey);
     if (s && countryGroups[s.country]) {
@@ -50,15 +53,13 @@ const SurveyParticipation = () => {
     }
   });
 
-  const countryCharts = Object.entries(countryGroups).map(([country, stats]) => {
-    return {
-      country,
-      data: [
-        { name: "응답", value: stats.participated },
-        { name: "미응답", value: stats.total - stats.participated },
-      ],
-    };
-  });
+  const countryCharts = Object.entries(countryGroups).map(([country, stats]) => ({
+    country,
+    data: [
+      { name: "응답", value: stats.participated },
+      { name: "미응답", value: stats.total - stats.participated },
+    ],
+  }));
 
   return (
     <MypageLayout>
@@ -72,12 +73,7 @@ const SurveyParticipation = () => {
               <ChartBox key={index}>
                 <h4>{chart.country}</h4>
                 <PieChart width={200} height={200}>
-                  <Pie
-                    data={chart.data}
-                    dataKey="value"
-                    outerRadius={80}
-                    label
-                  >
+                  <Pie data={chart.data} dataKey="value" outerRadius={80} label>
                     {chart.data.map((_, i) => (
                       <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
                     ))}
@@ -90,22 +86,20 @@ const SurveyParticipation = () => {
 
           <ParticipatedSection>
             <h3>📌 참여한 설문 목록</h3>
-            <p>총 참여 설문 수: {participatedSurveys.length}</p>
-            {participatedSurveys.length === 0 ? (
+            <p>총 참여 설문 수: {uniqueResponsesMap.size}</p>
+            {uniqueResponsesMap.size === 0 ? (
               <p>아직 참여한 설문이 없습니다.</p>
             ) : (
               <SurveyList>
-               {responses
-                .filter((r) => r.surveyId)  // ✅ Null 응답 제거
-                .map((r) => (
-                <SurveyCard key={r.surveyId._id}>
-                <img src={r.surveyId.imageUrl} alt={r.surveyId.entityName} />
-                <div>
-                  <strong>{`${r.surveyId.country} > ${r.surveyId.category} > ${r.surveyId.entityName}`}</strong>
-                  <p>응답한 문항 수: {r.answers.length}</p>
-                </div>
-                </SurveyCard>
-                  ))}
+                {[...uniqueResponsesMap.values()].map((r) => (
+                  <SurveyCard key={r.surveyId._id}>
+                    <img src={r.surveyId.imageUrl} alt={r.surveyId.entityName} />
+                    <div>
+                      <strong>{`${r.surveyId.country} > ${r.surveyId.category} > ${r.surveyId.entityName}`}</strong>
+                      <p>응답한 문항 수: {r.answers.length}</p>
+                    </div>
+                  </SurveyCard>
+                ))}
               </SurveyList>
             )}
           </ParticipatedSection>
@@ -117,6 +111,7 @@ const SurveyParticipation = () => {
 
 export default SurveyParticipation;
 
+// 스타일 정의
 const Wrapper = styled.div`
   padding: 20px;
 `;

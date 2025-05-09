@@ -19,8 +19,16 @@ const Survey = () => {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => setSurveys(data));
+      .then((data) => {
+        console.log("✅ 세션 유지 확인:", data);
+        setSurveys(Array.isArray(data) ? data : []);  // 배열 보장
+      })
+      .catch((err) => {
+        console.error("❌ 세션 조회 실패:", err);
+        setSurveys([]);
+      });
   }, []);
+  
 
   const filtered = surveys.filter((item) => {
     const countryMatch =
@@ -78,6 +86,7 @@ const Survey = () => {
 
       <SurveyContainer>
         {sorted.map((item) => {
+          console.log("네비게이션 직전 item._id:", item._id);
           const answered = item.progress || 0;
           const total = item.captions.length;
           const percent = Math.round((answered / total) * 100);
@@ -85,7 +94,9 @@ const Survey = () => {
             <SurveyItem
               key={item._id}
               ref={(el) => (surveyRefs.current[item.title] = el)}
-              onClick={() =>
+              onClick={() =>{
+                console.log("이동할 surveyId:", item._id);  
+
                 navigate(`/survey/${item.title}`, {
                   state: {
                     image: item.imageUrl,
@@ -93,10 +104,11 @@ const Survey = () => {
                     country: item.country,
                     category: item.category,
                     entityName: item.entityName,
-                    _id: item._id,
+                    surveyId: item._id,
+                    _id: item._id 
                   },
-                })
-              }
+                });
+              }}
             >
               <SurveyImage src={item.imageUrl} alt={item.title} />
               <SurveyContent>

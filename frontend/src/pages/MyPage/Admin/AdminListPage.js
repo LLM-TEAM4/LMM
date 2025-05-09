@@ -146,13 +146,22 @@ const AdminListPage = () => {
     const fetchSurveys = async () => {
       try {
         const res = await fetch("http://localhost:4000/survey/posted", {
-          credentials: "include", // ✅ 세션 쿠키 포함
+          credentials: "include",
         });
         const data = await res.json();
-        setSurveys(data);
-        setFilteredSurveys(data);
+  
+        if (Array.isArray(data)) {
+          setSurveys(data);
+          setFilteredSurveys(data);
+        } else {
+          console.error("서버에서 배열이 아닌 응답을 받음:", data);
+          setSurveys([]);
+          setFilteredSurveys([]);
+        }
       } catch (err) {
         console.error("❌ 설문 목록 불러오기 실패:", err);
+        setSurveys([]);
+        setFilteredSurveys([]);
       }
     };
   
