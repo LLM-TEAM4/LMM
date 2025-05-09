@@ -79,7 +79,7 @@ const Survey = () => {
       <SurveyContainer>
         {sorted.map((item) => {
           const answered = item.progress || 0;
-          const total = 20; // 고정값
+          const total = item.captions.length;
           const percent = Math.round((answered / total) * 100);
           return (
             <SurveyItem

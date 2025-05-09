@@ -11,12 +11,12 @@ const SurveyParticipation = () => {
   const [surveys, setSurveys] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:4000/api/auth/me", {
+    fetch("http://localhost:4000/survey/my", {
       credentials: "include",
     })
       .then((res) => res.json())
       .then((data) => {
-        setResponses(data.user.responses || []);
+        setResponses(data);
       }); 
 
     fetch("http://localhost:4000/survey",{
@@ -27,10 +27,10 @@ const SurveyParticipation = () => {
   }, []);
 
   const surveyMap = new Map();
-  surveys.forEach((s) => surveyMap.set(s._id, s));
-
+  surveys.forEach((s) => surveyMap.set(s._id.toString(), s));
+  
   const participatedSurveys = responses
-    .map((r) => surveyMap.get(r.surveyId))
+    .map((r) => surveyMap.get(r.surveyId._id.toString()))
     .filter(Boolean);
 
   // ✅ 나라별 참여/미참여 차트 데이터 구성
@@ -43,7 +43,8 @@ const SurveyParticipation = () => {
   });
 
   responses.forEach((r) => {
-    const s = surveyMap.get(r.surveyId);
+    const surveyKey = r.surveyId && r.surveyId._id && r.surveyId._id.toString();
+    const s = surveyMap.get(surveyKey);
     if (s && countryGroups[s.country]) {
       countryGroups[s.country].participated += 1;
     }
@@ -94,17 +95,17 @@ const SurveyParticipation = () => {
               <p>아직 참여한 설문이 없습니다.</p>
             ) : (
               <SurveyList>
-                {participatedSurveys.map((s) => (
-                  <SurveyCard key={s._id}>
-                    <img src={s.imageUrl} alt={s.entityName} />
-                    <div>
-                      <strong>{`${s.country} > ${s.category} > ${s.entityName}`}</strong>
-                      <p>
-                        응답한 문항 수: {responses.find((r) => r.surveyId === s._id)?.answers.length || 0}
-                      </p>
-                    </div>
-                  </SurveyCard>
-                ))}
+               {responses
+                .filter((r) => r.surveyId)  // ✅ Null 응답 제거
+                .map((r) => (
+                <SurveyCard key={r.surveyId._id}>
+                <img src={r.surveyId.imageUrl} alt={r.surveyId.entityName} />
+                <div>
+                  <strong>{`${r.surveyId.country} > ${r.surveyId.category} > ${r.surveyId.entityName}`}</strong>
+                  <p>응답한 문항 수: {r.answers.length}</p>
+                </div>
+                </SurveyCard>
+                  ))}
               </SurveyList>
             )}
           </ParticipatedSection>
