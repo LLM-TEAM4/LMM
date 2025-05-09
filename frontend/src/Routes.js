@@ -21,6 +21,7 @@ import RankingMonthlyPage from "./pages/Ranking/RankingMonthlyPage";
 import Administrator from "./pages/Administrator/Administrator";
 import AdminSurveyDetail from "./pages/Administrator/AdminSurveyDetail";
 import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
+import SurveyStatisticsPage from "./pages/Administrator/SurveyStatisticsPage";
 
 class AppRoutes extends React.Component {
   render() {
@@ -53,10 +54,17 @@ class AppRoutes extends React.Component {
           <Route path="/ranking/weekly" element={<RankingWeeklyPage />} />
           <Route path="/ranking/monthly" element={<RankingMonthlyPage />} />
           <Route path="/administrator" element={<Administrator />} />
-          <Route path="/administrator/detail" element={<AdminSurveyDetail />} />
+          <Route
+            path="/administrator/detail/:id"
+            element={<AdminSurveyDetail />}
+          />
           <Route
             path="/administrator/result/:id"
             element={<SurveyResultPage />}
+          />
+          <Route
+            path="/administrator/statistics/:id"
+            element={<SurveyStatisticsPage />}
           />
         </Routes>
       </Router>

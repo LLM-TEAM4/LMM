@@ -115,7 +115,7 @@ const SurveyResultPage = () => {
 
           {/* ✅ 총 참여자 수 표시 */}
           <p style={{ fontSize: "16px", marginBottom: "20px", color: "#555" }}>
-            총 참여자 수: <strong>{total}명</strong>
+            현재까지 참여자 수: <strong>{total}명</strong>
           </p>
 
           {options.map((option, index) => {
