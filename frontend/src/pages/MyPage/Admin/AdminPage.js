@@ -83,6 +83,20 @@ const Button = styled.button`
     background-color: #4a82d9;
   }
 `;
+const CaptionAddButton = styled.button`
+  background-color: #4a82d9;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-left: 10px;
+  &:hover {
+    background-color: #366ac3;
+  }
+`;
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -119,15 +133,14 @@ const AdminPage = () => {
     e.preventDefault();
     console.log("🚀 등록 버튼 클릭됨");
 
-
     const formDataToSend = new FormData();
     formDataToSend.append("admin", "admin@admin.com");
     formDataToSend.append("country", formData.country);
     formDataToSend.append("category", formData.category);
     formDataToSend.append("entityName", formData.entityName);
-    formDataToSend.append("captions", JSON.stringify(formData.captions)); // 배열은 문자열로 보내야 함
-    formDataToSend.append("image", imageFile); // File 객체
-  
+    formDataToSend.append("captions", JSON.stringify(formData.captions));
+    formDataToSend.append("image", imageFile);
+
     try {
       console.log("📡 FormData 전송 시작");
       const res = await fetch("http://localhost:4000/survey", {
@@ -135,7 +148,7 @@ const AdminPage = () => {
         body: formDataToSend,
         credentials: "include",
       });
-  
+
       console.log("📥 응답 수신됨", res);
       if (res.ok) {
         alert("등록 완료!");
@@ -145,7 +158,6 @@ const AdminPage = () => {
           entityName: "",
           captions: ["", "", "", "", ""],
         });
-        //setImageFile(null);
         window.dispatchEvent(new Event("surveyRegistered"));
       } else {
         const error = await res.json();
@@ -156,7 +168,6 @@ const AdminPage = () => {
       alert("서버 오류가 발생했습니다.");
     }
   };
-  
 
   return (
     <MypageLayout>
@@ -165,7 +176,6 @@ const AdminPage = () => {
           <SectionTitle>설문 등록</SectionTitle>
           <CreditInfo onClick={() => setShowPopup(!showPopup)}>
             등록 가능한 설문 수 : {creditCount}
-
           </CreditInfo>
         </TitleWrapper>
 
@@ -192,7 +202,8 @@ const AdminPage = () => {
                     value={option}
                     checked={formData.country === option}
                     onChange={handleChange}
-                  /> {option}
+                  />{" "}
+                  {option}
                 </label>
               ))}
             </RadioGroup>
@@ -209,7 +220,8 @@ const AdminPage = () => {
                     value={option}
                     checked={formData.category === option}
                     onChange={handleChange}
-                  /> {option}
+                  />{" "}
+                  {option}
                 </label>
               ))}
             </RadioGroup>
@@ -217,20 +229,37 @@ const AdminPage = () => {
 
           <FormGroup>
             <Label>고유명사</Label>
-            <Input name="entityName" value={formData.entityName} onChange={handleChange} />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>이미지 업로드</Label>
             <Input
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
+              name="entityName"
+              value={formData.entityName}
+              onChange={handleChange}
             />
           </FormGroup>
 
           <FormGroup>
-            <Label>캡션 5가지</Label>
+            <Label>이미지 업로드</Label>
+            <Input type="file" accept="image/*" onChange={handleImageChange} />
+          </FormGroup>
+
+          <FormGroup>
+            <Label style={{ display: "flex", alignItems: "center" }}>
+              캡션
+              <CaptionAddButton
+                type="button"
+                onClick={() => {
+                  if (formData.captions.length < 20) {
+                    setFormData({
+                      ...formData,
+                      captions: [...formData.captions, ""],
+                    });
+                  } else {
+                    alert("최대 20개의 캡션만 등록할 수 있습니다.");
+                  }
+                }}
+              >
+                + 추가
+              </CaptionAddButton>
+            </Label>
             {formData.captions.map((caption, index) => (
               <Input
                 key={index}

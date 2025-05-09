@@ -145,7 +145,9 @@ const AdminListPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const res = await fetch("https://backend-culturelens.shop/survey");
+        const res = await fetch("http://localhost:4000/survey/posted", {
+          credentials: "include", // ✅ 세션 쿠키 포함
+        });
         const data = await res.json();
         setSurveys(data);
         setFilteredSurveys(data);
@@ -153,9 +155,10 @@ const AdminListPage = () => {
         console.error("❌ 설문 목록 불러오기 실패:", err);
       }
     };
-
+  
     fetchSurveys();
   }, []);
+  
 
   const handleCountryChange = (e) => {
     setSelectedCountry(e.target.value);
@@ -165,6 +168,10 @@ const AdminListPage = () => {
     setSelectedCategory(e.target.value);
   };
 
+  const handleStatusChange = (e) => {
+    setSelectedStatus(e.target.value);
+  };
+
   useEffect(() => {
     let filtered = surveys;
 
@@ -180,22 +187,6 @@ const AdminListPage = () => {
       );
     }
 
-    setFilteredSurveys(filtered);
-  }, [selectedCountry, selectedCategory, surveys]);
-
-  useEffect(() => {
-    let filtered = surveys;
-
-    if (selectedCountry) {
-      filtered = filtered.filter(
-        (survey) => survey.country === selectedCountry
-      );
-    }
-    if (selectedCategory) {
-      filtered = filtered.filter(
-        (survey) => survey.category === selectedCategory
-      );
-    }
     if (selectedStatus) {
       filtered = filtered.filter((survey) => survey.status === selectedStatus);
     }
@@ -245,7 +236,7 @@ const AdminListPage = () => {
               <Select
                 id="status"
                 value={selectedStatus}
-                onChange={(e) => setSelectedStatus(e.target.value)}
+                onChange={handleStatusChange}
               >
                 <option value="">전체</option>
                 {statuses.map((status) => (
