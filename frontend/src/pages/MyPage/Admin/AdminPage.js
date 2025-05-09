@@ -118,10 +118,7 @@ const AdminPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("🚀 등록 버튼 클릭됨");
-    if (!imageFile) {
-      alert("이미지를 선택해주세요.");
-      return;
-    } 
+
 
     const formDataToSend = new FormData();
     formDataToSend.append("admin", "admin@admin.com");
@@ -129,11 +126,11 @@ const AdminPage = () => {
     formDataToSend.append("category", formData.category);
     formDataToSend.append("entityName", formData.entityName);
     formDataToSend.append("captions", JSON.stringify(formData.captions)); // 배열은 문자열로 보내야 함
-    formDataToSend.append("image", imageFile); // File 객체
+    //formDataToSend.append("image", imageFile); // File 객체
   
     try {
       console.log("📡 FormData 전송 시작");
-      const res = await fetch("https://backend-culturelens.shop/survey", {
+      const res = await fetch("http://localhost:4000/survey", {
         method: "POST",
         body: formDataToSend,
       });
@@ -147,7 +144,7 @@ const AdminPage = () => {
           entityName: "",
           captions: ["", "", "", "", ""],
         });
-        setImageFile(null);
+        //setImageFile(null);
         window.dispatchEvent(new Event("surveyRegistered"));
       } else {
         const error = await res.json();

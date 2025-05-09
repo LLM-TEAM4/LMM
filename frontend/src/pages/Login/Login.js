@@ -109,6 +109,7 @@ class Login extends Component {
 
       if (!response.ok) {
         const errorData = await response.json();
+        console.error("❌ 로그인 실패 응답:", errorData); // ✅ 이 줄 추가
         alert(errorData.message || "로그인 실패");
         return;
       }
