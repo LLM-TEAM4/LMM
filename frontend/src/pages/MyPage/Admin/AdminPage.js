@@ -126,13 +126,14 @@ const AdminPage = () => {
     formDataToSend.append("category", formData.category);
     formDataToSend.append("entityName", formData.entityName);
     formDataToSend.append("captions", JSON.stringify(formData.captions)); // 배열은 문자열로 보내야 함
-    //formDataToSend.append("image", imageFile); // File 객체
+    formDataToSend.append("image", imageFile); // File 객체
   
     try {
       console.log("📡 FormData 전송 시작");
       const res = await fetch("http://localhost:4000/survey", {
         method: "POST",
         body: formDataToSend,
+        credentials: "include",
       });
   
       console.log("📥 응답 수신됨", res);

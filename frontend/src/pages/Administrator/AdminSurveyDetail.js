@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
 import { useParams } from "react-router-dom";
 import surveyData from "../../data/SurveyData";
-import axios from "axios";
 
 const Container = styled.div`
   padding: 100px 40px 40px;

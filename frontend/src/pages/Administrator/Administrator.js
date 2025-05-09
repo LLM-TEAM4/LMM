@@ -3,6 +3,7 @@ import axios from "axios";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
+import surveyData from "../../data/SurveyData"
 
 const Container = styled.div`
   padding: 100px 20px 40px;
