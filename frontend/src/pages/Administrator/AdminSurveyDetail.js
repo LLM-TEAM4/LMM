@@ -2,6 +2,9 @@ import React from "react";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
+import { useParams } from "react-router-dom";
+import surveyData from "../../data/SurveyData";
+//import axios from "axios";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -107,19 +110,22 @@ const RejectButton = styled.button`
 `;
 
 const AdminSurveyDetail = () => {
+  const { id } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const data = location.state;
 
-  if (!data) {
+  const survey = surveyData[Number(id) - 1]; // index로 직접 접근
+
+  if (!survey) {
     return (
       <Container>
-        <p>설문 정보가 없습니다.</p>
+        <p>설문 데이터를 찾을 수 없습니다.</p>
       </Container>
     );
   }
 
-  const { country, category, entityName, imageUrl, captions, createdBy } = data;
+  const { country, category, title, image, caption, createdBy } = survey;
 
   const handleApprove = () => {
     alert("해당 설문이 승인되었습니다.");
@@ -127,9 +133,30 @@ const AdminSurveyDetail = () => {
   };
 
   const handleReject = () => {
-    alert("해당 설문이 거절되었습니다.");
-    navigate(-1); // 이전 페이지로 이동
+    const reason = prompt("거절 사유를 입력하세요:");
+    if (!reason) return; // 취소 또는 입력 안 하면 아무 작업 안 함
+
+    // 나중에 이 rejectReason을 백엔드에 전송하거나 상태로 넘길 수도 있음
+    alert(`거절 사유: ${reason}`);
+    navigate(-1); // 이전 화면으로 돌아가기
   };
+
+  // const handleReject = async () => {
+  //   const reason = prompt("거절 사유를 입력하세요:");
+  //   if (!reason) return;
+
+  //   try {
+  //     await axios.patch(`http://localhost:4000/survey/${id}/reject`, {
+  //       reason,
+  //     });
+
+  //     alert("거절되었습니다.");
+  //     navigate(-1);
+  //   } catch (err) {
+  //     console.error("거절 요청 실패:", err);
+  //     alert("거절 처리 중 오류가 발생했습니다.");
+  //   }
+  // };
 
   return (
     <>
@@ -153,15 +180,15 @@ const AdminSurveyDetail = () => {
           </InfoRow>
 
           <InfoRow>
-            <Label>고유명사</Label>
-            <Text>{entityName}</Text>
+            <Label>주제</Label>
+            <Text>{title}</Text>
           </InfoRow>
 
           <InfoRow
             style={{ flexDirection: "column", alignItems: "flex-start" }}
           >
             <Label style={{ marginBottom: "10px" }}>이미지</Label>
-            {imageUrl && <Image src={imageUrl} alt={entityName} />}
+            {image && <Image src={image} alt={title} />}
           </InfoRow>
 
           <InfoRow
@@ -169,7 +196,7 @@ const AdminSurveyDetail = () => {
           >
             <Label style={{ marginBottom: "10px" }}>캡션</Label>
             <CaptionList>
-              {(captions || []).map((cap, idx) => (
+              {(caption || []).map((cap, idx) => (
                 <CaptionItem key={idx}>{cap}</CaptionItem>
               ))}
             </CaptionList>

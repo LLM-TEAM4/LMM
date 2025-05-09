@@ -97,6 +97,20 @@ const ApproveButton = styled.button`
   }
 `;
 
+const StatisticsButton = styled.button`
+  padding: 8px 12px;
+  background-color: #ff9800; /* 주황색 */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+
+  &:hover {
+    background-color: #f57c00;
+  }
+`;
+
 const RejectButton = styled.button`
   padding: 8px 12px;
   background-color: #f44336;
@@ -117,11 +131,25 @@ const Administrator = () => {
       ...survey,
       id: index + 1,
       status: "pending",
+      rejectReason: "", // 거절 사유
     }))
   );
 
   const handleStatusChange = (id, status) => {
-    setSurveys((prev) => prev.map((s) => (s.id === id ? { ...s, status } : s)));
+    if (status === "rejected") {
+      const reason = prompt("거절 사유를 입력하세요:");
+      if (!reason) return; // 입력 없으면 취소
+
+      setSurveys((prev) =>
+        prev.map((s) =>
+          s.id === id ? { ...s, status, rejectReason: reason } : s
+        )
+      );
+    } else {
+      setSurveys((prev) =>
+        prev.map((s) => (s.id === id ? { ...s, status } : s))
+      );
+    }
   };
 
   const filteredSurveys = surveys.filter(
@@ -159,7 +187,7 @@ const Administrator = () => {
             <SurveyItem
               key={item.id}
               onClick={() =>
-                navigate("/administrator/detail", {
+                navigate(`/administrator/detail/${item.id}`, {
                   state: {
                     id: item.id,
                     country: item.country,
@@ -213,7 +241,18 @@ const Administrator = () => {
                   >
                     결과 보기
                   </ApproveButton>
+                  <StatisticsButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/administrator/statistics/${item.id}`);
+                    }}
+                  >
+                    통계 보기
+                  </StatisticsButton>
                 </ButtonGroup>
+              )}
+              {activeTab === "rejected" && item.rejectReason && (
+                <SurveyText>❌ 거절 사유: {item.rejectReason}</SurveyText>
               )}
             </SurveyItem>
           ))}
