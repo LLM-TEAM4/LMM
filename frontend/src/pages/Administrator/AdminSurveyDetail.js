@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import styled from "styled-components";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -121,14 +122,24 @@ const AdminSurveyDetail = () => {
 
   const { country, category, entityName, imageUrl, captions, createdBy } = data;
 
-  const handleApprove = () => {
-    alert("해당 설문이 승인되었습니다.");
-    navigate(-1); // 이전 페이지로 이동
+  const handleApprove = async () => {
+    try {
+      await axios.post(`/admin/surveys/${data.id}/approve`);
+      alert("해당 설문이 승인되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      alert("승인 중 오류가 발생했습니다.");
+    }
   };
 
-  const handleReject = () => {
-    alert("해당 설문이 거절되었습니다.");
-    navigate(-1); // 이전 페이지로 이동
+  const handleReject = async () => {
+    try {
+      await axios.post(`/admin/surveys/${data.id}/reject`);
+      alert("해당 설문이 거절되었습니다.");
+      navigate(-1);
+    } catch (err) {
+      alert("거절 중 오류가 발생했습니다.");
+    }
   };
 
   return (
