@@ -24,7 +24,7 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
 
 
   useEffect(() => {
-    fetch(`${BASE_URL}/${resolvedSurveyId}/progress`, {
+    fetch(`${BASE_URL}/survey/${resolvedSurveyId}/progress`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -44,7 +44,7 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
     });
   
     try {
-      const res = await fetch(`${BASE_URL}/${resolvedSurveyId}/answer`, {
+      const res = await fetch(`${BASE_URL}/survey/${resolvedSurveyId}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
