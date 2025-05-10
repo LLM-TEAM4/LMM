@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
-import axios from "axios"; // Axios 추가
+import axios from "axios";
 import Header from "../../components/CommonHeader";
 
 const Container = styled.div`
@@ -16,10 +16,11 @@ const RankingContainer = styled.div`
 `;
 
 const RankingBox = styled.div`
-  width: 45%;
+  width: 30%;
   padding: 10px;
   border: 1px solid #ddd;
   border-radius: 8px;
+  background: #fff;
 `;
 
 const SurveyContainer = styled.div`
@@ -84,102 +85,110 @@ const ContinueButton = styled.button`
 
 const MainPage = () => {
   const navigate = useNavigate();
-  const [surveyData, setSurveyData] = useState([]); // 설문 데이터를 저장할 상태
+  const [surveyData, setSurveyData] = useState([]);
+  const [rankingData, setRankingData] = useState({});
 
   useEffect(() => {
-    const fetchSurveys = async () => {
+    const fetchData = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/api/survey");
-        console.log("서버 응답:", response.data); // 응답 데이터 구조 확인
-        setSurveyData(response.data);
+        const surveyRes = await axios.get("http://localhost:4000/survey");
+        setSurveyData(surveyRes.data);
+
+        const countries = ["한국", "중국", "일본"];
+        const countryResults = {};
+
+        for (const country of countries) {
+          const res = await fetch(`http://localhost:4000/ranking/country/${country}`);
+          const data = await res.json();
+          countryResults[country] = data;
+        }
+
+        setRankingData(countryResults);
       } catch (error) {
-        console.error("설문 데이터를 불러오는 데 실패했습니다.", error);
+        console.error("데이터 불러오기 실패", error);
       }
     };
-  
-    fetchSurveys();
+
+    fetchData();
   }, []);
-  
 
-  const weeklyRanking = [
-    { id: 1, name: "user1", count: 18 },
-    { id: 2, name: "user2", count: 16 },
-    { id: 3, name: "user3", count: 10 },
-    { id: 4, name: "user4", count: 8 },
-    { id: 5, name: "user5", count: 2 },
-  ];
-
-  const monthlyRanking = [
-    { id: 1, name: "user1", count: 52 },
-    { id: 2, name: "user2", count: 46 },
-    { id: 3, name: "user3", count: 30 },
-    { id: 4, name: "user4", count: 28 },
-    { id: 5, name: "user5", count: 25 },
-  ];
-
-  const ongoingSurveys = surveyData.filter(
-    (item) => item.status && item.status.toLowerCase() === "approved"
-  );  return (
+  return (
     <Container>
       <Header />
 
-      {/* 주간 & 월간 순위 */}
       <RankingContainer>
-        <RankingBox>
-          <h3>🏆 주간 통합 순위</h3>
-          {weeklyRanking.map((user) => (
-            <p key={user.id}>
-              <strong>{user.id}</strong> {user.name} {user.count}회
-            </p>
-          ))}
-        </RankingBox>
-        <RankingBox>
-          <h3>🏆 월간 통합 순위</h3>
-          {monthlyRanking.map((user) => (
-            <p key={user.id}>
-              <strong>{user.id}</strong> {user.name} {user.count}회
-            </p>
-          ))}
-        </RankingBox>
-      </RankingContainer>
+  {["한국", "중국", "일본"].map((country) => (
+    <RankingBox key={country}>
+      <h3 style={{ textAlign: "center", marginBottom: "15px" }}>{country} 랭킹</h3>
+      {(rankingData[country] || []).length === 0 ? (
+        <p style={{ textAlign: "center" }}>데이터 없음</p>
+      ) : (
+        (rankingData[country] || []).slice(0, 5).map((user, index) => {
+          const rankIcons = ["🥇", "🥈", "🥉"];
+          const rankBadge = rankIcons[index] || `${index + 1}️⃣`;
 
-      {/* 진행 중인 설문 */}
+          return (
+            <div
+              key={index}
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: "8px",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+                padding: "12px",
+                marginBottom: "10px",
+                backgroundColor: "#fefefe",
+                boxShadow: "0 2px 5px rgba(0,0,0,0.05)",
+              }}
+            >
+              <span style={{ fontSize: "1.2rem" }}>{rankBadge}</span>
+              <div>
+                <strong>{user.nickname}</strong>
+                <div style={{ color: "#888", fontSize: "0.9rem" }}>
+                  응답 {user.count}회
+                </div>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </RankingBox>  
+  ))}
+</RankingContainer>  
+
+
       <SurveyContainer>
         <h3>🔍 진행중인 설문</h3>
-        {ongoingSurveys.length === 0 ? (
+        {surveyData.length === 0 ? (
           <div>승인된 설문이 없습니다.</div>
         ) : (
-          ongoingSurveys.map((item, index) => {
-            const goal = 20;
-            const responses = Array.isArray(item.responses) ? item.responses : [];
-            const percent = Math.round((responses.length / goal) * 100);
-          
-            return (
-              <SurveyItem
-                key={index}
-                onClick={() =>
-                  navigate(`/survey/${item._id}`, {
-                    state: {
-                      image: item.imageUrl,
-                      caption: item.captions?.[0] || "",
-                      path: `한국 > ${item.category} > ${item.entityName}`,
-                    },
-                  })
-                }
-              >
-                <SurveyImage src={item.imageUrl} alt={item.entityName} />
-                <SurveyContent>
-                  <strong>{item.entityName}</strong>
-                  <ProgressText>진행상황</ProgressText>
-                  <ProgressBar value={responses.length} max={goal} />
-                  <ProgressText>
-                    {percent}% ({responses.length} / {goal})
-                  </ProgressText>
-                </SurveyContent>
-                <ContinueButton>이어서 진행하기</ContinueButton>
-              </SurveyItem>
-            );
-          })          
+          surveyData.map((item, index) => (
+            <SurveyItem
+              key={index}
+              onClick={() =>
+                navigate(`/survey/${item._id}`, {
+                  state: {
+                    image: item.imageUrl,
+                    caption: item.captions?.[0] || "",
+                    path: `${item.country} > ${item.category} > ${item.entityName}`,
+                  },
+                })
+              }
+            >
+              <SurveyImage src={item.imageUrl} alt={item.entityName} />
+              <SurveyContent>
+                <strong>{item.entityName}</strong>
+                <ProgressText>진행상황</ProgressText>
+                <ProgressBar value={item.responses?.length || 0} max={20} />
+                <ProgressText>
+                  {item.responses?.length || 0} / 20
+                </ProgressText>
+              </SurveyContent>
+              <ContinueButton>이어서 진행하기</ContinueButton>
+            </SurveyItem>
+          ))
         )}
       </SurveyContainer>
     </Container>
