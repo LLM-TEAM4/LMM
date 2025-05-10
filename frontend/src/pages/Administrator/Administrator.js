@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Container = styled.div`
   padding: 100px 20px 40px;
@@ -169,7 +170,7 @@ const Administrator = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
-        const res = await fetch("http://localhost:4000/survey/all/posted", {
+        const res = await fetch(`${BASE_URL}/survey/all/posted`, {
           credentials: "include",
         });
         if (!res.ok) throw new Error("서버 응답 오류");
@@ -192,7 +193,7 @@ const Administrator = () => {
     }
 
     try {
-      const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
+      const res = await fetch(`${BASE_URL}/survey/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

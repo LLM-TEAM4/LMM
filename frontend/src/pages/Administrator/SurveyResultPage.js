@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -68,7 +69,7 @@ const SurveyResultPage = () => {
   useEffect(() => {
     const fetchSurvey = async () => {
       try {
-        const res = await fetch(`http://localhost:4000/survey/${id}`, { credentials: "include" });
+        const res = await fetch(`${BASE_URL}/${id}`, { credentials: "include" });
         const data = await res.json();
         console.log("서버 응답 데이터", data);
         setSurvey(data);

@@ -99,7 +99,7 @@ const MainPage = () => {
         const countryResults = {};
 
         for (const country of countries) {
-          const res = await fetch(`http://localhost:4000/ranking/country/${country}`);
+          const res = await fetch(`${BASE_URL}/${country}`);
           const data = await res.json();
           countryResults[country] = data;
         }
