@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+// 요소별, 캡션별 통계
+
+import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import MypageLayout from "../../layouts/MypageLayout";
+import Header from "../../../components/AdminHeader";
+import surveyData from "../../../data/SurveyData";
 
-const Content = styled.div`
-  flex: 1;
-  padding: 20px;
+const Container = styled.div`
+  padding: 100px 40px 40px;
   background-color: #ffffff;
-  border-radius: 15px;
-  font-size: 14px;
-  min-height: 600px;
+  min-height: 100vh;
 `;
 
 const TitleRow = styled.div`
@@ -75,13 +75,9 @@ const Image = styled.img`
   object-fit: cover;
 `;
 
-const COLORS = ["#8884d8", "#8dd1e1", "#82ca9d", "#ffc658", "#ff7f50"];
-
 const ExportWrapper = styled.div`
   position: relative;
   display: inline-block;
-  overflow: visible;
-  z-index: 1;
 `;
 
 const ExportButton = styled.button`
@@ -92,7 +88,6 @@ const ExportButton = styled.button`
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
-  z-index: 2;
 `;
 
 const Dropdown = styled.div`
@@ -115,33 +110,37 @@ const DropdownItem = styled.div`
   }
 `;
 
+const BackButton = styled.button`
+  padding: 10px 20px;
+  background-color: #649eff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 40px;
+
+  &:hover {
+    background-color: #4a82d9;
+  }
+`;
+
+const COLORS = ["#8884d8", "#8dd1e1", "#82ca9d", "#ffc658", "#ff7f50"];
+
 const SurveyStatisticsPage = () => {
   const { id } = useParams();
-  const [survey, setSurvey] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchSurveyDetails = async () => {
-      try {
-        const res = await fetch(`http://localhost:4000/survey/${id}`);
-        const data = await res.json();
+  const survey = surveyData.find((s) => String(s._id) === id);
 
-        const mockVotes = {
-          0: { 1: 5, 2: 3, 3: 2, 4: 1, 5: 0 },
-          1: { 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 },
-          2: { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 },
-          3: { 1: 1, 2: 1, 3: 2, 4: 2, 5: 10 },
-          4: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 0 },
-        };
-
-        setSurvey({ ...data, votes: mockVotes });
-      } catch (err) {
-        console.error("❌ 설문 세부 정보 불러오기 실패:", err);
-      }
-    };
-
-    fetchSurveyDetails();
-  }, [id]);
+  const votes = {
+    0: { 1: 5, 2: 3, 3: 2, 4: 1, 5: 0 },
+    1: { 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 },
+    2: { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 },
+    3: { 1: 1, 2: 1, 3: 2, 4: 2, 5: 10 },
+    4: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 0 },
+  };
 
   const formatChartData = (votesObj) => {
     return [1, 2, 3, 4, 5].map((score) => ({
@@ -158,7 +157,7 @@ const SurveyStatisticsPage = () => {
       category: survey.category,
       entityName: survey.entityName,
       captions: survey.captions,
-      votes: survey.votes,
+      votes,
     };
 
     if (type === "json") {
@@ -173,10 +172,10 @@ const SurveyStatisticsPage = () => {
     } else if (type === "csv") {
       let csv = "캡션,1점,2점,3점,4점,5점\n";
       survey.captions.forEach((caption, i) => {
-        const votes = survey.votes?.[i] || {};
-        csv += `${caption},${votes[1] || 0},${votes[2] || 0},${votes[3] || 0},${
-          votes[4] || 0
-        },${votes[5] || 0}\n`;
+        const v = votes[i] || {};
+        csv += `${caption},${v[1] || 0},${v[2] || 0},${v[3] || 0},${
+          v[4] || 0
+        },${v[5] || 0}\n`;
       });
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
@@ -189,11 +188,12 @@ const SurveyStatisticsPage = () => {
     setShowDropdown(false);
   };
 
-  if (!survey) return <p>설문 정보를 불러오는 중...</p>;
+  if (!survey) return <p>설문 정보를 찾을 수 없습니다.</p>;
 
   return (
-    <MypageLayout>
-      <Content>
+    <>
+      <Header />
+      <Container>
         <TitleRow>
           <SectionTitle>캡션별 응답 분포</SectionTitle>
           <ExportWrapper>
@@ -229,33 +229,39 @@ const SurveyStatisticsPage = () => {
         </DetailRow>
 
         <ChartGrid>
-          {survey.captions.map((caption, idx) => (
-            <ChartWrapper key={idx}>
-              <h4>캡션 {idx + 1}</h4>
-              <ResponsiveContainer width={180} height={180}>
-                <PieChart>
-                  <Pie
-                    data={formatChartData(survey.votes[idx])}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={70}
-                    label
-                  >
-                    {formatChartData(survey.votes[idx]).map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={COLORS[index % COLORS.length]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartWrapper>
-          ))}
+          {survey.captions.map((caption, idx) => {
+            const chartData = formatChartData(votes[idx]);
+            return (
+              <ChartWrapper key={idx}>
+                <h4>캡션 {idx + 1}</h4>
+                <ResponsiveContainer width={180} height={180}>
+                  <PieChart>
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={70}
+                      label
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={COLORS[index % COLORS.length]}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </ChartWrapper>
+            );
+          })}
         </ChartGrid>
-      </Content>
-    </MypageLayout>
+        <BackButton onClick={() => navigate(-1)}>
+          ← 목록으로 돌아가기
+        </BackButton>
+      </Container>
+    </>
   );
 };
 

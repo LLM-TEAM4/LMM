@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
@@ -100,6 +100,27 @@ const CaptionAddButton = styled.button`
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const [userCredit, setUserCredit] = useState("");
+  useEffect(() => {
+    const fetchUser = async () => {
+      const res = await fetch("http://localhost:4000/api/auth/me", {
+        credentials: "include",
+      });
+  
+      if (res.status === 401) {
+        navigate("/login");
+        return;
+      }
+
+      const data = await res.json();
+      if (data && data.user) {
+        const name = data.user.userCredit || data.user.id;
+        setUserCredit(data.user.credit);
+      }
+    };
+  
+    fetchUser();
+  }, []);
 
   const [formData, setFormData] = useState({
     country: "",
@@ -175,7 +196,7 @@ const AdminPage = () => {
         <TitleWrapper>
           <SectionTitle>설문 등록</SectionTitle>
           <CreditInfo onClick={() => setShowPopup(!showPopup)}>
-            등록 가능한 설문 수 : {creditCount}
+            등록 가능한 설문 수 : {userCredit}
           </CreditInfo>
         </TitleWrapper>
 

@@ -115,7 +115,7 @@ const AdminSurveyDetail = () => {
   const navigate = useNavigate();
   const data = location.state;
 
-  const survey = surveyData[Number(id) - 1]; // index로 직접 접근
+  const survey = surveyData.find((item) => String(item._id) === id);
 
   if (!survey) {
     return (
@@ -125,11 +125,12 @@ const AdminSurveyDetail = () => {
     );
   }
 
-  const { country, category, title, image, caption, createdBy } = survey;
+  const { country, category, entityName, imageUrl, captions, admin, _id } =
+    survey;
 
   const handleApprove = async () => {
     try {
-      await axios.post(`/admin/surveys/${data.id}/approve`);
+      await axios.post(`/admin/surveys/${_id}/approve`);
       alert("해당 설문이 승인되었습니다.");
       navigate(-1);
     } catch (err) {
@@ -142,14 +143,13 @@ const AdminSurveyDetail = () => {
     if (!reason) return;
 
     try {
-      await axios.patch(`/admin/surveys/${id}/reject`, { reason });
+      await axios.patch(`/admin/surveys/${_id}/reject`, { reason });
       alert("해당 설문이 거절되었습니다.");
       navigate(-1);
     } catch (err) {
       alert("거절 중 오류가 발생했습니다.");
     }
   };
-
 
   return (
     <>
@@ -159,7 +159,7 @@ const AdminSurveyDetail = () => {
         <InfoBox>
           <InfoRow>
             <Label>등록자</Label>
-            <Text>{createdBy}</Text>
+            <Text>{admin}</Text>
           </InfoRow>
 
           <InfoRow>
@@ -174,14 +174,14 @@ const AdminSurveyDetail = () => {
 
           <InfoRow>
             <Label>주제</Label>
-            <Text>{title}</Text>
+            <Text>{entityName}</Text>
           </InfoRow>
 
           <InfoRow
             style={{ flexDirection: "column", alignItems: "flex-start" }}
           >
             <Label style={{ marginBottom: "10px" }}>이미지</Label>
-            {image && <Image src={image} alt={title} />}
+            {imageUrl && <Image src={imageUrl} alt={entityName} />}
           </InfoRow>
 
           <InfoRow
@@ -189,7 +189,7 @@ const AdminSurveyDetail = () => {
           >
             <Label style={{ marginBottom: "10px" }}>캡션</Label>
             <CaptionList>
-              {(caption || []).map((cap, idx) => (
+              {(captions || []).map((cap, idx) => (
                 <CaptionItem key={idx}>{cap}</CaptionItem>
               ))}
             </CaptionList>
