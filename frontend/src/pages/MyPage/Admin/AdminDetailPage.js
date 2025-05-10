@@ -130,26 +130,21 @@ const AdminDetailPage = () => {
   useEffect(() => {
     const fetchSurveyDetails = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/survey/${id}`);
+
+        const res = await fetch(`${BASE_URL}/survey/${id}`, {
+          credentials: "include",
+        });
         const data = await res.json();
-
-        const mockVotes = {
-          0: { 1: 5, 2: 3, 3: 2, 4: 1, 5: 0 },
-          1: { 1: 2, 2: 3, 3: 4, 4: 5, 5: 6 },
-          2: { 1: 0, 2: 1, 3: 2, 4: 3, 5: 4 },
-          3: { 1: 1, 2: 1, 3: 2, 4: 2, 5: 10 },
-          4: { 1: 3, 2: 2, 3: 1, 4: 1, 5: 0 },
-        };
-
-        setSurvey({ ...data, votes: mockVotes });
+  
+        setSurvey(data);  // ✅ 실제 백엔드 데이터 그대로 세팅
       } catch (err) {
         console.error("❌ 설문 세부 정보 불러오기 실패:", err);
       }
     };
-
+  
     fetchSurveyDetails();
   }, [id]);
-
+  
   const formatChartData = (votesObj) => {
     return [1, 2, 3, 4, 5].map((score) => ({
       name: `${score}점`,
@@ -230,27 +225,28 @@ const AdminDetailPage = () => {
           </TextBlock>
         </DetailRow>
         <ChartGrid>
-          {survey.captions.map((caption, idx) => (
-            <ChartWrapper key={idx}>
-              <h4>캡션 {idx + 1}</h4>
-              <ResponsiveContainer width={180} height={180}>
-                <PieChart>
-                  <Pie
-                    data={formatChartData(survey.votes[idx])}
-                    dataKey="value"
-                    nameKey="name"
-                    outerRadius={70}
-                    label
-                  >
-                    {formatChartData(survey.votes[idx]).map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </ChartWrapper>
+        {survey.captions.map((caption, idx) => (
+  <ChartWrapper key={idx}>
+    <h4>캡션 {idx + 1}</h4>
+    <ResponsiveContainer width={180} height={180}>
+      <PieChart>
+        <Pie
+          data={formatChartData(survey.votes[idx])}
+          dataKey="value"
+          nameKey="name"
+          outerRadius={70}
+          label
+        >
+          {formatChartData(survey.votes[idx]).map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
           ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
+    </ResponsiveContainer>
+  </ChartWrapper>
+))}
+
         </ChartGrid>
       </Content>
     </MypageLayout>

@@ -18,11 +18,24 @@ const RankingWeeklyPage = () => {
   const countries = ["한국", "중국", "일본"];
 
   useEffect(() => {
-    fetch(`${BASE_URL}/api/ranking/weekly`)
-      .then(res => res.json())
-      .then(data => setRankingData(data))
-      .catch(err => console.error("❌ 랭킹 데이터 오류:", err));
+    const fetchCountryRankings = async () => {
+      try {
+        const countries = ["한국", "중국", "일본"];
+        const countryResults = {};
+        for (const country of countries) {
+          const res = await fetch(`${BASE_URL}/api/ranking/weekly`);
+          const data = await res.json();
+          countryResults[country] = data;
+        }
+        setRankingData(countryResults);
+      } catch (error) {
+        console.error("랭킹 데이터 불러오기 실패", error);
+      }
+    };
+  
+    fetchCountryRankings();
   }, []);
+  
 
   const styles = {
     container: {

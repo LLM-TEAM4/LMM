@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../assets/img/logo.png";
 
@@ -31,12 +31,31 @@ const LogoImageStyled = styled.img`
   height: 35px;
 `;
 
+// ✅ 일반 사용자와 동일한 스타일
+const LoginButton = styled(NavLink)`
+  padding: 10px 20px;
+  border: 1px solid #68a0f4;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 16px;
+  color: #000;
+  background-color: white;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #f0f6ff;
+  }
+`;
+
 const AdminHeader = () => {
+  const navigate = useNavigate();
+
   return (
     <HeaderContainer>
-      <LogoWrapper>
+      <LogoWrapper to="/">
         <LogoImageStyled src={LogoImage} alt="로고" />
       </LogoWrapper>
+      <LoginButton to="/login">👤</LoginButton>
     </HeaderContainer>
   );
 };

@@ -3,8 +3,10 @@ import styled from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import MypageLayout from "../../../layouts/MypageLayout";
 
+
 // 백엔드 응답에 status 필드 추가해서 승인/거절/대기 구분되게
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const SectionTitle = styled.h2`
   font-size: 18px;
   font-weight: bold;
@@ -23,7 +25,7 @@ const Content = styled.div`
 
 const SurveyGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr); // 2개 고정
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-top: 20px;
 
@@ -145,46 +147,44 @@ const AdminListPage = () => {
   useEffect(() => {
     const fetchSurveys = async () => {
       try {
+
         const res = await fetch("https://backend-culturelens.shop/survey/posted", {
-          credentials: "include", // ✅ 세션 쿠키 포함
+          credentials: "include",
+
         });
         const data = await res.json();
-        setSurveys(data);
-        setFilteredSurveys(data);
+
+        if (Array.isArray(data)) {
+          setSurveys(data);
+          setFilteredSurveys(data);
+        } else {
+          console.error("서버에서 배열이 아닌 응답을 받음:", data);
+          setSurveys([]);
+          setFilteredSurveys([]);
+        }
       } catch (err) {
         console.error("❌ 설문 목록 불러오기 실패:", err);
+        setSurveys([]);
+        setFilteredSurveys([]);
       }
     };
-  
+
     fetchSurveys();
   }, []);
-  
 
-  const handleCountryChange = (e) => {
-    setSelectedCountry(e.target.value);
-  };
-
-  const handleCategoryChange = (e) => {
-    setSelectedCategory(e.target.value);
-  };
-
-  const handleStatusChange = (e) => {
-    setSelectedStatus(e.target.value);
-  };
+  const handleCountryChange = (e) => setSelectedCountry(e.target.value);
+  const handleCategoryChange = (e) => setSelectedCategory(e.target.value);
+  const handleStatusChange = (e) => setSelectedStatus(e.target.value);
 
   useEffect(() => {
     let filtered = surveys;
 
     if (selectedCountry) {
-      filtered = filtered.filter(
-        (survey) => survey.country === selectedCountry
-      );
+      filtered = filtered.filter((survey) => survey.country === selectedCountry);
     }
 
     if (selectedCategory) {
-      filtered = filtered.filter(
-        (survey) => survey.category === selectedCategory
-      );
+      filtered = filtered.filter((survey) => survey.category === selectedCategory);
     }
 
     if (selectedStatus) {
@@ -202,50 +202,31 @@ const AdminListPage = () => {
           <SelectWrapper>
             <div>
               <label htmlFor="country">나라 선택:</label>
-              <Select
-                id="country"
-                value={selectedCountry}
-                onChange={handleCountryChange}
-              >
+              <Select id="country" value={selectedCountry} onChange={handleCountryChange}>
                 <option value="">전체</option>
                 {countries.map((country) => (
-                  <option key={country} value={country}>
-                    {country}
-                  </option>
+                  <option key={country} value={country}>{country}</option>
                 ))}
               </Select>
             </div>
 
             <div>
               <label htmlFor="category">카테고리 선택:</label>
-              <Select
-                id="category"
-                value={selectedCategory}
-                onChange={handleCategoryChange}
-              >
+              <Select id="category" value={selectedCategory} onChange={handleCategoryChange}>
                 <option value="">전체</option>
                 {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
+                  <option key={category} value={category}>{category}</option>
                 ))}
               </Select>
             </div>
+
             <div>
               <label htmlFor="status">승인 상태:</label>
-              <Select
-                id="status"
-                value={selectedStatus}
-                onChange={handleStatusChange}
-              >
+              <Select id="status" value={selectedStatus} onChange={handleStatusChange}>
                 <option value="">전체</option>
                 {statuses.map((status) => (
                   <option key={status} value={status}>
-                    {status === "approved"
-                      ? "승인됨"
-                      : status === "pending"
-                      ? "대기 중"
-                      : "거절됨"}
+                    {status === "approved" ? "승인됨" : status === "pending" ? "대기 중" : "거절됨"}
                   </option>
                 ))}
               </Select>
@@ -257,23 +238,39 @@ const AdminListPage = () => {
           <p>등록한 설문조사가 없습니다.</p>
         ) : (
           <SurveyGrid>
-            {filteredSurveys.map(
-              ({ _id, country, category, entityName, imageUrl }) => (
-                <SurveyCard key={_id}>
+            {filteredSurveys.map(({ _id, country, category, entityName, imageUrl, status, responseUserCount }) => (
+              <SurveyCard key={_id}>
+
+                {status === "rejected" ? (
+                  <div style={{ cursor: "not-allowed", opacity: 0.5 }}>
+                    <Image src={imageUrl} alt={category} />
+                    <CardInfo>
+                      <EntityName>{entityName}</EntityName>
+                      <MetaInfo>{`${country}, ${category}`}</MetaInfo>
+                      <MetaInfo>❌ 거절됨</MetaInfo>
+                    </CardInfo>
+                    
+                  </div>
+                ) : (
                   <StyledLink to={`/mypage/survey-creation-detail/${_id}`}>
                     <Image src={imageUrl} alt={category} />
                     <CardInfo>
                       <EntityName>{entityName}</EntityName>
                       <MetaInfo>{`${country}, ${category}`}</MetaInfo>
+                      <MetaInfo>
+                        {status === "approved" ? "✅ 승인됨" : "🕒 승인 대기 중"}
+                      </MetaInfo>
                     </CardInfo>
+
+                    {status === "approved" && (
                     <ResponseButton>
-                      <span>58명</span>
+                      <span>{responseUserCount}명</span>
                       <span>응답 보러가기</span>
-                    </ResponseButton>
+                    </ResponseButton>)}
                   </StyledLink>
-                </SurveyCard>
-              )
-            )}
+                )}
+              </SurveyCard>
+            ))}
           </SurveyGrid>
         )}
       </Content>
