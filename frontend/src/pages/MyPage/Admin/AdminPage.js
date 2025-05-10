@@ -172,7 +172,8 @@ const AdminPage = () => {
 
       console.log("📥 응답 수신됨", res);
       if (res.ok) {
-        alert("등록 완료!");
+        console.log("✅ 승인 심사를 받으러 이동합니다.");  
+        alert("등록 완료! 승인 심사를 받으러 이동합니다.");
         setFormData({
           country: "",
           category: "",

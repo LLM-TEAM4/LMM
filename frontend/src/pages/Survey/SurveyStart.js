@@ -8,17 +8,21 @@ const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  const { image, caption = [], path, surveyId } = location.state || {};
+  //const { image, caption = [], path, surveyId } = location.state || {};
 
-  console.log("📌 location.state: ", location.state);
-  console.log("📌 surveyId: ", surveyId);
+  const state = location.state || {};
+console.log("📌 Full state:", state);
+
+const { image, caption = [], path, surveyId, _id } = state;
+const resolvedSurveyId = surveyId || _id;
+console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
 
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [existingAnswers, setExistingAnswers] = useState([]);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/survey/${surveyId}/progress`, {
+    fetch(`http://localhost:4000/survey/${resolvedSurveyId}/progress`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -27,7 +31,7 @@ const SurveyStart = () => {
         setCurrentIndex(data.progress || 0);
       })
       .catch(console.error);
-  }, [surveyId]);
+  }, [resolvedSurveyId]);
 
   const handleSave = async () => {
     const combinedAnswers = [...existingAnswers];
@@ -38,7 +42,7 @@ const SurveyStart = () => {
     });
   
     try {
-      const res = await fetch(`http://localhost:4000/survey/${surveyId}/answer`, {
+      const res = await fetch(`http://localhost:4000/survey/${resolvedSurveyId}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

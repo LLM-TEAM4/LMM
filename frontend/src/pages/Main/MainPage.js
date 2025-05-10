@@ -91,7 +91,7 @@ const MainPage = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const surveyRes = await axios.get("http://localhost:4000/survey");
+        const surveyRes = await axios.get("http://localhost:4000/survey", { withCredentials: true });
         setSurveyData(surveyRes.data);
 
         const countries = ["한국", "중국", "일본"];
@@ -181,10 +181,8 @@ const MainPage = () => {
               <SurveyContent>
                 <strong>{item.entityName}</strong>
                 <ProgressText>진행상황</ProgressText>
-                <ProgressBar value={item.responses?.length || 0} max={20} />
-                <ProgressText>
-                  {item.responses?.length || 0} / 20
-                </ProgressText>
+                <ProgressBar value={item.progress} max={item.total} />
+                <ProgressText>{item.progress} / {item.total}</ProgressText>
               </SurveyContent>
               <ContinueButton>이어서 진행하기</ContinueButton>
             </SurveyItem>
