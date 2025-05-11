@@ -100,7 +100,48 @@ const Administrator = () => {
   // 탭 변경 시 URL 쿼리스트링도 함께 변경
   const changeTab = (tab) => {
     setActiveTab(tab);
-    navigate(`/administrator?tab=${tab}`);
+    navigate(`/administrator?tab=${tab}`);}
+  useEffect(() => {
+    const fetchSurveys = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/survey/all/posted", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("서버 응답 오류");
+        const data = await res.json();
+        setSurveys(data);
+      } catch (err) {
+        console.error("❌ 관리자 설문 불러오기 실패:", err);
+        alert("설문 데이터를 불러오는 데 실패했습니다.");
+      }
+    };
+
+    fetchSurveys();
+  }, []);
+
+  const handleStatusChange = async (id, status) => {
+    let reason = "";
+    if (status === "rejected") {
+      reason = prompt("거절 사유를 입력하세요:");
+      if (!reason) return;
+    }
+
+    try {
+      const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status, rejectReason: reason }),
+      });
+
+      if (!res.ok) throw new Error("상태 변경 실패");
+
+      const updatedSurvey = await res.json();
+      setSurveys((prev) => prev.map((s) => (s._id === id ? updatedSurvey : s)));
+    } catch (err) {
+      console.error("❌ 상태 변경 오류:", err);
+      alert("설문 상태 변경에 실패했습니다.");
+    }
   };
 
   const [surveys, setSurveys] = useState([]);
@@ -119,20 +160,7 @@ useEffect(() => {
   fetchSurveys();
 }, []);
 
-const handleStatusChange = async (id, status) => {
-  try {
-    const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify({ status }),
-    });
-    const updatedSurvey = await res.json();
-    setSurveys((prev) => prev.map((s) => (s._id === id ? updatedSurvey : s)));
-  } catch (err) {
-    console.error("❌ 상태 변경 오류:", err);
-  }
-};
+
 
 const filteredSurveys = surveys.filter((s) => s.status === activeTab);
 
