@@ -23,7 +23,7 @@ const RankingMonthlyPage = () => {
         const countries = ["한국", "중국", "일본"];
         const countryResults = {};
         for (const country of countries) {
-          const res = await fetch(`${BASE_URL}/api/ranking/monthly`);
+          const res = await fetch(`${BASE_URL}/ranking/monthly`);
           const data = await res.json();
           countryResults[country] = data;
         }
