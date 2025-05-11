@@ -78,6 +78,16 @@ const BackButton = styled.button`
   }
 `;
 
+const ExportButton = styled.button`
+  background-color: #4a82d9;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+`;
+
 const OverallStatisticsPage = () => {
   const countryStats = {};
   const navigate = useNavigate();
@@ -111,6 +121,32 @@ const OverallStatisticsPage = () => {
     if (value < 3.5) return "#ff9800";
     return "#4caf50";
   };
+  const exportData = (type) => {
+    const data = sorted; // 국가별 평균 점수 정렬된 배열
+
+    if (type === "json") {
+      const blob = new Blob([JSON.stringify(data, null, 2)], {
+        type: "application/json",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "overall_statistics.json";
+      link.click();
+    } else if (type === "csv") {
+      let csv = "국가,평균 점수\n";
+      data.forEach((item) => {
+        csv += `${item.country},${item.average}\n`;
+      });
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "overall_statistics.csv";
+      link.click();
+    }
+  };
 
   return (
     <>
@@ -130,6 +166,18 @@ const OverallStatisticsPage = () => {
             <strong>{sorted[0]?.average}</strong>점
           </HighlightText>
         </HighlightBox>
+
+        <div style={{ marginBottom: "30px", textAlign: "right" }}>
+          <ExportButton onClick={() => exportData("csv")}>
+            CSV로 내보내기
+          </ExportButton>
+          <ExportButton
+            onClick={() => exportData("json")}
+            style={{ marginLeft: "10px" }}
+          >
+            JSON으로 내보내기
+          </ExportButton>
+        </div>
 
         {/* 국가별 평균 응답 점수 그래프 */}
         <ChartWrapper>
