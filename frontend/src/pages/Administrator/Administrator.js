@@ -202,9 +202,7 @@ const Administrator = () => {
       if (!res.ok) throw new Error("상태 변경 실패");
 
       const updatedSurvey = await res.json();
-      setSurveys((prev) =>
-        prev.map((s) => (s._id === id ? updatedSurvey : s))
-      );
+      setSurveys((prev) => prev.map((s) => (s._id === id ? updatedSurvey : s)));
     } catch (err) {
       console.error("❌ 상태 변경 오류:", err);
       alert("설문 상태 변경에 실패했습니다.");
@@ -220,29 +218,52 @@ const Administrator = () => {
         <Title>관리자 설문 승인 페이지</Title>
         <TabsContainer>
           <TabLeft>
-            <Tab $active={activeTab === "approved"} onClick={() => setActiveTab("approved")}>
+            <Tab
+              $active={activeTab === "approved"}
+              onClick={() => setActiveTab("approved")}
+            >
               승인됨
             </Tab>
-            <Tab $active={activeTab === "rejected"} onClick={() => setActiveTab("rejected")}>
+            <Tab
+              $active={activeTab === "rejected"}
+              onClick={() => setActiveTab("rejected")}
+            >
               거절됨
             </Tab>
-            <Tab $active={activeTab === "pending"} onClick={() => setActiveTab("pending")}>
+            <Tab
+              $active={activeTab === "pending"}
+              onClick={() => setActiveTab("pending")}
+            >
               대기 중
             </Tab>
           </TabLeft>
           <DropdownWrapper>
-            <StatisticsButton onClick={() => setOpenMenuId(openMenuId ? null : "global")}>
+            <StatisticsButton
+              onClick={() => setOpenMenuId(openMenuId ? null : "global")}
+            >
               📊 통합 통계 보기 ⬇
             </StatisticsButton>
             {openMenuId === "global" && (
               <DropdownMenu>
-                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/country")}>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/country")
+                  }
+                >
                   ▶ 국가별 통계
                 </DropdownButton>
-                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/category")}>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/category")
+                  }
+                >
                   ▶ 카테고리별 통계
                 </DropdownButton>
-                <DropdownButton onClick={() => navigate("/administrator/statistics/summary/overall")}>
+                <DropdownButton
+                  onClick={() =>
+                    navigate("/administrator/statistics/summary/overall")
+                  }
+                >
                   ▶ 전체 설문 요약
                 </DropdownButton>
               </DropdownMenu>
@@ -254,7 +275,9 @@ const Administrator = () => {
           {filteredSurveys.map((item) => (
             <SurveyItem
               key={item._id}
-              onClick={() => navigate(`/administrator/detail/${item._id}`, { state: item })}
+              onClick={() =>
+                navigate(`/administrator/detail/${item._id}`, { state: item })
+              }
             >
               <SurveyImage src={item.imageUrl} alt={item.entityName} />
               <SurveyContent>
@@ -270,29 +293,26 @@ const Administrator = () => {
                 )}
               </SurveyContent>
 
-              {activeTab === "pending" && (
-                <ButtonGroup>
-                  <ApproveButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStatusChange(item._id, "approved");
-                    }}
-                  >
-                    승인
-                  </ApproveButton>
-                  <RejectButton
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleStatusChange(item._id, "rejected");
-                    }}
-                  >
-                    거절
-                  </RejectButton>
-                </ButtonGroup>
-              )}
+              <ButtonGroup>
+                <select
+                  value={item.status}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => handleStatusChange(item._id, e.target.value)}
+                  style={{
+                    padding: "8px",
+                    borderRadius: "6px",
+                    border: "1px solid #ccc",
+                    marginRight: "10px",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="pending">승인 대기</option>
+                  <option value="approved">승인</option>
+                  <option value="rejected">거절</option>
+                </select>
 
-              {activeTab === "approved" && (
-                <ButtonGroup>
+                {/* 결과 보기 버튼은 approved 상태일 때만 유지 */}
+                {item.status === "approved" && (
                   <ApproveButton
                     onClick={(e) => {
                       e.stopPropagation();
@@ -301,8 +321,8 @@ const Administrator = () => {
                   >
                     결과 보기
                   </ApproveButton>
-                </ButtonGroup>
-              )}
+                )}
+              </ButtonGroup>
             </SurveyItem>
           ))}
           {filteredSurveys.length === 0 && <p>표시할 설문이 없습니다.</p>}
