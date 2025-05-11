@@ -15,6 +15,10 @@ const Survey = () => {
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [sortOrder, setSortOrder] = useState("asc");
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+
   useEffect(() => {
     fetch("http://localhost:4000/survey", {
       credentials: "include",
@@ -29,6 +33,21 @@ const Survey = () => {
         setSurveys([]);
       });
   }, []);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/userinfo", { credentials: "include" });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkLogin();
+  }, []);
+  
   
 
   const filtered = surveys.filter((item) => {
@@ -56,6 +75,11 @@ const Survey = () => {
       surveyRefs.current[completedTitle].scrollIntoView({ behavior: "smooth", block: "center" });
     }
   }, [completedTitle, sorted]);
+
+
+  if (isLoading) {
+    return <p>로딩 중...</p>;
+  }
 
   return (
     <SurveypageLayout
@@ -95,35 +119,77 @@ const Survey = () => {
             <SurveyItem
               key={item._id}
               ref={(el) => (surveyRefs.current[item.title] = el)}
-              onClick={() =>{
-                console.log("이동할 surveyId:", item._id);  
-
-                navigate(`/survey/${item.title}`, {
-                  state: {
-                    image: item.imageUrl,
-                    caption: item.captions,
-                    country: item.country,
-                    category: item.category,
-                    entityName: item.entityName,
-                    surveyId: item._id,
-                    _id: item._id 
-                  },
-                });
+              
+              onClick={() => {
+                if (isLoggedIn) {
+                  console.log("이동할 surveyId:", item._id);
+                  navigate(`/survey/${item.title}`, {
+                    state: {
+                      image: item.imageUrl,
+                      caption: item.captions,
+                      country: item.country,
+                      category: item.category,
+                      entityName: item.entityName,
+                      surveyId: item._id,
+                      _id: item._id,
+                    },
+                  });
+                } else {
+                  navigate("/login");
+                }
               }}
+              
             >
               <SurveyImage src={item.imageUrl} alt={item.title} />
+              
               <SurveyContent>
-                <strong style={{ fontSize: "17px" }}>
-                  {`${item.country} > ${item.category} > ${item.entityName}`}
-                </strong>
-                <ProgressBar value={answered} max={total} />
-                <ProgressText>
-                  {`${answered} / ${total} (${percent}%)`}
-                </ProgressText>
-              </SurveyContent>
-              <ContinueButton>
-                {answered >= total ? "완료" : "이어서 진행하기"}
-              </ContinueButton>
+  <strong style={{ fontSize: "17px" }}>
+    {`${item.country} > ${item.category} > ${item.entityName}`}
+  </strong>
+
+  {isLoggedIn ? (
+    <>
+      <ProgressBar value={answered} max={total} />
+      <ProgressText>{`${answered} / ${total} (${percent}%)`}</ProgressText>
+    </>
+  ) : (
+    <ProgressText style={{ color: "gray" }}>
+      로그인 후, 설문조사를 진행하세요
+    </ProgressText>
+  )}
+</SurveyContent>
+
+
+              <ContinueButton
+  onClick={(e) => {
+    e.stopPropagation();  // 상위 SurveyItem 클릭 막기
+    if (isLoggedIn) {
+      navigate(`/survey/${item.title}`, {
+        state: {
+          image: item.imageUrl,
+          caption: item.captions,
+          country: item.country,
+          category: item.category,
+          entityName: item.entityName,
+          surveyId: item._id,
+          _id: item._id 
+        },
+      });
+    } else {
+      navigate("/login");
+    }
+  }}
+>
+  {isLoggedIn
+    ? answered >= total
+      ? "완료"
+      : "이어서 진행하기"
+    : "로그인하러 가기"}
+</ContinueButton>
+
+
+
+              
             </SurveyItem>
           );
         })}

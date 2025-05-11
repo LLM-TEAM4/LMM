@@ -162,7 +162,8 @@ useEffect(() => {
 
 
 
-const filteredSurveys = surveys.filter((s) => s.status === activeTab);
+const filteredSurveys =
+  activeTab === "total" ? surveys : surveys.filter((s) => s.status === activeTab);
 
 
   return (
@@ -175,7 +176,21 @@ const filteredSurveys = surveys.filter((s) => s.status === activeTab);
             <Tab $active={activeTab === "approved"} onClick={() => changeTab("approved")}>승인됨</Tab>
             <Tab $active={activeTab === "rejected"} onClick={() => changeTab("rejected")}>거절됨</Tab>
             <Tab $active={activeTab === "pending"} onClick={() => changeTab("pending")}>대기 중</Tab>
-          </TabLeft>
+            </TabLeft>
+
+            <button
+    style={{
+      padding: "8px 16px",
+      borderRadius: "6px",
+      border: "1px solid #68a0f4",
+      background: "#68a0f4",
+      color: "#fff",
+      cursor: "pointer"
+    }}
+    onClick={() => navigate("/administrator/statistics")}
+  >
+    통합 통계
+  </button>
         </TabsContainer>
         <SurveyList>
   {filteredSurveys.map((item) => (

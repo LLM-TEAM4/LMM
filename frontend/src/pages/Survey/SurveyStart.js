@@ -19,8 +19,31 @@ const SurveyStart = () => {
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [existingAnswers, setExistingAnswers] = useState([]);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/userinfo", { credentials: "include" });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false); 
+      }
+    };
+    checkLogin();
+  }, []);
+
+  useEffect(() => {
+    if (!isLoggedIn) {
+      setExistingAnswers([]);
+      setCurrentIndex(0);
+      return;
+    }
+
     fetch(`http://localhost:4000/survey/${resolvedSurveyId}/progress`, {
       credentials: "include",
     })
@@ -30,7 +53,7 @@ const SurveyStart = () => {
         setCurrentIndex(data.progress || 0);
       })
       .catch(console.error);
-  }, [resolvedSurveyId]);
+  }, [resolvedSurveyId, isLoggedIn]);
 
   const handleSave = async () => {
     const combinedAnswers = [...existingAnswers];
@@ -69,6 +92,10 @@ const SurveyStart = () => {
   const fallbackImage = BulgogiImg;
   const fallbackCaption = "설명이 제공되지 않았습니다.";
 
+  if (isLoading) {
+    return <p>로딩 중...</p>;  // 또는 return null;
+  }
+
   return (
     <Wrapper>
       <CommonHeader />
@@ -81,47 +108,63 @@ const SurveyStart = () => {
           <ImageBlock>
             <Image src={image || fallbackImage} alt={title} />
           </ImageBlock>
+
           <QuestionBlock>
-            <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
-            <Options>
-              {[5, 4, 3, 2, 1].map((score) => (
-                <Option key={score}>
-                  <input
-                    type="radio"
-                    checked={selected[currentIndex] === score}
-                    onChange={() => handleSelect(score)}
-                  />
-                  <span>
-                    {
-                      {
-                        5: "문화적으로 풍부하다 (5점)",
-                        4: "문화적으로 매우 적절하다 (4점)",
-                        3: "문화적으로 적절하다 (3점)",
-                        2: "중립적 또는 일반적이다 (2점)",
-                        1: "문화적으로 부적절하다 (1점)",
-                      }[score]
-                    }
-                  </span>
-                </Option>
-              ))}
-            </Options>
-            <ButtonGroup>
-              <ContinueButton
-                onClick={handleSave}
-                disabled={selected[currentIndex] == null}
-              >
-                임시 저장
-              </ContinueButton>
-              <ContinueButton
-                onClick={
-                  currentIndex >= caption.length - 1 ? handleSave : handleNext
-                }
-                disabled={selected[currentIndex] == null}
-              >
-                {currentIndex >= caption.length - 1 ? "설문 끝내기" : "다음"}
-              </ContinueButton>
-            </ButtonGroup>
-          </QuestionBlock>
+  {isLoggedIn ? (
+    <>
+      <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
+      <Options>
+        {[5, 4, 3, 2, 1].map((score) => (
+          <Option key={score}>
+            <input
+              type="radio"
+              checked={selected[currentIndex] === score}
+              onChange={() => handleSelect(score)}
+            />
+            <span>
+              {
+                {
+                  5: "문화적으로 풍부하다 (5점)",
+                  4: "문화적으로 매우 적절하다 (4점)",
+                  3: "문화적으로 적절하다 (3점)",
+                  2: "중립적 또는 일반적이다 (2점)",
+                  1: "문화적으로 부적절하다 (1점)",
+                }[score]
+              }
+            </span>
+          </Option>
+        ))}
+      </Options>
+      <ButtonGroup>
+        <ContinueButton
+          onClick={handleSave}
+          disabled={selected[currentIndex] == null}
+        >
+          임시 저장
+        </ContinueButton>
+        <ContinueButton
+          onClick={currentIndex >= caption.length - 1 ? handleSave : handleNext}
+          disabled={selected[currentIndex] == null}
+        >
+          {currentIndex >= caption.length - 1 ? "설문 끝내기" : "다음"}
+        </ContinueButton>
+      </ButtonGroup>
+    </>
+  ) : (
+    <>
+      <p style={{ color: "gray", marginBottom: "10px" }}>
+        로그인 후, 설문조사를 진행하세요
+      </p>
+      <ButtonGroup>
+        <ContinueButton onClick={() => navigate("/login")}>
+          로그인하러 가기
+        </ContinueButton>
+      </ButtonGroup>
+    </>
+  )}
+</QuestionBlock>
+
+
         </ContentArea>
       </Container>
     </Wrapper>

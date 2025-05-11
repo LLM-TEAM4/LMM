@@ -1,5 +1,5 @@
-import React from "react";
-import { NavLink,useLocation } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink,useLocation,useNavigate  } from "react-router-dom";
 import styled from "styled-components";
 import LogoImage from "../assets/img/logo.png";
 
@@ -104,13 +104,43 @@ const LoginWrapper = styled.div`
 
 const Header = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+
   const isRanking = location.pathname.startsWith("/ranking");
   const isMypage = location.pathname.startsWith("/mypage");
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkLogin = async () => {
+      try {
+        const res = await fetch("http://localhost:4000/api/userinfo", { credentials: "include" });
+        setIsLoggedIn(res.ok);
+      } catch {
+        setIsLoggedIn(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkLogin();
+  }, []);
+
+  const handleLogoClick = () => {
+    if (isLoading) return; // 로딩 중이면 무시
+    if (isLoggedIn) {
+      if (location.pathname !== "/mainpage") navigate("/mainpage");
+    } else {
+      if (location.pathname !== "/main") navigate("/main");
+    }
+  };
+
   return (
     <HeaderContainer>
-      <LogoWrapper to="/mainpage">
-        <LogoImageStyled src={LogoImage} alt="로고" />
-      </LogoWrapper>
+      <div onClick={handleLogoClick} style={{ cursor: "pointer", display: "flex", alignItems: "center", gap: "8px", flexShrink: 0 }}>
+        <img src={LogoImage} alt="로고" style={{ height: "35px" }} />
+      </div>
 
       <NavButtons>
       <NavButton to="/survey">

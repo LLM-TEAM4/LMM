@@ -52,7 +52,7 @@ const AdminHeader = () => {
 
   return (
     <HeaderContainer>
-      <LogoWrapper to="/">
+      <LogoWrapper to="/administrator">
         <LogoImageStyled src={LogoImage} alt="로고" />
       </LogoWrapper>
       <LoginButton to="/login">👤</LoginButton>
