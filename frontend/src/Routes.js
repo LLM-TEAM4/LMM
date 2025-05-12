@@ -1,4 +1,5 @@
 import React from "react";
+import { Navigate } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import StatisticsSummaryPage from "./pages/Administrator/Statistics/StatisticsSummaryPage";
 
@@ -19,7 +20,9 @@ import AdminListPage from "./pages/MyPage/Admin/AdminListPage";
 import AdminDetailPage from "./pages/MyPage/Admin/AdminDetailPage";
 import RankingWeeklyPage from "./pages/Ranking/RankingWeeklyPage";
 import RankingMonthlyPage from "./pages/Ranking/RankingMonthlyPage";
+import AdministratorLayout from "./layouts/AdministratorLayout";
 import Administrator from "./pages/Administrator/Administrator";
+import AdminDashboard from "./pages/Administrator/AdminDashboard";
 import AdminSurveyDetail from "./pages/Administrator/AdminSurveyDetail";
 import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
 import SurveyStatisticsPage from "./pages/Administrator/Statistics/SurveyStatisticsPage";
@@ -62,36 +65,37 @@ class AppRoutes extends React.Component {
           />
           <Route path="/ranking/weekly" element={<RankingWeeklyPage />} />
           <Route path="/ranking/monthly" element={<RankingMonthlyPage />} />
-          <Route path="/administrator" element={<Administrator />} />
-          <Route
-            path="/administrator/detail/:id"
-            element={<AdminSurveyDetail />}
-          />
-          <Route
-            path="/administrator/result/:id"
-            element={<SurveyResultPage />}
-          />
-          <Route
-            path="/administrator/statistics/:id"
-            element={<SurveyStatisticsPage />}
-          />
-          <Route path="/administrator/surveys/category/:categoryName" element={<CategorySurveyListPage />} />
 
-         
+          <Route path="/administrator" element={<AdministratorLayout />}>
+            {/* 기본 진입 시 대시보드로 이동 */}
+            <Route index element={<Navigate to="dashboard" replace />} />
 
+            {/* 관리자 메인 */}
+            <Route path="dashboard" element={<AdminDashboard />} />
 
+            {/* 승인 요청 목록 */}
+            <Route path="requests" element={<Administrator />} />
 
-          
-          <Route
-            path="/administrator/statistics/summary/country"
-            element={<CountryStatisticsPage />}
-          />
-          <Route
-            path="/administrator/statistics/summary/category"
-            element={<CategoryStatisticsPage />}
-          />
-         
-          
+            {/* 개별 설문 상세/결과/통계 */}
+            <Route path="detail/:id" element={<AdminSurveyDetail />} />
+            <Route path="result/:id" element={<SurveyResultPage />} />
+            <Route path="statistics/:id" element={<SurveyStatisticsPage />} />
+
+            {/* 요약 통계 */}
+            <Route
+              path="statistics/summary/country"
+              element={<CountryStatisticsPage />}
+            />
+            <Route
+              path="statistics/summary/category"
+              element={<CategoryStatisticsPage />}
+            />
+            <Route
+              path="statistics/summary/overall"
+              element={<OverallStatisticsPage />}
+            />
+          </Route>
+
         </Routes>
       </Router>
     );
