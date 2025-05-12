@@ -66,47 +66,6 @@ const AdminDashboard = () => {
       <Header />
       <DashboardContainer>
         <h1>관리자 페이지</h1>
-        <Grid>
-          <Card>
-            <Title>승인 요청된 설문조사</Title>
-            <Description>
-              총 <strong>{pendingSurveys.length}</strong>개의 설문조사가 승인
-              대기 중입니다.
-            </Description>
-
-            {/* 미리보기 리스트 */}
-            <ul style={{ marginBottom: "20px", paddingLeft: "20px" }}>
-              {pendingSurveys.slice(0, 3).map((s) => (
-                <li key={s._id} style={{ fontSize: "13px", color: "#444" }}>
-                  설문조사 &gt; {s.country} &gt; {s.category}
-                </li>
-              ))}
-              {pendingSurveys.length > 3 && (
-                <li style={{ fontSize: "13px", color: "#999" }}>
-                  ...외 {pendingSurveys.length - 3}개
-                </li>
-              )}
-            </ul>
-
-            <Button onClick={() => navigate("/administrator/requests")}>
-              승인 요청 보기
-            </Button>
-          </Card>
-
-          <Card>
-            <Title>설문 통계 보기</Title>
-            <Description>
-              국가별, 카테고리별, 전체 설문 통계를 확인할 수 있어요.
-            </Description>
-            <Button
-              onClick={() =>
-                navigate("/administrator/statistics/summary/overall")
-              }
-            >
-              통계 페이지 이동
-            </Button>
-          </Card>
-        </Grid>
         <StatisticsPreviewGrid />
       </DashboardContainer>
     </>
