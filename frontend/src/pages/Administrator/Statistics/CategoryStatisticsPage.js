@@ -1,9 +1,15 @@
+
 // CategoryStatisticsPage.js
 import React from "react";
+
+
+import React, { useState,useEffect } from "react";
+
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
+
 import {
   BarChart,
   Bar,
@@ -14,6 +20,10 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
+
+import { useNavigate } from "react-router-dom";
+import AdminStatisticsLayout from "../../../layouts/AdminStatisticsLayout";
+
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -34,6 +44,7 @@ const Subtitle = styled.p`
   margin-bottom: 30px;
 `;
 
+
 const ChartWrapper = styled.div`
   width: 100%;
   height: 500px;
@@ -42,6 +53,7 @@ const ChartWrapper = styled.div`
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
 `;
+
 
 const BackButton = styled.button`
   margin-top: 30px;
@@ -57,6 +69,7 @@ const BackButton = styled.button`
   }
 `;
 
+
 const aggregateScores = (votes) => {
   const flatVotes = Object.values(votes || {}).flatMap((vote) =>
     Object.entries(vote).flatMap(([score, count]) =>
@@ -67,8 +80,28 @@ const aggregateScores = (votes) => {
   return flatVotes.length ? sum / flatVotes.length : 0;
 };
 
+const StatItem = styled.div`
+  background: #fff;
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  border-left: 6px solid #649eff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    background-color: #f0f4ff;
+  }
+`;
+
+
+
 const CategoryStatisticsPage = () => {
   const navigate = useNavigate();
+
   const categoryMap = {
     cuisine: {},
     clothes: {},
@@ -76,6 +109,18 @@ const CategoryStatisticsPage = () => {
     game: {},
     tooleh: {},
   };
+
+  const [categoryStats, setCategoryStats] = useState([]);
+
+  useEffect(() => {
+  fetch("http://localhost:4000/survey/statistics/category-averages", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+      console.log("✅ 카테고리별 서버 응답 데이터:", data);
+      setCategoryStats(data);
+    })
+    .catch(err => console.error("카테고리별 통계 불러오기 실패:", err));
+}, []);
 
   surveyData.forEach((s) => {
     if (!categoryMap[s.category][s.country]) {
@@ -137,6 +182,7 @@ const CategoryStatisticsPage = () => {
   );
 
   return (
+
     <>
       <Header />
       <Container>
@@ -153,7 +199,46 @@ const CategoryStatisticsPage = () => {
         </BackButton>
       </Container>
     </>
+
+
+    <Container>
+      <Title>카테고리별 설문 통계</Title>
+      <Subtitle>
+        설문 항목들은 음식(cuisine), 의복(clothes), 건축(architecture) 등의
+        문화 카테고리로 분류되어 있으며, 각 카테고리별 항목 수를 확인할 수 있습니다.
+      </Subtitle>
+
+      {categoryStats.map((categoryItem) => (
+  <StatItem 
+    key={categoryItem.category}
+    onClick={() => navigate(`/administrator/surveys/category/${categoryItem.category}`)}
+    style={{ cursor: "pointer" }}
+>
+    <CategoryTitle> 
+  📂 {categoryItem.category}
+  </CategoryTitle>
+
+
+    <Count>총 설문 수: {categoryItem.items.length}개</Count>
+    <ItemList>
+  {categoryItem.items.slice(0, 5).map((s) => (
+    <Item key={s._id}>{s.entityName}</Item>
+  ))}
+  {categoryItem.items.length > 5 && (
+    <Item>... 외 {categoryItem.items.length - 5}개</Item>
+  )}
+</ItemList>
+
+  </StatItem>
+))}
+
+      <BackButton onClick={() => navigate(-1)}>
+        ← 목록으로 돌아가기
+      </BackButton>
+    </Container>
+
   );
 };
 
 export default CategoryStatisticsPage;
+

@@ -1,6 +1,7 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StatisticsSummaryPage from "./pages/Administrator/Statistics/StatisticsSummaryPage";
 
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
@@ -27,14 +28,18 @@ import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
 import SurveyStatisticsPage from "./pages/Administrator/Statistics/SurveyStatisticsPage";
 import CountryStatisticsPage from "./pages/Administrator/Statistics/CountryStatisticsPage";
 import CategoryStatisticsPage from "./pages/Administrator/Statistics/CategoryStatisticsPage";
-import OverallStatisticsPage from "./pages/Administrator/Statistics/OverallStatisticsPage";
+
+import CategorySurveyListPage from "./pages/Administrator/Statistics/CategorySurveyListPage";
+
 
 class AppRoutes extends React.Component {
   render() {
     return (
       <Router>
         <Routes>
-          <Route path="/" element={<Main />} />
+        <Route path="/" element={<Main />} />
+          <Route path="/main" element={<Main />} />
+
           <Route path="/mainpage" element={<MainPage />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/signupid" element={<SignupID />} />
@@ -44,6 +49,7 @@ class AppRoutes extends React.Component {
           <Route path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
+          <Route path="/administrator/statistics" element={<StatisticsSummaryPage />} />
           <Route
             path="/mypage/survey-participation"
             element={<SurveyParticipation />}
@@ -59,6 +65,7 @@ class AppRoutes extends React.Component {
           />
           <Route path="/ranking/weekly" element={<RankingWeeklyPage />} />
           <Route path="/ranking/monthly" element={<RankingMonthlyPage />} />
+
           <Route path="/administrator" element={<AdministratorLayout />}>
             {/* 기본 진입 시 대시보드로 이동 */}
             <Route index element={<Navigate to="dashboard" replace />} />
@@ -88,6 +95,7 @@ class AppRoutes extends React.Component {
               element={<OverallStatisticsPage />}
             />
           </Route>
+
         </Routes>
       </Router>
     );

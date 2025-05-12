@@ -63,10 +63,13 @@ const SurveyParticipation = () => {
 
   return (
     <MypageLayout>
+      <CommonHeader />
       <Wrapper>
-        <CommonHeader />
-        <Container>
-          <h2>나의 설문 응답 현황</h2>
+        
+        
+        <SectionTitle>📌 설문 응답 현황</SectionTitle>
+        <SectionCard>
+        
 
           <ChartRow>
             {countryCharts.map((chart, index) => (
@@ -83,9 +86,11 @@ const SurveyParticipation = () => {
               </ChartBox>
             ))}
           </ChartRow>
+          </SectionCard>
+          <SectionTitle>📌 참여한 설문 목록</SectionTitle>
+          <SectionCard>
 
-          <ParticipatedSection>
-            <h3>📌 참여한 설문 목록</h3>
+          <ParticipatedSection>    
             <p>총 참여 설문 수: {uniqueResponsesMap.size}</p>
             {uniqueResponsesMap.size === 0 ? (
               <p>아직 참여한 설문이 없습니다.</p>
@@ -103,7 +108,8 @@ const SurveyParticipation = () => {
               </SurveyList>
             )}
           </ParticipatedSection>
-        </Container>
+        
+        </SectionCard>
       </Wrapper>
     </MypageLayout>
   );
@@ -112,8 +118,25 @@ const SurveyParticipation = () => {
 export default SurveyParticipation;
 
 // 스타일 정의
+const SectionTitle = styled.h2`
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  margin-top;50px;
+
+`;
+
+const SectionCard = styled.div`
+  background: #f9f9f9;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+`;
+
+
 const Wrapper = styled.div`
-  padding: 20px;
+  padding: 400px 20px 20px 20px;
 `;
 
 const Container = styled.div`
@@ -131,11 +154,14 @@ const ChartRow = styled.div`
 `;
 
 const ChartBox = styled.div`
+  margin-botton:30px;
   text-align: center;
+  
+
 `;
 
 const ParticipatedSection = styled.div`
-  margin-top: 60px;
+  margin-top: 5px;
 `;
 
 const SurveyList = styled.div`

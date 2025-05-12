@@ -6,55 +6,122 @@ import { FaPencilAlt } from "react-icons/fa";
 import DefaultProfile from "../../assets/img/profile.png";
 import MypageLayout from "../../layouts/MypageLayout";
 
-const InputField = styled.input`
-  width: 200px;
-  padding: 8px;
-  font-size: 16px;
-  border-radius: 6px;
-  border: 2px solid #F5F5F5;
+
+const PageWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  gap: 20px;
+  padding: 40px 20px;
 `;
 
-const WarningText = styled.p`
-  font-size: 12px;
-  color: ${({ isValid }) => (isValid ? "#68A0F4" : "red")};
-  margin-top: 0px;
+
+const LogoutWrapper = styled.div`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
 `;
 
-const ActionButton = styled.button`
-  padding: 10px 15px;
-  font-size: 16px;
-  background-color: #68a0f4;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  &:hover {
-    background-color: #4f82d8;
-  }
+
+
+const ProfileCard = styled.div`
+  background: #f9f9f9;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  display: flex;       
+  flex-direction: column; 
+  justify-content: center; 
+   min-height: 250px;
+`;
+
+const ProfileImage = styled.img`
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 그림자 추가 */
+  border: 3px solid #ffffff; /* 흰색 테두리 추가 */
+`;
+
+const Title = styled.h2`
+  font-size: 24px;
+  
+  margin-bottom: 20px;
+`;
+
+const InfoText = styled.p`
+  font-size: 18px;
+  margin-bottom: 5px;
+  font-weight: bold;
+`;
+
+const NicknameSection = styled.div`
+  margin-top: 5px;
 `;
 
 const ButtonRow = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
-  justify-content: flex-end;
-  margin-top: 15px;
+  justify-content: center;
+  margin-top: 20px;
 `;
 
-const InfoText = styled.p`
+const StyledButton = styled.button`
+  padding: 12px 24px;
+  background-color: #649eff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  width: fit-content;
+  &:hover {
+    background-color: #4a82d9;
+  }
+`;
+
+const LogoutButton = styled(StyledButton)`
+  background-color: #f44336;
+  padding: 8px 16px;
   font-size: 14px;
-  color: #444;
-  margin-bottom: 8px;
+  width: auto;
+  &:hover {
+    background-color: #d32f2f;
+  }
 `;
 
-const NicknameLabel = styled.label`
+
+const ProfileContentWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  color: #444;
-  margin-bottom: 4px;
+  justify-content: center;
+  height: 100%;
 `;
+
+const BlockWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  width: 100%;
+`;
+
+const ProfileCardSquare = styled(ProfileCard)`
+  width: 300px;       // 너비 고정
+  height: 300px;      // 높이 고정
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
 
 const MyPage = () => {
   const [nickname, setNickname] = useState("");
@@ -64,6 +131,55 @@ const MyPage = () => {
   const [profileImage, setProfileImage] = useState(DefaultProfile);
   const navigate = useNavigate();
 
+  const [modalMessage, setModalMessage] = useState("");
+const [showModal, setShowModal] = useState(false);
+
+const openModal = (message) => {
+  setModalMessage(message);
+  setShowModal(true);
+};
+
+const closeModal = () => {
+  setShowModal(false);
+  if (modalMessage === "로그아웃 되었습니다!") {
+    navigate("/main");  // ✅ 모달 닫을 때 이동
+  }
+};
+
+
+const modalBackgroundStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 9999,
+};
+
+const modalBoxStyle = {
+  background: "#fff",
+  padding: "30px",
+  borderRadius: "10px",
+  textAlign: "center",
+  width: "300px"
+};
+
+const modalButtonStyle = {
+  marginTop: "20px",
+  padding: "10px 20px",
+  backgroundColor: "#68a0f4",
+  color: "#fff",
+  border: "none",
+  borderRadius: "5px",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+
+
   useEffect(() => {
     const fetchUser = async () => {
       const res = await fetch("http://localhost:4000/api/auth/me", {
@@ -71,7 +187,10 @@ const MyPage = () => {
       });
   
       if (res.status === 401) {
-        navigate("/login");
+        openModal("로그인 후 이용해주세요. 로그인 화면으로 이동합니다.");
+        setTimeout(() => {
+          navigate("/login");
+        }, 500);  // 0.5초 뒤 이동 (너무 빠르면 안 보일 수 있으니 약간의 시간 줌)
         return;
       }
   
@@ -104,6 +223,24 @@ const MyPage = () => {
   }, []);
   
 
+  const handleLogout = async () => {
+  try {
+    const res = await fetch("http://localhost:4000/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (res.ok) {
+      openModal("로그아웃 되었습니다!");  // ✅ 모달만 먼저 보여줌
+    } else {
+      openModal("로그아웃 실패");
+    }
+  } catch (err) {
+    console.error(err);
+    openModal("오류 발생");
+  }
+};
+
+  
   const handleInputChange = (event) => {
     const newName = event.target.value;
     setNickname(newName);
@@ -160,7 +297,7 @@ const MyPage = () => {
 
   const handleNicknameSave = () => {
     if (nickname === originalNickname) {
-      alert("닉네임이 변경되지 않았습니다.");
+      openModal("닉네임이 변경되지 않았습니다.");
       return;
     }
 
@@ -168,7 +305,7 @@ const MyPage = () => {
       .then(res => res.json())
       .then(data => {
         if (data.exists) {
-          alert("이미 존재하는 닉네임입니다.");
+          openModal("이미 존재하는 닉네임입니다.");
           return;
         }
 
@@ -183,69 +320,69 @@ const MyPage = () => {
             return res.json();
           })
           .then(data => {
-            alert("✅ 닉네임이 변경되었습니다.");
+            openModal("✅ 닉네임이 변경되었습니다.");
             setOriginalNickname(nickname);
           })
           .catch(err => {
-            alert("❌ 닉네임 변경 중 오류 발생");
+            openModal("❌ 닉네임 변경 중 오류 발생");
             console.error(err);
           });
       });
   };
 
+
+ 
+
   return (
     <MypageLayout>
-      <div style={{ padding: 20 }}>
-        <h2>계정 정보</h2>
+      <PageWrapper>
+  <ProfileCardSquare>
+    <ProfileImage src={profileImage} alt="프로필" />
+    <ButtonRow>
+      <StyledButton onClick={() => document.getElementById("fileUpload").click()}>사진 변경</StyledButton>
+      <StyledButton onClick={handleResetToDefaultImage}>기본 이미지로 변경</StyledButton>
+    </ButtonRow>
+    <input type="file" id="fileUpload" style={{ display: "none" }} accept="image/*" onChange={handleImageChange} />
+  </ProfileCardSquare>
 
-        <div style={{ display: "flex", gap: "40px", alignItems: "center" }}>
-          <div>
-            <img
-              src={profileImage}
-              alt="프로필"
-              style={{ width: 150, height: 150, borderRadius: "50%" }}
-            />
-            <input
-              type="file"
-              id="fileUpload"
-              style={{ display: "none" }}
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <ActionButton
-              onClick={() => document.getElementById("fileUpload").click()}
-              style={{ marginTop: 10 }}
-            >
-              사진 변경
-            </ActionButton>
-            <ActionButton
-              onClick={handleResetToDefaultImage}
-              style={{ marginTop: 10, marginLeft: 10 }}
-            >
-              기본 이미지로 변경
-            </ActionButton>
-          </div>
+  <ProfileCard>
+  <InfoText style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "15px" }}>
+    📬 유저아이디 : {userId}로 로그인 중</InfoText>
+    <NicknameSection>
+      <InfoText>
+        닉네임 변경</InfoText>
+      <input
+        type="text"
+        value={nickname}
+        onChange={handleInputChange}
+        style={{ width: "200px", padding: "8px", fontSize: "16px", borderRadius: "6px", border: "2px solid #F5F5F5" }}
+      />
+      <ButtonRow>
+        <StyledButton onClick={handleNicknameSave} disabled={!isNameValid}>저장</StyledButton>
+      </ButtonRow>
+    </NicknameSection>
+  </ProfileCard>
+</PageWrapper>
 
-          <div>
-            <InfoText>아이디: <strong>{userId}</strong></InfoText>
+<LogoutWrapper>
+  <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+</LogoutWrapper>
+  
+      {showModal && (
+  <div style={modalBackgroundStyle}>
+    <div style={modalBoxStyle}>
+      <p>{modalMessage}</p>
+      <button onClick={closeModal} style={modalButtonStyle}>확인</button>
+    </div>
+  </div>
+)}
 
-            <NicknameLabel>
-              <FaPencilAlt style={{ color: "#649eff" }} /> 닉네임
-            </NicknameLabel>
-            <InputField
-              type="text"
-              value={nickname}
-              onChange={handleInputChange}
-            />
-            <WarningText isValid={isNameValid}>닉네임은 10글자 초과 불가</WarningText>
-            <ButtonRow>
-              <ActionButton onClick={handleNicknameSave} disabled={!isNameValid}>저장</ActionButton>
-            </ButtonRow>
-          </div>
-        </div>
-      </div>
     </MypageLayout>
+    
   );
+  
+
+  
 };
 
 export default MyPage;
