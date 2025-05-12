@@ -26,16 +26,18 @@ const RightContent = styled.div`
   justify-content: center;
 `;
 
-const MypageLayout = ({ children }) => {
+
+const MypageLayout = ({ children, CustomSidebar }) => {
   return (
     <Wrapper>
       <CommonHeader />
       <ContentWrapper>
-        <MypageSidebar />
+        {CustomSidebar ? <CustomSidebar /> : <MypageSidebar />}
         <RightContent>{children}</RightContent>
       </ContentWrapper>
     </Wrapper>
   );
 };
+
 
 export default MypageLayout;

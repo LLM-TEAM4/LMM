@@ -1,5 +1,5 @@
-// 📄 CategoryStatisticsPage.js
-import React, { useState } from "react";
+
+import React, { useState,useEffect } from "react";
 import styled from "styled-components";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
@@ -25,14 +25,6 @@ const Subtitle = styled.p`
   margin-bottom: 30px;
 `;
 
-const StatItem = styled.div`
-  background: #fff;
-  padding: 20px 25px;
-  margin-bottom: 20px;
-  border-left: 6px solid #649eff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-`;
 
 const CategoryTitle = styled.h3`
   font-size: 18px;
@@ -70,9 +62,39 @@ const BackButton = styled.button`
     background-color: #4a82d9;
   }
 `;
+
+const StatItem = styled.div`
+  background: #fff;
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  border-left: 6px solid #649eff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
+    background-color: #f0f4ff;
+  }
+`;
+
+
 const CategoryStatisticsPage = () => {
   const categoryMap = {};
   const navigate = useNavigate();
+  const [categoryStats, setCategoryStats] = useState([]);
+
+  useEffect(() => {
+  fetch("http://localhost:4000/survey/statistics/category-averages", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+      console.log("✅ 카테고리별 서버 응답 데이터:", data);
+      setCategoryStats(data);
+    })
+    .catch(err => console.error("카테고리별 통계 불러오기 실패:", err));
+}, []);
 
   surveyData.forEach((item) => {
     if (!categoryMap[item.category]) {
@@ -82,6 +104,7 @@ const CategoryStatisticsPage = () => {
   });
 
   return (
+
     <Container>
       <Title>카테고리별 설문 통계</Title>
       <Subtitle>
@@ -89,17 +112,29 @@ const CategoryStatisticsPage = () => {
         문화 카테고리로 분류되어 있으며, 각 카테고리별 항목 수를 확인할 수 있습니다.
       </Subtitle>
 
-      {Object.entries(categoryMap).map(([category, items]) => (
-        <StatItem key={category}>
-          <CategoryTitle>📂 {category}</CategoryTitle>
-          <Count>총 설문 수: {items.length}개</Count>
-          <ItemList>
-            {items.map((s) => (
-              <Item key={s._id}>{s.entityName || s.title}</Item>
-            ))}
-          </ItemList>
-        </StatItem>
-      ))}
+      {categoryStats.map((categoryItem) => (
+  <StatItem 
+    key={categoryItem.category}
+    onClick={() => navigate(`/administrator/surveys/category/${categoryItem.category}`)}
+    style={{ cursor: "pointer" }}
+>
+    <CategoryTitle> 
+  📂 {categoryItem.category}
+  </CategoryTitle>
+
+
+    <Count>총 설문 수: {categoryItem.items.length}개</Count>
+    <ItemList>
+  {categoryItem.items.slice(0, 5).map((s) => (
+    <Item key={s._id}>{s.entityName}</Item>
+  ))}
+  {categoryItem.items.length > 5 && (
+    <Item>... 외 {categoryItem.items.length - 5}개</Item>
+  )}
+</ItemList>
+
+  </StatItem>
+))}
 
       <BackButton onClick={() => navigate(-1)}>
         ← 목록으로 돌아가기

@@ -26,6 +26,8 @@ import SurveyStatisticsPage from "./pages/Administrator/Statistics/SurveyStatist
 import CountryStatisticsPage from "./pages/Administrator/Statistics/CountryStatisticsPage";
 import CategoryStatisticsPage from "./pages/Administrator/Statistics/CategoryStatisticsPage";
 import OverallStatisticsPage from "./pages/Administrator/Statistics/OverallStatisticsPage";
+import CategorySurveyListPage from "./pages/Administrator/Statistics/CategorySurveyListPage";
+
 
 class AppRoutes extends React.Component {
   render() {
@@ -73,7 +75,10 @@ class AppRoutes extends React.Component {
             path="/administrator/statistics/:id"
             element={<SurveyStatisticsPage />}
           />
+          <Route path="/administrator/surveys/category/:categoryName" element={<CategorySurveyListPage />} />
+
          
+
 
 
           

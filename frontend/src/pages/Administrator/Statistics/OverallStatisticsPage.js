@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
 import { useNavigate } from "react-router-dom";
+import AdminStatisticsLayout from "../../../layouts/AdminStatisticsLayout";
 
 import {
   BarChart,
@@ -192,7 +193,7 @@ const OverallStatisticsPage = () => {
               />
               <Bar dataKey="average" barSize={40}>
                 {sorted.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={getColor(entry.average)} />
+                  <Cell key={`cell-${index}`} fill={getColor(entry.averageScore)} />
                 ))}
               </Bar>
             </BarChart>
