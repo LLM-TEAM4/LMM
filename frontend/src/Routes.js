@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import StatisticsSummaryPage from "./pages/Administrator/Statistics/StatisticsSummaryPage";
 
 import Login from "./pages/Login/Login";
 import Signup from "./pages/Signup/Signup";
@@ -43,6 +44,7 @@ class AppRoutes extends React.Component {
           <Route path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
+          <Route path="/administrator/statistics" element={<StatisticsSummaryPage />} />
           <Route
             path="/mypage/survey-participation"
             element={<SurveyParticipation />}
@@ -71,8 +73,10 @@ class AppRoutes extends React.Component {
             path="/administrator/statistics/:id"
             element={<SurveyStatisticsPage />}
           />
-          <Route path="/administrator/statistics" element={<SurveyStatisticsPage />} />
+         
 
+
+          
           <Route
             path="/administrator/statistics/summary/country"
             element={<CountryStatisticsPage />}
@@ -85,6 +89,7 @@ class AppRoutes extends React.Component {
             path="/administrator/statistics/summary/overall"
             element={<OverallStatisticsPage />}
           />
+          
         </Routes>
       </Router>
     );

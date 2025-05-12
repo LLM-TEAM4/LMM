@@ -1,9 +1,10 @@
 // 📄 CategoryStatisticsPage.js
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
 import { useNavigate } from "react-router-dom";
+import AdminStatisticsLayout from "../../../layouts/AdminStatisticsLayout";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -69,7 +70,6 @@ const BackButton = styled.button`
     background-color: #4a82d9;
   }
 `;
-
 const CategoryStatisticsPage = () => {
   const categoryMap = {};
   const navigate = useNavigate();
@@ -82,34 +82,31 @@ const CategoryStatisticsPage = () => {
   });
 
   return (
-    <>
-      <Header />
-      <Container>
-        <Title>카테고리별 설문 통계</Title>
-        <Subtitle>
-          설문 항목들은 음식(cuisine), 의복(clothes), 건축(architecture) 등의
-          문화 카테고리로 분류되어 있으며, 각 카테고리별 항목 수를 확인할 수
-          있습니다.
-        </Subtitle>
+    <Container>
+      <Title>카테고리별 설문 통계</Title>
+      <Subtitle>
+        설문 항목들은 음식(cuisine), 의복(clothes), 건축(architecture) 등의
+        문화 카테고리로 분류되어 있으며, 각 카테고리별 항목 수를 확인할 수 있습니다.
+      </Subtitle>
 
-        {Object.entries(categoryMap).map(([category, items]) => (
-          <StatItem key={category}>
-            <CategoryTitle>📂 {category}</CategoryTitle>
-            <Count>총 설문 수: {items.length}개</Count>
-            <ItemList>
-              {items.map((s) => (
-                <Item key={s._id}>{s.entityName || s.title}</Item>
-              ))}
-            </ItemList>
-          </StatItem>
-        ))}
+      {Object.entries(categoryMap).map(([category, items]) => (
+        <StatItem key={category}>
+          <CategoryTitle>📂 {category}</CategoryTitle>
+          <Count>총 설문 수: {items.length}개</Count>
+          <ItemList>
+            {items.map((s) => (
+              <Item key={s._id}>{s.entityName || s.title}</Item>
+            ))}
+          </ItemList>
+        </StatItem>
+      ))}
 
-        <BackButton onClick={() => navigate(-1)}>
-          ← 목록으로 돌아가기
-        </BackButton>
-      </Container>
-    </>
+      <BackButton onClick={() => navigate(-1)}>
+        ← 목록으로 돌아가기
+      </BackButton>
+    </Container>
   );
 };
 
 export default CategoryStatisticsPage;
+

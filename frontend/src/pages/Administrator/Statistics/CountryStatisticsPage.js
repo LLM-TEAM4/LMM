@@ -1,9 +1,12 @@
 // 국가별 통계
-import React from "react";
+import React, { useState } from "react";
+
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
+import AdminStatisticsLayout from "../../../layouts/AdminStatisticsLayout";
+
 import {
   BarChart,
   Bar,
@@ -60,7 +63,8 @@ const BackButton = styled.button`
 const CountryStatisticsPage = () => {
   const navigate = useNavigate();
   const countryStats = {};
-
+  const [activeMenu, setActiveMenu] = useState("country");
+  
   surveyData.forEach((s) => {
     const votes = Object.values(s.votes || {}).flatMap((voteObj) =>
       Object.entries(voteObj).flatMap(([score, count]) =>
@@ -92,8 +96,7 @@ const CountryStatisticsPage = () => {
   };
 
   return (
-    <>
-      <Header />
+    
       <Container>
         <Title>국가별 평균 응답 점수</Title>
         <Subtitle>
@@ -124,7 +127,7 @@ const CountryStatisticsPage = () => {
           ← 목록으로 돌아가기
         </BackButton>
       </Container>
-    </>
+      
   );
 };
 

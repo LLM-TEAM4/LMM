@@ -188,6 +188,7 @@ const filteredSurveys =
       cursor: "pointer"
     }}
     onClick={() => navigate("/administrator/statistics")}
+
   >
     통합 통계
   </button>
