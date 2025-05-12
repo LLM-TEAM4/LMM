@@ -28,16 +28,15 @@ import SurveyResultPage from "./pages/Administrator/SurveyResultPage";
 import SurveyStatisticsPage from "./pages/Administrator/Statistics/SurveyStatisticsPage";
 import CountryStatisticsPage from "./pages/Administrator/Statistics/CountryStatisticsPage";
 import CategoryStatisticsPage from "./pages/Administrator/Statistics/CategoryStatisticsPage";
-
 import CategorySurveyListPage from "./pages/Administrator/Statistics/CategorySurveyListPage";
-
+import OverallStatisticsPage from "./pages/Administrator/Statistics/OverallStatisticsPage";
 
 class AppRoutes extends React.Component {
   render() {
     return (
       <Router>
         <Routes>
-        <Route path="/" element={<Main />} />
+          <Route path="/" element={<Main />} />
           <Route path="/main" element={<Main />} />
 
           <Route path="/mainpage" element={<MainPage />} />
@@ -49,7 +48,10 @@ class AppRoutes extends React.Component {
           <Route path="/survey" element={<Survey />} />
           <Route path="/survey/:title" element={<SurveyDetail />} />
           <Route path="/survey/:title/start" element={<SurveyStart />} />
-          <Route path="/administrator/statistics" element={<StatisticsSummaryPage />} />
+          <Route
+            path="/administrator/statistics"
+            element={<StatisticsSummaryPage />}
+          />
           <Route
             path="/mypage/survey-participation"
             element={<SurveyParticipation />}
@@ -95,7 +97,6 @@ class AppRoutes extends React.Component {
               element={<OverallStatisticsPage />}
             />
           </Route>
-
         </Routes>
       </Router>
     );

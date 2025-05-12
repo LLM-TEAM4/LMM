@@ -17,7 +17,6 @@ const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 30px;
-  margin-top: 30px;
 `;
 
 const ChartCard = styled.div`
@@ -71,6 +70,10 @@ const aggregateScores = (votes) => {
 const StatisticsPreviewGrid = () => {
   const navigate = useNavigate();
 
+  // 승인 대기 설문
+  const pendingSurveys = surveyData.filter((s) => s.status === "pending");
+
+  // 국가별 통계
   const countryMap = {};
   surveyData.forEach((s) => {
     if (!countryMap[s.country]) countryMap[s.country] = [];
@@ -82,6 +85,7 @@ const StatisticsPreviewGrid = () => {
   }));
   const sortedCountry = [...countryData].sort((a, b) => a.avg - b.avg);
 
+  // 카테고리별 통계
   const categoryMap = {};
   surveyData.forEach((s) => {
     if (!categoryMap[s.category]) categoryMap[s.category] = [];
@@ -98,6 +102,44 @@ const StatisticsPreviewGrid = () => {
 
   return (
     <Grid>
+      {/* 승인 요청 카드 */}
+      <ChartCard onClick={() => navigate("/administrator/requests")}>
+        <Title>승인 요청된 설문조사</Title>
+        <p style={{ fontSize: "14px", marginBottom: "16px" }}>
+          총 <strong>{pendingSurveys.length}</strong>개의 설문이 승인 대기
+          중입니다.
+        </p>
+        <ul style={{ marginBottom: "16px", paddingLeft: "20px" }}>
+          {pendingSurveys.slice(0, 3).map((s) => (
+            <li key={s._id} style={{ fontSize: "13px", color: "#444" }}>
+              설문조사 &gt; {s.country} &gt; {s.category}
+            </li>
+          ))}
+          {pendingSurveys.length > 3 && (
+            <li style={{ fontSize: "13px", color: "#999" }}>
+              ...외 {pendingSurveys.length - 3}개
+            </li>
+          )}
+        </ul>
+      </ChartCard>
+
+      <ChartCard
+        onClick={() => navigate("/administrator/statistics/summary/overall")}
+      >
+        <Title>전체 통계</Title>
+        <p style={{ fontSize: "14px", marginBottom: "16px" }}>
+          전체 설문에 대한 평균 점수 및 주요 통계를 확인할 수 있습니다.
+        </p>
+        <HighlightBox>
+          <HighlightTitle>📉 가장 편향성이 큰 국가</HighlightTitle>
+          <HighlightText>
+            <strong>{sortedCountry[0]?.country}</strong> — 평균 점수{" "}
+            <strong>{sortedCountry[0]?.avg}</strong>점
+          </HighlightText>
+        </HighlightBox>
+      </ChartCard>
+
+      {/* 국가별 통계 */}
       <ChartCard
         onClick={() => navigate("/administrator/statistics/summary/country")}
       >
@@ -111,15 +153,9 @@ const StatisticsPreviewGrid = () => {
             <Bar dataKey="avg" fill="#4caf50" barSize={20} />
           </BarChart>
         </ResponsiveContainer>
-        <HighlightBox>
-          <HighlightTitle>📉 가장 편향성이 큰 국가</HighlightTitle>
-          <HighlightText>
-            <strong>{sortedCountry[0]?.country}</strong> — 평균 점수{" "}
-            <strong>{sortedCountry[0]?.avg}</strong>점
-          </HighlightText>
-        </HighlightBox>
       </ChartCard>
 
+      {/* 카테고리별 통계 */}
       <ChartCard
         onClick={() => navigate("/administrator/statistics/summary/category")}
       >
