@@ -112,7 +112,7 @@ const MyPage = () => {
   };
 
   const uploadProfileImage = (base64) => {
-    fetch("http://localhost:4000/api/auth/profile", {
+    fetch(`${BASE_URL}/api/auth/profile`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -165,7 +165,7 @@ const MyPage = () => {
       return;
     }
 
-    fetch(`http://localhost:4000/api/auth/check-nickname/${nickname}`)
+    fetch(`${BASE_URL}/api/auth/nickname`)
       .then(res => res.json())
       .then(data => {
         if (data.exists) {
@@ -173,7 +173,7 @@ const MyPage = () => {
           return;
         }
 
-        fetch("http://localhost:4000/api/auth/nickname", {
+        fetch(`${BASE_URL}/api/auth/nickname`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
