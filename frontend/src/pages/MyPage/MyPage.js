@@ -17,11 +17,12 @@ const PageWrapper = styled.div`
 
 
 const LogoutWrapper = styled.div`
-  width: 100%;
-  max-width: 800px;
-  display: flex;
-  justify-content: flex-end;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
 `;
+
 
 
 const ProfileCard = styled.div`
@@ -88,11 +89,14 @@ const StyledButton = styled.button`
 
 const LogoutButton = styled(StyledButton)`
   background-color: #f44336;
-  width: 100%;
+  padding: 8px 16px;
+  font-size: 14px;
+  width: auto;
   &:hover {
     background-color: #d32f2f;
   }
 `;
+
 
 const ProfileContentWrapper = styled.div`
   display: flex;
@@ -117,6 +121,7 @@ const ProfileCardSquare = styled(ProfileCard)`
   justify-content: center;
   align-items: center;
 `;
+
 
 const MyPage = () => {
   const [nickname, setNickname] = useState("");
@@ -311,6 +316,9 @@ const MyPage = () => {
   </ProfileCard>
 </PageWrapper>
 
+<LogoutWrapper>
+  <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
+</LogoutWrapper>
   
       
     </MypageLayout>

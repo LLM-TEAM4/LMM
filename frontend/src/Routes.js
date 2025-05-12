@@ -71,6 +71,8 @@ class AppRoutes extends React.Component {
             path="/administrator/statistics/:id"
             element={<SurveyStatisticsPage />}
           />
+          <Route path="/administrator/statistics" element={<SurveyStatisticsPage />} />
+
           <Route
             path="/administrator/statistics/summary/country"
             element={<CountryStatisticsPage />}
