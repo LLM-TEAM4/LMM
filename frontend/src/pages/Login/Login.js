@@ -126,7 +126,7 @@ class Login extends Component {
         this.props.navigate("/administrator");
       } else {
         alert("로그인에 성공했습니다.");
-        this.props.navigate("/mainpage");
+        this.props.navigate("/survey");
       }
       
 
