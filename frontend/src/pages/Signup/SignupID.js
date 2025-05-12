@@ -169,7 +169,7 @@ const SignupID = () => {
       const data = await response.json();
       console.log("회원가입 성공:", data);
 
-      setModalMessage("🎉 회원가입 성공! 메인화면으로 이동합니다.");
+      setModalMessage("🎉 회원가입 성공! 로그인을 진행해주세요.");
       setIsError(false);
       setShowModal(true);
     

@@ -108,7 +108,7 @@ const Header = () => {
   const isMypage = location.pathname.startsWith("/mypage");
   return (
     <HeaderContainer>
-      <LogoWrapper to="/mainpage">
+      <LogoWrapper to="/survey">
         <LogoImageStyled src={LogoImage} alt="로고" />
       </LogoWrapper>
 
