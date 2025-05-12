@@ -130,7 +130,55 @@ const MyPage = () => {
   const [isNameValid, setIsNameValid] = useState(true);
   const [profileImage, setProfileImage] = useState(DefaultProfile);
   const navigate = useNavigate();
-  
+
+  const [modalMessage, setModalMessage] = useState("");
+const [showModal, setShowModal] = useState(false);
+
+const openModal = (message) => {
+  setModalMessage(message);
+  setShowModal(true);
+};
+
+const closeModal = () => {
+  setShowModal(false);
+  if (modalMessage === "로그아웃 되었습니다!") {
+    navigate("/main");  // ✅ 모달 닫을 때 이동
+  }
+};
+
+
+const modalBackgroundStyle = {
+  position: "fixed",
+  top: 0,
+  left: 0,
+  width: "100%",
+  height: "100%",
+  backgroundColor: "rgba(0, 0, 0, 0.5)",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  zIndex: 9999,
+};
+
+const modalBoxStyle = {
+  background: "#fff",
+  padding: "30px",
+  borderRadius: "10px",
+  textAlign: "center",
+  width: "300px"
+};
+
+const modalButtonStyle = {
+  marginTop: "20px",
+  padding: "10px 20px",
+  backgroundColor: "#68a0f4",
+  color: "#fff",
+  border: "none",
+  borderRadius: "5px",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -139,7 +187,7 @@ const MyPage = () => {
       });
   
       if (res.status === 401) {
-        alert("로그인 후 이용해주세요. 로그인 화면으로 이동합니다.");
+        openModal("로그인 후 이용해주세요. 로그인 화면으로 이동합니다.");
         setTimeout(() => {
           navigate("/login");
         }, 500);  // 0.5초 뒤 이동 (너무 빠르면 안 보일 수 있으니 약간의 시간 줌)
@@ -176,22 +224,22 @@ const MyPage = () => {
   
 
   const handleLogout = async () => {
-    try {
-      const res = await fetch("http://localhost:4000/api/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-      if (res.ok) {
-        alert("로그아웃 되었습니다.");
-        navigate("/main");
-      } else {
-        alert("로그아웃 실패");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("오류 발생");
+  try {
+    const res = await fetch("http://localhost:4000/api/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+    if (res.ok) {
+      openModal("로그아웃 되었습니다!");  // ✅ 모달만 먼저 보여줌
+    } else {
+      openModal("로그아웃 실패");
     }
-  };
+  } catch (err) {
+    console.error(err);
+    openModal("오류 발생");
+  }
+};
+
   
   const handleInputChange = (event) => {
     const newName = event.target.value;
@@ -249,7 +297,7 @@ const MyPage = () => {
 
   const handleNicknameSave = () => {
     if (nickname === originalNickname) {
-      alert("닉네임이 변경되지 않았습니다.");
+      openModal("닉네임이 변경되지 않았습니다.");
       return;
     }
 
@@ -257,7 +305,7 @@ const MyPage = () => {
       .then(res => res.json())
       .then(data => {
         if (data.exists) {
-          alert("이미 존재하는 닉네임입니다.");
+          openModal("이미 존재하는 닉네임입니다.");
           return;
         }
 
@@ -272,11 +320,11 @@ const MyPage = () => {
             return res.json();
           })
           .then(data => {
-            alert("✅ 닉네임이 변경되었습니다.");
+            openModal("✅ 닉네임이 변경되었습니다.");
             setOriginalNickname(nickname);
           })
           .catch(err => {
-            alert("❌ 닉네임 변경 중 오류 발생");
+            openModal("❌ 닉네임 변경 중 오류 발생");
             console.error(err);
           });
       });
@@ -320,8 +368,17 @@ const MyPage = () => {
   <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
 </LogoutWrapper>
   
-      
+      {showModal && (
+  <div style={modalBackgroundStyle}>
+    <div style={modalBoxStyle}>
+      <p>{modalMessage}</p>
+      <button onClick={closeModal} style={modalButtonStyle}>확인</button>
+    </div>
+  </div>
+)}
+
     </MypageLayout>
+    
   );
   
 

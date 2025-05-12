@@ -89,6 +89,25 @@ const RejectButton = styled.button`
   cursor: pointer;
 `;
 
+const modalBoxStyle = {
+  background: "#fff",
+  padding: "30px",
+  borderRadius: "10px",
+  textAlign: "center",
+  width: "300px"
+};
+
+const modalButtonStyle = {
+  marginTop: "20px",
+  padding: "10px 20px",
+  backgroundColor: "#68a0f4",
+  color: "#fff",
+  border: "none",
+  borderRadius: "5px",
+  fontWeight: "bold",
+  cursor: "pointer",
+};
+
 
 // 기존 탭 상태를 쿼리스트링에서 가져와서 초기화
 const Administrator = () => {
@@ -96,12 +115,24 @@ const Administrator = () => {
   const [searchParams] = useSearchParams();
   const initialTab = searchParams.get("tab") || "pending";
   const [activeTab, setActiveTab] = useState(initialTab);
+  const [surveys, setSurveys] = useState([]);
+  const [modalMessage, setModalMessage] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
+   const openModal = (message) => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+  };
 
   // 탭 변경 시 URL 쿼리스트링도 함께 변경
   const changeTab = (tab) => {
     setActiveTab(tab);
     navigate(`/administrator?tab=${tab}`);}
-  useEffect(() => {
+    useEffect(() => {
     const fetchSurveys = async () => {
       try {
         const res = await fetch("http://localhost:4000/survey/all/posted", {
@@ -112,7 +143,7 @@ const Administrator = () => {
         setSurveys(data);
       } catch (err) {
         console.error("❌ 관리자 설문 불러오기 실패:", err);
-        alert("설문 데이터를 불러오는 데 실패했습니다.");
+        openModal("설문 데이터를 불러오는 데 실패했습니다.");
       }
     };
 
@@ -140,11 +171,11 @@ const Administrator = () => {
       setSurveys((prev) => prev.map((s) => (s._id === id ? updatedSurvey : s)));
     } catch (err) {
       console.error("❌ 상태 변경 오류:", err);
-      alert("설문 상태 변경에 실패했습니다.");
+      openModal("설문 상태 변경에 실패했습니다.");
     }
   };
 
-  const [surveys, setSurveys] = useState([]);
+ 
 const [openMenuId, setOpenMenuId] = useState(null);
 
 useEffect(() => {
@@ -256,6 +287,26 @@ const filteredSurveys =
 </SurveyList>
 
       </Container>
+      {showModal && (
+  <div style={{
+    position: "fixed",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 9999,
+  }}>
+    <div style={modalBoxStyle}>
+      <p>{modalMessage}</p>
+      <button onClick={closeModal} style={modalButtonStyle}>확인</button>
+    </div>
+  </div>
+)}
+
     </>
   );
 };
