@@ -18,6 +18,7 @@ const surveys = [
     country: "한국",
     category: "cuisine",
     imageUrl: BulgogiImg,
+    status: "pending",
     captions: [
       "(1) A traditional Korean dish, Bulgogi is marinated thinly sliced beef that has been grilled or stir-fried.",
       "(2) Korean Bulgogi consists of marinated beef that has been cooked through grilling or stir-frying.",
@@ -40,6 +41,7 @@ const surveys = [
     country: "한국",
     category: "cuisine",
     imageUrl: BibimbabImg,
+    status: "pending",
     captions: [
       "(1) Bibimbap is a Korean mixed rice dish with assorted vegetables, meat, egg, and gochujang.",
       "(2) This image displays a Western rice bowl topped with grilled chicken and avocado.",
@@ -62,6 +64,7 @@ const surveys = [
     country: "한국",
     category: "cuisine",
     imageUrl: KimchiImg,
+    status: "pending",
     captions: [
       "(1) Kimchi is a traditional Korean side dish made of fermented vegetables such as cabbage and radish.",
       "(2) This image shows sauerkraut, a popular German fermented cabbage side dish.",
@@ -84,6 +87,7 @@ const surveys = [
     country: "한국",
     category: "clothes",
     imageUrl: HanbokImg,
+    status: "pending",
     captions: [
       "(1) Hanbok is a traditional Korean attire characterized by vibrant colors and elegant designs.",
       "(2) The image portrays a modern Western-style dress.",
@@ -106,6 +110,7 @@ const surveys = [
     country: "한국",
     category: "architecture",
     imageUrl: GyeongbokgungImg,
+    status: "pending",
     captions: [
       "(1) Gyeongbokgung Palace is a historical royal palace located in Seoul, South Korea.",
       "(2) The image depicts a historical structure likely from China or Japan.",
@@ -128,6 +133,7 @@ const surveys = [
     country: "중국",
     category: "architecture",
     imageUrl: ChineseWallImg,
+    status: "pending",
     captions: [
       "(1) The Great Wall of China is an ancient defensive structure stretching across northern China.",
       "(2) The image shows a medieval castle wall from Europe.",
@@ -150,6 +156,7 @@ const surveys = [
     country: "중국",
     category: "cuisine",
     imageUrl: JjajangmyeonImg,
+    status: "pending",
     captions: [
       "(1) Jajangmyeon is a Korean-Chinese dish featuring noodles topped with black bean sauce.",
       "(2) The noodles shown here appear to be spaghetti with a tomato-based sauce.",
@@ -172,6 +179,7 @@ const surveys = [
     country: "중국",
     category: "clothes",
     imageUrl: CheongsamImg,
+    status: "pending",
     captions: [
       "(1) Cheongsam, also known as Qipao, is a traditional Chinese dress noted for its fitted silhouette and ornate designs.",
       "(2) The image appears to show traditional Korean clothing rather than a Qipao.",
@@ -194,6 +202,7 @@ const surveys = [
     country: "일본",
     category: "cuisine",
     imageUrl: SushiImg,
+    status: "pending",
     captions: [
       "(1) Sushi is a traditional Japanese dish consisting of vinegared rice accompanied by seafood and vegetables.",
       "(2) This image shows Korean-style rice rolls known as Kimbap.",
@@ -216,6 +225,7 @@ const surveys = [
     country: "일본",
     category: "clothes",
     imageUrl: KimonoImg,
+    status: "pending",
     captions: [
       "(1) The Kimono is a traditional Japanese garment worn for special occasions.",
       "(2) The image depicts Korean Hanbok rather than a Kimono.",
@@ -238,6 +248,7 @@ const surveys = [
     country: "일본",
     category: "architecture",
     imageUrl: TokyoTowerImg,
+    status: "pending",
     captions: [
       "(1) Tokyo Tower is a prominent communications and observation tower in Tokyo, Japan.",
       "(2) This image resembles the Eiffel Tower located in Paris, France.",

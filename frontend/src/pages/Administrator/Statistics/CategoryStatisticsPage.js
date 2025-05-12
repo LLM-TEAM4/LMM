@@ -1,9 +1,19 @@
-// 📄 CategoryStatisticsPage.js
+// CategoryStatisticsPage.js
 import React from "react";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 import Header from "../../../components/AdminHeader";
 import surveyData from "../../../data/SurveyData";
-import { useNavigate } from "react-router-dom";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  Legend,
+} from "recharts";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -24,36 +34,13 @@ const Subtitle = styled.p`
   margin-bottom: 30px;
 `;
 
-const StatItem = styled.div`
-  background: #fff;
-  padding: 20px 25px;
-  margin-bottom: 20px;
-  border-left: 6px solid #649eff;
-  border-radius: 10px;
+const ChartWrapper = styled.div`
+  width: 100%;
+  height: 500px;
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-`;
-
-const CategoryTitle = styled.h3`
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #333;
-`;
-
-const Count = styled.p`
-  font-size: 14px;
-  color: #555;
-  margin-bottom: 8px;
-`;
-
-const ItemList = styled.ul`
-  list-style: disc;
-  padding-left: 20px;
-`;
-
-const Item = styled.li`
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 4px;
 `;
 
 const BackButton = styled.button`
@@ -70,39 +57,96 @@ const BackButton = styled.button`
   }
 `;
 
-const CategoryStatisticsPage = () => {
-  const categoryMap = {};
-  const navigate = useNavigate();
+const aggregateScores = (votes) => {
+  const flatVotes = Object.values(votes || {}).flatMap((vote) =>
+    Object.entries(vote).flatMap(([score, count]) =>
+      Array(Number(count)).fill(Number(score))
+    )
+  );
+  const sum = flatVotes.reduce((a, b) => a + b, 0);
+  return flatVotes.length ? sum / flatVotes.length : 0;
+};
 
-  surveyData.forEach((item) => {
-    if (!categoryMap[item.category]) {
-      categoryMap[item.category] = [];
+const CategoryStatisticsPage = () => {
+  const navigate = useNavigate();
+  const categoryMap = {
+    cuisine: {},
+    clothes: {},
+    architecture: {},
+    game: {},
+    tooleh: {},
+  };
+
+  surveyData.forEach((s) => {
+    if (!categoryMap[s.category][s.country]) {
+      categoryMap[s.category][s.country] = [];
     }
-    categoryMap[item.category].push(item);
+    categoryMap[s.category][s.country].push(aggregateScores(s.votes));
   });
+
+  const charts = Object.entries(categoryMap).map(
+    ([category, countryScores]) => {
+      const data = Object.entries(countryScores).map(([country, scores]) => ({
+        country,
+        average:
+          scores.length > 0
+            ? Number(
+                (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)
+              )
+            : 0,
+      }));
+
+      const colors = {
+        cuisine: "#e16162",
+        clothes: "#f2aa00",
+        architecture: "#007b83",
+        game: "#6a1b9a",
+        tooleh: "#00796b",
+      };
+
+      const labels = {
+        cuisine: "Food",
+        clothes: "Clothing",
+        architecture: "Architecture",
+        game: "Game",
+        tooleh: "Tooleh",
+      };
+
+      return (
+        <ChartWrapper key={category}>
+          <h3 style={{ marginBottom: "10px", color: "#333" }}>
+            {labels[category]}
+          </h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data} margin={{ bottom: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis
+                dataKey="country"
+                angle={-15}
+                textAnchor="end"
+                height={60}
+              />
+              <YAxis domain={[0, 5]} />
+              <Tooltip />
+              <Bar dataKey="average" fill={colors[category]} barSize={20} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartWrapper>
+      );
+    }
+  );
 
   return (
     <>
       <Header />
       <Container>
-        <Title>카테고리별 설문 통계</Title>
+        <Title>카테고리별 국가 점수</Title>
         <Subtitle>
-          설문 항목들은 음식(cuisine), 의복(clothes), 건축(architecture) 등의
-          문화 카테고리로 분류되어 있으며, 각 카테고리별 항목 수를 확인할 수
-          있습니다.
+          각 문화 카테고리 내에서 국가별로 평가된 생성 이미지의 설명 일치도
+          평균을 확인할 수 있습니다.
         </Subtitle>
 
-        {Object.entries(categoryMap).map(([category, items]) => (
-          <StatItem key={category}>
-            <CategoryTitle>📂 {category}</CategoryTitle>
-            <Count>총 설문 수: {items.length}개</Count>
-            <ItemList>
-              {items.map((s) => (
-                <Item key={s._id}>{s.entityName || s.title}</Item>
-              ))}
-            </ItemList>
-          </StatItem>
-        ))}
+        {charts}
 
         <BackButton onClick={() => navigate(-1)}>
           ← 목록으로 돌아가기
