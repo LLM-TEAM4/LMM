@@ -59,9 +59,7 @@ const AdminStatisticsLayout = ({ children, activeMenu, onMenuChange  }) => {
 <MenuItem $active={activeMenu === "category"} onClick={() => onMenuChange("category")}>
   카테고리별 통계
 </MenuItem>
-<MenuItem $active={activeMenu === "overall"} onClick={() => onMenuChange("overall")}>
-  전체 설문 요약
-</MenuItem>
+
 </Sidebar>
         <RightContent>
           {children}

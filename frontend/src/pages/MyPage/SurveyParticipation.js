@@ -63,8 +63,9 @@ const SurveyParticipation = () => {
 
   return (
     <MypageLayout>
+      <CommonHeader />
       <Wrapper>
-        <CommonHeader />
+        
         
         <SectionTitle>📌 설문 응답 현황</SectionTitle>
         <SectionCard>
@@ -121,6 +122,8 @@ const SectionTitle = styled.h2`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 20px;
+  margin-top;50px;
+
 `;
 
 const SectionCard = styled.div`
@@ -133,7 +136,7 @@ const SectionCard = styled.div`
 
 
 const Wrapper = styled.div`
-  padding: 100px 20px 20px 20px;
+  padding: 400px 20px 20px 20px;
 `;
 
 const Container = styled.div`
@@ -151,7 +154,10 @@ const ChartRow = styled.div`
 `;
 
 const ChartBox = styled.div`
+  margin-botton:30px;
   text-align: center;
+  
+
 `;
 
 const ParticipatedSection = styled.div`

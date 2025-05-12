@@ -97,6 +97,32 @@ const CountryStatisticsPage = () => {
     return "#4caf50";
   };
 
+  const exportData = (type) => {
+    
+  const data = sortedData;  // 현재 국가별 정렬 데이터
+
+  if (type === "json") {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "country_statistics.json";
+    link.click();
+  } else if (type === "csv") {
+    let csv = "국가,평균 점수,총 설문 수,총 응답자 수\n";
+    data.forEach(item => {
+      csv += `${item.country},${item.averageScore},${item.totalSurveys ?? "없음"},${item.totalParticipants ?? "없음"}\n`;
+    });
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "country_statistics.csv";
+    link.click();
+  }
+};
+
+
   return (
     <Container>
   <Title>국가별 평균 응답 점수</Title>
@@ -104,6 +130,23 @@ const CountryStatisticsPage = () => {
     점수가 낮을수록 해당 국가 이미지에 대해 생성형 AI의 문화적 편향성이
     높게 나타난 것을 의미합니다.
   </Subtitle>
+
+  {/* 가장 편향성 높은 국가 강조 */}
+<div style={{
+  backgroundColor: '#fff4f4',
+  borderLeft: '6px solid #f44336',
+  padding: '20px 25px',
+  borderRadius: '10px',
+  marginBottom: '30px',
+  boxShadow: '0 4px 10px rgba(0, 0, 0, 0.04)'
+}}>
+  <h2 style={{ fontSize: '20px', color: '#d32f2f', marginBottom: '10px' }}>📉 가장 편향성이 큰 국가</h2>
+  <p style={{ fontSize: '16px', color: '#555' }}>
+    <strong>{sortedData[0]?.country}</strong> — 평균 점수 <strong>{sortedData[0]?.averageScore}</strong>점
+  </p>
+</div>
+
+
 
   {/* ✅ 차트는 한 번만 */}
   <ChartWrapper>

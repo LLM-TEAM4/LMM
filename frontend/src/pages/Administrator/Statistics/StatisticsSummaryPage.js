@@ -3,8 +3,7 @@ import styled from "styled-components";
 import AdminStatisticsLayout from "../../../layouts/AdminStatisticsLayout";
 import CountryStatisticsPage from "./CountryStatisticsPage";
 import CategoryStatisticsPage from "./CategoryStatisticsPage";
-import OverallStatisticsPage from "./OverallStatisticsPage";
-import AdminHeader from "../../../components/AdminHeader";
+
 
 const PageWrapper = styled.div`
   display: flex;
@@ -14,8 +13,10 @@ const PageWrapper = styled.div`
 
 const StatisticsSummaryPage = () => {
   const [activeMenu, setActiveMenu] = useState(() => {
-    return localStorage.getItem("adminStatisticsActiveTab") || "country";
-  });
+  const stored = localStorage.getItem("adminStatisticsActiveTab");
+  return stored === "overall" || !stored ? "country" : stored;
+});
+
 
   const handleMenuChange = (menu) => {
     setActiveMenu(menu);
@@ -28,8 +29,7 @@ const StatisticsSummaryPage = () => {
         return <CountryStatisticsPage />;
       case "category":
         return <CategoryStatisticsPage />;
-      case "overall":
-        return <OverallStatisticsPage />;
+      
       default:
         return <p>선택된 메뉴가 없습니다.</p>;
     }
