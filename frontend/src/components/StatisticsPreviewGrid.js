@@ -15,7 +15,7 @@ import surveyData from "../data/SurveyData";
 
 const Grid = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 30px;
 `;
 
@@ -26,6 +26,8 @@ const ChartCard = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: transform 0.2s;
+  height: 250px; /* 높이 고정 또는 max-height 사용 */
+  overflow: hidden;
 
   &:hover {
     transform: scale(1.02);
