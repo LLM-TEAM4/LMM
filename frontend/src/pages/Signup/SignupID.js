@@ -194,13 +194,13 @@ const SignupID = () => {
         <img src={LogoImage} alt="로고" />
       </HeaderLogo>
 
-      <p>빠르고 쉽게 계정을 만들어보세요!</p>
+      <p>설문에 응하기 앞서, 계정을 만들어주세요 😃</p>
 
       <Form onSubmit={handleSubmit}>
         <label>아이디</label>
         <Input
           type="text"
-          placeholder="아이디를 입력해주세요."
+          placeholder="사용할 아이디를 입력해주세요."
           value={id}
           onChange={(e) => setId(e.target.value)}
           autoComplete="off"
@@ -208,13 +208,13 @@ const SignupID = () => {
         <label>비밀번호</label>
         <Input
           type="password"
-          placeholder="비밀번호를 입력해주세요."
+          placeholder="사용할 비밀번호를 입력해주세요."
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="off"
         />
-        <PasswordHint>문자 + 숫자 조합 6자 이상</PasswordHint>
-        <Button type="submit">간편하게 시작하기</Button>
+        <PasswordHint>영문 소문자 + 숫자 조합 4자 이상</PasswordHint>
+        <Button type="submit">회원가입하기</Button>
       </Form>
 
       <LoginText>

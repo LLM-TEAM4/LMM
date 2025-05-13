@@ -52,7 +52,7 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
       });
   
       if (!res.ok) throw new Error("응답 저장 실패");
-      alert("임시 저장 완료");
+      alert("저장 완료");
       navigate("/survey", { replace: true });
     } catch (error) {
       console.error(error);

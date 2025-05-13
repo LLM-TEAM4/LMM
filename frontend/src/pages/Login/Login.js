@@ -2,7 +2,7 @@
 import React, { Component } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import LoginLogoImage from "../../assets/img/loginlogo.png";
+import LogoImage from "../../assets/img/logo.png";
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 function withRouter(Component) {
@@ -140,8 +140,10 @@ class Login extends Component {
     return (
       <Container>
         <HeaderLogo>
-          <img src={LoginLogoImage} alt="로고" />
-        </HeaderLogo>
+        <img src={LogoImage} alt="로고" />
+      </HeaderLogo>
+
+      <p>로그인을 진행해주세요 😃</p>
 
         <Form onSubmit={this.handleSubmit}>
           <label>아이디</label>

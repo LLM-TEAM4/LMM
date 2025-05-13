@@ -74,7 +74,7 @@ const Survey = () => {
     >
       <PathAndSortContainer>
         <CategoryPath>
-          설문조사
+          설문조사 : "아래 4가지 설문을 순서대로 진행해주세요 😃"
           {selectedCountries.length > 0 && ` > ${selectedCountries.join(", ")}`}
           {selectedCategories.length > 0 && ` > ${selectedCategories.join(", ")}`}
         </CategoryPath>

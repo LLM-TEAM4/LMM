@@ -3,6 +3,7 @@ import RankingpageLayout from "../../layouts/RankingpageLayout";
 import koreaImage from '../../assets/img/Koreaprofile.png';
 import chinaImage from '../../assets/img/Chinaprofile.png';
 import japanImage from '../../assets/img/Japanprofile.png';
+import defaultProfileImage from '../../assets/img/profile.png'; 
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -134,6 +135,11 @@ const RankingWeeklyPage = () => {
     }
   };
 
+  // 기본 이미지로 대체하는 함수
+  const handleImageError = (e) => {
+    e.target.src = defaultProfileImage; // 기본 이미지로 변경
+  };
+
   return (
     <RankingpageLayout>
       <div style={styles.container}>
@@ -170,7 +176,7 @@ const RankingWeeklyPage = () => {
                     <div style={{ ...styles.userBox, ...getRankStyle(user.rank - 1) }}>
                       <span style={styles.badge}>{getRankStyle(user.rank - 1).badge}</span>
                       <img
-                        src={user.profileImage}
+                        src={user.profileImage || defaultProfileImage} // 유저 프로필 이미지 또는 기본 이미지
                         alt="유저"
                         style={{
                           width: "30px",
@@ -179,6 +185,7 @@ const RankingWeeklyPage = () => {
                           objectFit: "cover",
                           marginRight: "10px",
                         }}
+                        onError={handleImageError} // 이미지 로드 실패 시 기본 이미지로 대체
                       />
                       <span>{user.nickname || user.id}</span>
                     </div>
