@@ -194,7 +194,7 @@ const SignupID = () => {
         <img src={LogoImage} alt="로고" />
       </HeaderLogo>
 
-      <p>설문에 응하기 앞서, 계정을 만들어주세요 😃</p>
+      <p>시간을 내주셔서 감사합니다. 설문에 응답하시기 전에, 먼저 계정을 생성해 주세요. 😊</p>
 
       <Form onSubmit={handleSubmit}>
         <label>아이디</label>
