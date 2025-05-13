@@ -150,7 +150,7 @@ class Login extends Component {
 
         {/* ✅ 설명문 하늘색 박스 */}
         <DescriptionBox>
-         <strong> 앞서 생성한 계정으로 로그인을 진행해주세요 😊</strong> 
+         <strong>생성한 계정으로 로그인을 진행해주세요 😊</strong> 
         </DescriptionBox>
 
         <Form onSubmit={this.handleSubmit}>

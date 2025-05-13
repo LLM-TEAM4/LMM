@@ -1,128 +1,133 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/img/profile.png";
-import KoreaImage from "../../assets/img/korea.png"; // 한국 이미지 추가
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const SurveyComplete = () => {
-  const [users, setUsers] = useState([]);
-  const navigate = useNavigate();
+const RankingBox = () => {
+  const [rankings, setRankings] = useState([]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchRankings = async () => {
       try {
-        const res = await fetch(`${BASE_URL}/survey/users`);
-        const data = await res.json();
-        setUsers(data.users);
+        const response = await fetch(`${BASE_URL}/api/ranking/weekly`);
+        const data = await response.json();
+        setRankings(data);
       } catch (error) {
-        console.error("사용자 정보 로드 실패:", error);
+        console.error("❌ 랭킹 데이터 가져오기 실패:", error);
       }
     };
 
-    fetchUsers();
+    fetchRankings();
   }, []);
 
-  const sortedUsers = [...users].sort((a, b) => b.answerCount - a.answerCount);
-
   return (
-    <Wrapper>
-      <MessageBox>
-        <Message>설문에 응해주셔서 감사합니다 :)</Message>
-        <Content>
-          <Image src={KoreaImage} alt="한국 이미지" />
-          <Title>한국</Title>
-        </Content>
-        <UserGrid>
-          {sortedUsers.map((user, index) => (
-            <UserCard key={index}>
-              <ProfileImage src={DefaultProfile} alt="프로필 이미지" />
-              <Nickname>{user.nickname}</Nickname>
-              <AnswerCount>응답 개수: {user.answerCount}</AnswerCount>
+    <RankingWrapper>
+      <ThankYouText>설문에 응해주셔서 감사합니다 :)</ThankYouText>
+      <RankingContainer>
+        <CountrySection>
+          <CountryImage src="path/to/korea-image.png" alt="Korea" />
+          <CountryTitle>한국</CountryTitle>
+        </CountrySection>
+
+        <RankingGrid>
+          {rankings.map((user) => (
+            <UserCard key={user.id}>
+              <ProfileSection>
+                <ProfileImage src={DefaultProfile} alt="User Profile" />
+                <Nickname>{user.nickname}</Nickname>
+              </ProfileSection>
+              <ResponseCount>{user.count} 응답</ResponseCount>
             </UserCard>
           ))}
-        </UserGrid>
-      </MessageBox>
-    </Wrapper>
+        </RankingGrid>
+      </RankingContainer>
+    </RankingWrapper>
   );
 };
 
-export default SurveyComplete;
+export default RankingBox;
 
 // Styled Components
-const Wrapper = styled.div`
-  padding: 20px;
-`;
 
-const MessageBox = styled.div`
-  background-color: #f0f0f0;
-  border-radius: 8px;
+const RankingWrapper = styled.div`
+  width: 100%;
   padding: 20px;
+  background-color: #f5f5f5;
   text-align: center;
 `;
 
-const Message = styled.h2`
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #333;
+const ThankYouText = styled.h2`
+  margin-bottom: 30px;
+  color: #444;
 `;
 
-const Content = styled.div`
-  margin-bottom: 20px;
+const RankingContainer = styled.div`
+  background-color: #ddd;
+  border-radius: 10px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const Image = styled.img`
+const CountrySection = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+`;
+
+const CountryImage = styled.img`
   width: 100px;
   height: 100px;
-  object-fit: cover;
   border-radius: 50%;
 `;
 
-const Title = styled.h3`
+const CountryTitle = styled.h3`
   margin-top: 10px;
-  font-size: 18px;
-  color: #333;
+  color: #444;
 `;
 
-const UserGrid = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+const RankingGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 20px;
+  width: 100%;
 `;
 
 const UserCard = styled.div`
   background-color: white;
+  padding: 15px;
   border-radius: 8px;
-  padding: 10px;
-  width: 120px;
-
+  text-align: center;
   display: flex;
   flex-direction: column;
-  align-items: center; /* 수직 방향 중앙 정렬 */
+  align-items: center;
   justify-content: center;
-  text-align: center;
+`;
+
+const ProfileSection = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 `;
 
 const ProfileImage = styled.img`
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 `;
 
 const Nickname = styled.p`
-  margin-top: 10px;
-  font-size: 14px;
-  color: #333;
-  text-align: center;
+  font-weight: bold;
+  color: #444;
 `;
 
-const AnswerCount = styled.p`
-  margin-top: 6px;
-  font-size: 12px;
-  color: #666;
-  text-align: center;
+const ResponseCount = styled.p`
+  margin-top: 10px;
+  color: #444;
+  font-size: 14px;
 `;
 
