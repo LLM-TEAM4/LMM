@@ -1,42 +1,68 @@
 import React, { useState, useEffect } from "react";
 import RankingpageLayout from "../../layouts/RankingpageLayout";
-import koreaImage from '../../assets/img/Koreaprofile.png';
-import chinaImage from '../../assets/img/Chinaprofile.png';
-import japanImage from '../../assets/img/Japanprofile.png';
-import defaultProfileImage from '../../assets/img/profile.png'; 
+import defaultProfileImage from '../../assets/img/profile.png';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const countryImages = {
-  한국: koreaImage,
-  중국: chinaImage,
-  일본: japanImage,
-};
-
 const RankingWeeklyPage = () => {
-  const [rankingData, setRankingData] = useState({});
-  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
-  const countries = ["한국", "중국", "일본"];
+  const [rankingData, setRankingData] = useState([]);
 
   useEffect(() => {
-    const fetchCountryRankings = async () => {
+    const fetchRankingData = async () => {
       try {
-        const countries = ["한국", "중국", "일본"];
-        const countryResults = {};
-        for (const country of countries) {
-          const res = await fetch(`${BASE_URL}/ranking/weekly`);
-          const data = await res.json();
-          countryResults[country] = data;
-        }
-        setRankingData(countryResults);
+        const res = await fetch(`${BASE_URL}/ranking/weekly`);
+        const data = await res.json();
+        const processedData = processRankingData(data);
+        setRankingData(processedData);
       } catch (error) {
         console.error("랭킹 데이터 불러오기 실패", error);
       }
     };
-  
-    fetchCountryRankings();
+    fetchRankingData();
   }, []);
-  
+
+  const processRankingData = (data) => {
+    // 응답 개수와 닉네임 기준으로 정렬
+    data.sort((a, b) => {
+      if (a.count === b.count) {
+        return a.nickname.localeCompare(b.nickname); // 사전식 정렬
+      }
+      return b.count - a.count; // 응답 개수 기준 내림차순
+    });
+
+    // 응답 수 별로 순위를 매깁니다.
+    let rank = 1;
+    let lastCount = null;
+    let adjustedData = [];
+
+    data.forEach((user, index) => {
+      if (user.count !== lastCount) {
+        // 새로운 응답 개수일 경우 순위를 갱신
+        lastCount = user.count;
+        if (user.count === 4) rank = 1;
+        else if (user.count === 3) rank = 2;
+        else if (user.count === 2) rank = 3;
+        else return; // 1, 2, 3응답자만 표시
+      }
+
+      adjustedData.push({ ...user, rank });
+    });
+
+    return adjustedData;
+  };
+
+  const getRankStyle = (rank) => {
+    switch (rank) {
+      case 1:
+        return { backgroundColor: "#fff9e6", badge: "🥇" }; // 1등: 금메달
+      case 2:
+        return { backgroundColor: "#f5f5f5", badge: "🥈" }; // 2등: 은메달
+      case 3:
+        return { backgroundColor: "#fdf1e0", badge: "🥉" }; // 3등: 동메달
+      default:
+        return null; // 그 외는 표시하지 않음
+    }
+  };
 
   const styles = {
     container: {
@@ -57,6 +83,7 @@ const RankingWeeklyPage = () => {
     },
     rankingWrapper: {
       display: "flex",
+      flexWrap: "wrap", // 여러 줄로 자동 정렬
       justifyContent: "center",
       gap: "2rem",
     },
@@ -64,26 +91,14 @@ const RankingWeeklyPage = () => {
       backgroundColor: "#f5f5f5",
       padding: "1rem",
       borderRadius: "1rem",
-      width: "280px",
+      width: "250px", // 카드 크기
       boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
       transition: "box-shadow 0.2s ease-in-out",
       cursor: "pointer",
     },
-    image: {
-      width: "150px",
-      height: "150px",
-      borderRadius: "50%",
-      margin: "0 auto 1rem",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.07)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundColor: "transparent",
-      border: "2.5px solid white"
-    },
-    countryName: {
-      textAlign: "center",
-      marginTop: "0.5rem",
-      marginBottom: "1.5rem",
+    badge: {
+      fontSize: "2rem", // 배지를 크게 보이게 함
+      marginBottom: "0.5rem",
     },
     userList: {
       listStyle: "none",
@@ -101,10 +116,6 @@ const RankingWeeklyPage = () => {
       fontSize: "1rem",
       width: "80%",
     },
-    badge: {
-      fontSize: "1.5rem",
-      marginRight: "10px",
-    },
     userBox: {
       backgroundColor: "#e0e0e0",
       padding: "8px 12px",
@@ -118,28 +129,6 @@ const RankingWeeklyPage = () => {
     }
   };
 
-  const getRankStyle = (rank) => {
-    switch (rank) {
-      case 0:
-        return { border: "2px solid gold", backgroundColor: "#fff9e6", badge: "🥇" };
-      case 1:
-        return { border: "2px solid #b0b0b0", backgroundColor: "#f5f5f5", badge: "🥈" };
-      case 2:
-        return { border: "2px solid #cd7f32", backgroundColor: "#fdf1e0", badge: "🥉" };
-      case 3:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: "4️⃣" };
-      case 4:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: "5️⃣" };
-      default:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: `#${rank + 1}` };
-    }
-  };
-
-  // 기본 이미지로 대체하는 함수
-  const handleImageError = (e) => {
-    e.target.src = defaultProfileImage; // 기본 이미지로 변경
-  };
-
   return (
     <RankingpageLayout>
       <div style={styles.container}>
@@ -148,52 +137,23 @@ const RankingWeeklyPage = () => {
           <div style={styles.divider}></div>
         </h2>
         <div style={styles.rankingWrapper}>
-          {countries.map((country, idx) => (
-            <div
-              key={idx}
-              style={{
-                ...styles.card,
-                ...(hoveredCardIndex === idx && {
-                  transform: "translateY(-4px)",
-                  boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
-                  backgroundColor: "#E7F3FF",
-                  border: "2px solid #1E90FF"
-                }),
-              }}
-              onMouseEnter={() => setHoveredCardIndex(idx)}
-              onMouseLeave={() => setHoveredCardIndex(null)}
-            >
+          {rankingData.map((user, index) => {
+            const rankStyle = getRankStyle(user.rank);
+            if (!rankStyle) return null; // 4등부터는 표시하지 않음
+
+            return (
               <div
+                key={index}
                 style={{
-                  ...styles.image,
-                  backgroundImage: `url(${countryImages[country]})`,
+                  ...styles.card,
                 }}
-              />
-              <h3 style={styles.countryName}>{country}</h3>
-              <ul style={styles.userList}>
-                {(rankingData[country] || []).map((user, index) => (
-                  <li key={index} style={styles.userItem}>
-                    <div style={{ ...styles.userBox, ...getRankStyle(user.rank - 1) }}>
-                      <span style={styles.badge}>{getRankStyle(user.rank - 1).badge}</span>
-                      <img
-                        src={user.profileImage || defaultProfileImage} // 유저 프로필 이미지 또는 기본 이미지
-                        alt="유저"
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          marginRight: "10px",
-                        }}
-                        onError={handleImageError} // 이미지 로드 실패 시 기본 이미지로 대체
-                      />
-                      <span>{user.nickname || user.id}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+              >
+                <div style={styles.badge}>{rankStyle.badge}</div>
+                <h3>{user.nickname || user.id}</h3>
+                <span>{user.count} 응답</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     </RankingpageLayout>
