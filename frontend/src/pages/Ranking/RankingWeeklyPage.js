@@ -141,7 +141,7 @@ const RankingWeeklyPage = () => {
 
   return (
     <RankingpageLayout>
-      <Content>
+      <div style={styles.content}>
       <div style={styles.container}>
         <h2 style={styles.header}>
           📅 주간 통합 순위
@@ -167,7 +167,8 @@ const RankingWeeklyPage = () => {
           })}
         </div>
       </div>
-      </Content>
+      </div>
+     
     </RankingpageLayout>
   );
 };
