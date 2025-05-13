@@ -4,13 +4,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import SurveypageLayout from "../../layouts/SurveypageLayout";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Survey = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const surveyRefs = useRef({});
   const { completedTitle } = location.state || {};
 
-  
   const [surveys, setSurveys] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
@@ -23,14 +23,13 @@ const Survey = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log("✅ 세션 유지 확인:", data);
-        setSurveys(Array.isArray(data) ? data : []);  // 배열 보장
+        setSurveys(Array.isArray(data) ? data : []); // 배열 보장
       })
       .catch((err) => {
         console.error("❌ 세션 조회 실패:", err);
         setSurveys([]);
       });
   }, []);
-  
 
   const filtered = surveys.filter((item) => {
     const countryMatch =
@@ -87,17 +86,17 @@ const Survey = () => {
 
       <SurveyContainer>
         {sorted.map((item) => {
-          console.log("네비게이션 직전 item._id:", item._id);
           const answered = item.progress || 0;
           const total = item.captions.length;
           const percent = Math.round((answered / total) * 100);
+          const isCompleted = percent >= 100;
+
           return (
             <SurveyItem
               key={item._id}
               ref={(el) => (surveyRefs.current[item.title] = el)}
-              onClick={() =>{
-                console.log("이동할 surveyId:", item._id);  
-
+              onClick={() => {
+                if (isCompleted) return; // ✅ 클릭 방지
                 navigate(`/survey/${item.title}`, {
                   state: {
                     image: item.imageUrl,
@@ -106,10 +105,11 @@ const Survey = () => {
                     category: item.category,
                     entityName: item.entityName,
                     surveyId: item._id,
-                    _id: item._id 
+                    _id: item._id,
                   },
                 });
               }}
+              $disabled={isCompleted} // ✅ styled-component에 전달
             >
               <SurveyImage src={item.imageUrl} alt={item.title} />
               <SurveyContent>
@@ -117,12 +117,10 @@ const Survey = () => {
                   {`${item.country} > ${item.category} > ${item.entityName}`}
                 </strong>
                 <ProgressBar value={answered} max={total} />
-                <ProgressText>
-                  {`${answered} / ${total} (${percent}%)`}
-                </ProgressText>
+                <ProgressText>{`${answered} / ${total} (${percent}%)`}</ProgressText>
               </SurveyContent>
-              <ContinueButton>
-                {answered >= total ? "완료" : "이어서 진행하기"}
+              <ContinueButton disabled={isCompleted}>
+                {isCompleted ? "완료" : "이어서 진행하기"}
               </ContinueButton>
             </SurveyItem>
           );
@@ -134,6 +132,7 @@ const Survey = () => {
 
 export default Survey;
 
+// Styled Components
 const PathAndSortContainer = styled.div`
   display: flex;
   justify-content: space-between;
@@ -178,16 +177,21 @@ const SurveyItem = styled.div`
   border: 1px solid #ddd;
   border-radius: 12px;
   margin-bottom: 20px;
-  background-color: #f9f9f9;
-  cursor: pointer;
+  background-color: ${({ $disabled }) => ($disabled ? "#eee" : "#f9f9f9")};
+  cursor: ${({ $disabled }) => ($disabled ? "not-allowed" : "pointer")};
   transition: all 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-  &:hover {
-    background-color: #f0f6ff;
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(100, 158, 255, 0.2);
-    border-color: #649eff;
-  }
+
+  ${({ $disabled }) =>
+    !$disabled &&
+    `
+    &:hover {
+      background-color: #f0f6ff;
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(100, 158, 255, 0.2);
+      border-color: #649eff;
+    }
+  `}
 `;
 
 const SurveyImage = styled.img`
@@ -232,7 +236,14 @@ const ContinueButton = styled.button`
   margin-left: auto;
   cursor: pointer;
   transition: background-color 0.2s;
+
   &:hover {
     background-color: #4a82d9;
+  }
+
+  &:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+    opacity: 0.6;
   }
 `;

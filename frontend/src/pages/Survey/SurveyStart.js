@@ -60,6 +60,8 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
       alert("저장 중 오류 발생");
     }
   };
+
+  
   
 
   const handleNext = () => {
@@ -154,4 +156,11 @@ const ContinueButton = styled.button`
   &:hover {
     background-color: #4a82d9;
   }
+`;
+const GuideImage = styled.img`
+  margin-top: 30px;
+  width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+  border-radius: 8px;
 `;
