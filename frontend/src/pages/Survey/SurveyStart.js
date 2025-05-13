@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
 import BulgogiImg from "../../assets/img/bulgogi.png";
+import Guide from "../../assets/img/guide.png";
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const SurveyStart = () => {
@@ -117,6 +118,7 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
     {currentIndex >= caption.length - 1 ? "설문 끝내기" : "다음"}
   </ContinueButton>
             </ButtonGroup>
+            <GuideImage src={Guide} alt="설문 가이드 이미지" />
           </QuestionBlock>
         </ContentArea>
       </Container>

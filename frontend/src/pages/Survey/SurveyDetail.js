@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router-dom";
 import CommonHeader from "../../components/CommonHeader";
+import Guide from "../../assets/img/guide.png";
+
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 const SurveyDetail = () => {
