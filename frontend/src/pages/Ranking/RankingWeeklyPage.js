@@ -1,203 +1,128 @@
 import React, { useState, useEffect } from "react";
-import RankingpageLayout from "../../layouts/RankingpageLayout";
-import koreaImage from '../../assets/img/Koreaprofile.png';
-import chinaImage from '../../assets/img/Chinaprofile.png';
-import japanImage from '../../assets/img/Japanprofile.png';
-import defaultProfileImage from '../../assets/img/profile.png'; 
+import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
+import DefaultProfile from "../../assets/img/profile.png";
+import KoreaImage from "../../assets/img/korea.png"; // 한국 이미지 추가
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-const countryImages = {
-  한국: koreaImage,
-  중국: chinaImage,
-  일본: japanImage,
-};
-
-const RankingWeeklyPage = () => {
-  const [rankingData, setRankingData] = useState({});
-  const [hoveredCardIndex, setHoveredCardIndex] = useState(null);
-  const countries = ["한국", "중국", "일본"];
+const SurveyComplete = () => {
+  const [users, setUsers] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchCountryRankings = async () => {
+    const fetchUsers = async () => {
       try {
-        const countries = ["한국", "중국", "일본"];
-        const countryResults = {};
-        for (const country of countries) {
-          const res = await fetch(`${BASE_URL}/ranking/weekly`);
-          const data = await res.json();
-          countryResults[country] = data;
-        }
-        setRankingData(countryResults);
+        const res = await fetch(`${BASE_URL}/survey/users`);
+        const data = await res.json();
+        setUsers(data.users);
       } catch (error) {
-        console.error("랭킹 데이터 불러오기 실패", error);
+        console.error("사용자 정보 로드 실패:", error);
       }
     };
-  
-    fetchCountryRankings();
+
+    fetchUsers();
   }, []);
-  
 
-  const styles = {
-    container: {
-      padding: "0 2rem 2rem 0",
-    },
-    header: {
-      fontSize: "1.5rem",
-      fontWeight: "bold",
-      marginBottom: "2rem",
-      display: "flex",
-      flexDirection: "column",
-    },
-    divider: {
-      width: "100%",
-      height: "1.5px",
-      backgroundColor: "#ccc",
-      marginTop: "8px",
-    },
-    rankingWrapper: {
-      display: "flex",
-      justifyContent: "center",
-      gap: "2rem",
-    },
-    card: {
-      backgroundColor: "#f5f5f5",
-      padding: "1rem",
-      borderRadius: "1rem",
-      width: "280px",
-      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-      transition: "box-shadow 0.2s ease-in-out",
-      cursor: "pointer",
-    },
-    image: {
-      width: "150px",
-      height: "150px",
-      borderRadius: "50%",
-      margin: "0 auto 1rem",
-      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.07)",
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundColor: "transparent",
-      border: "2.5px solid white"
-    },
-    countryName: {
-      textAlign: "center",
-      marginTop: "0.5rem",
-      marginBottom: "1.5rem",
-    },
-    userList: {
-      listStyle: "none",
-      padding: 0,
-      marginTop: "0.5rem",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-    },
-    userItem: {
-      display: "flex",
-      justifyContent: "flex-start",
-      alignItems: "center",
-      padding: "0.8rem 0",
-      fontSize: "1rem",
-      width: "80%",
-    },
-    badge: {
-      fontSize: "1.5rem",
-      marginRight: "10px",
-    },
-    userBox: {
-      backgroundColor: "#e0e0e0",
-      padding: "8px 12px",
-      borderRadius: "10px",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      width: "100%",
-      boxSizing: "border-box",
-      boxShadow: "0 2px 6px rgba(0, 0, 0, 0.15)",
-    }
-  };
-
-  const getRankStyle = (rank) => {
-    switch (rank) {
-      case 0:
-        return { border: "2px solid gold", backgroundColor: "#fff9e6", badge: "🥇" };
-      case 1:
-        return { border: "2px solid #b0b0b0", backgroundColor: "#f5f5f5", badge: "🥈" };
-      case 2:
-        return { border: "2px solid #cd7f32", backgroundColor: "#fdf1e0", badge: "🥉" };
-      case 3:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: "4️⃣" };
-      case 4:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: "5️⃣" };
-      default:
-        return { border: "1px solid #ccc", backgroundColor: "#f5f5f5", badge: `#${rank + 1}` };
-    }
-  };
-
-  // 기본 이미지로 대체하는 함수
-  const handleImageError = (e) => {
-    e.target.src = defaultProfileImage; // 기본 이미지로 변경
-  };
+  const sortedUsers = [...users].sort((a, b) => b.answerCount - a.answerCount);
 
   return (
-    <RankingpageLayout>
-      <div style={styles.container}>
-        <h2 style={styles.header}>
-          📅 주간 통합 순위
-          <div style={styles.divider}></div>
-        </h2>
-        <div style={styles.rankingWrapper}>
-          {countries.map((country, idx) => (
-            <div
-              key={idx}
-              style={{
-                ...styles.card,
-                ...(hoveredCardIndex === idx && {
-                  transform: "translateY(-4px)",
-                  boxShadow: "0 6px 20px rgba(0, 0, 0, 0.25)",
-                  backgroundColor: "#E7F3FF",
-                  border: "2px solid #1E90FF"
-                }),
-              }}
-              onMouseEnter={() => setHoveredCardIndex(idx)}
-              onMouseLeave={() => setHoveredCardIndex(null)}
-            >
-              <div
-                style={{
-                  ...styles.image,
-                  backgroundImage: `url(${countryImages[country]})`,
-                }}
-              />
-              <h3 style={styles.countryName}>{country}</h3>
-              <ul style={styles.userList}>
-                {(rankingData[country] || []).map((user, index) => (
-                  <li key={index} style={styles.userItem}>
-                    <div style={{ ...styles.userBox, ...getRankStyle(user.rank - 1) }}>
-                      <span style={styles.badge}>{getRankStyle(user.rank - 1).badge}</span>
-                      <img
-                        src={user.profileImage || defaultProfileImage} // 유저 프로필 이미지 또는 기본 이미지
-                        alt="유저"
-                        style={{
-                          width: "30px",
-                          height: "30px",
-                          borderRadius: "50%",
-                          objectFit: "cover",
-                          marginRight: "10px",
-                        }}
-                        onError={handleImageError} // 이미지 로드 실패 시 기본 이미지로 대체
-                      />
-                      <span>{user.nickname || user.id}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </div>
+    <Wrapper>
+      <MessageBox>
+        <Message>설문에 응해주셔서 감사합니다 :)</Message>
+        <Content>
+          <Image src={KoreaImage} alt="한국 이미지" />
+          <Title>한국</Title>
+        </Content>
+        <UserGrid>
+          {sortedUsers.map((user, index) => (
+            <UserCard key={index}>
+              <ProfileImage src={DefaultProfile} alt="프로필 이미지" />
+              <Nickname>{user.nickname}</Nickname>
+              <AnswerCount>응답 개수: {user.answerCount}</AnswerCount>
+            </UserCard>
           ))}
-        </div>
-      </div>
-    </RankingpageLayout>
+        </UserGrid>
+      </MessageBox>
+    </Wrapper>
   );
 };
 
-export default RankingWeeklyPage;
+export default SurveyComplete;
+
+// Styled Components
+const Wrapper = styled.div`
+  padding: 20px;
+`;
+
+const MessageBox = styled.div`
+  background-color: #f0f0f0;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+`;
+
+const Message = styled.h2`
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #333;
+`;
+
+const Content = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Image = styled.img`
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+const Title = styled.h3`
+  margin-top: 10px;
+  font-size: 18px;
+  color: #333;
+`;
+
+const UserGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+`;
+
+const UserCard = styled.div`
+  background-color: white;
+  border-radius: 8px;
+  padding: 10px;
+  width: 120px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 수직 방향 중앙 정렬 */
+  justify-content: center;
+  text-align: center;
+`;
+
+const ProfileImage = styled.img`
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 50%;
+`;
+
+const Nickname = styled.p`
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+`;
+
+const AnswerCount = styled.p`
+  margin-top: 6px;
+  font-size: 12px;
+  color: #666;
+  text-align: center;
+`;
+

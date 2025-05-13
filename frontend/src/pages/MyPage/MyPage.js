@@ -159,41 +159,41 @@ const MyPage = () => {
       });
   };
 
-  const handleNicknameSave = () => {
+  const handleNicknameSave = async () => {
     if (nickname === originalNickname) {
       alert("닉네임이 변경되지 않았습니다.");
       return;
     }
-
-    fetch(`${BASE_URL}/api/auth/nickname`)
-      .then(res => res.json())
-      .then(data => {
-        if (data.exists) {
-          alert("이미 존재하는 닉네임입니다.");
-          return;
-        }
-
-        fetch(`${BASE_URL}/api/auth/nickname`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ nickname }),
-        })
-          .then(res => {
-            if (!res.ok) throw new Error("변경 실패");
-            return res.json();
-          })
-          .then(data => {
-            alert("✅ 닉네임이 변경되었습니다.");
-            setOriginalNickname(nickname);
-          })
-          .catch(err => {
-            alert("❌ 닉네임 변경 중 오류 발생");
-            console.error(err);
-          });
+  
+    try {
+      // ✅ 닉네임 중복 확인 (GET /check-nickname/:nickname)
+      const checkRes = await fetch(`${BASE_URL}/api/auth/check-nickname/${nickname}`);
+      const checkData = await checkRes.json();
+  
+      if (checkData.exists) {
+        alert("이미 존재하는 닉네임입니다.");
+        return;
+      }
+  
+      // ✅ 닉네임 변경 요청 (PATCH /nickname)
+      const res = await fetch(`${BASE_URL}/api/auth/nickname`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ nickname }),
       });
+  
+      if (!res.ok) throw new Error("변경 실패");
+  
+      const data = await res.json();
+      alert("✅ 닉네임이 변경되었습니다.");
+      setOriginalNickname(nickname);
+    } catch (err) {
+      console.error("❌ 닉네임 변경 오류:", err);
+      alert("닉네임 변경 중 오류가 발생했습니다.");
+    }
   };
-
+  
   return (
     <MypageLayout>
       <div style={{ padding: 20 }}>

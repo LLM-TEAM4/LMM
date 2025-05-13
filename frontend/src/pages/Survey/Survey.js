@@ -73,7 +73,7 @@ const Survey = () => {
     >
       <PathAndSortContainer>
         <CategoryPath>
-          설문조사 - 아래 4개의 설문을 순서대로 진행해주세요. 한 개당 20초 가량 소요됩니다. 😃
+          설문조사 - 1개당 1분 가량 소요됩니다. 아래 4개의 설문을 진행해주세요. 😃
           {selectedCountries.length > 0 && ` > ${selectedCountries.join(", ")}`}
           {selectedCategories.length > 0 && ` > ${selectedCategories.join(", ")}`}
         </CategoryPath>
