@@ -67,6 +67,7 @@ const RankingWeeklyPage = () => {
   const styles = {
     container: {
       padding: "0 2rem 2rem 0",
+      marginTop: "20px",
     },
     header: {
       fontSize: "1.5rem",
