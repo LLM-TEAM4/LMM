@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import LogoImage from "../../assets/img/logo.png";
-import { useNavigate } from "react-router-dom"; 
-// 회원가입하면 자동으로 프로필이미지 기본이미지로 설정정
+import { useNavigate } from "react-router-dom";
 import DefaultProfile from "../../assets/img/profile.png";
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -20,15 +19,25 @@ const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
   margin-bottom: 20px;
 
   img {
     width: 150px;
     margin-right: 10px;
   }
+`;
+
+// ✅ 설명문 하늘색 박스 추가
+const DescriptionBox = styled.div`
+  background-color: #eaf3ff;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: 320px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  line-height: 1.5;
 `;
 
 const Form = styled.form`
@@ -100,7 +109,7 @@ const ModalBackground = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(5px); 
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,20 +143,19 @@ const SignupID = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const [isError, setIsError] = useState(false);
-  const navigate = useNavigate();  
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-
     e.preventDefault();
 
-    const blob = await fetch(DefaultProfile).then(res => res.blob());
+    const blob = await fetch(DefaultProfile).then((res) => res.blob());
     const base64 = await new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(blob);
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
     });
-  
+
     try {
       const response = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
@@ -155,12 +163,11 @@ const SignupID = () => {
         body: JSON.stringify({
           id,
           password,
-          profileImage: base64, // 기본 이미지 포함!
+          profileImage: base64,
         }),
         credentials: "include",
       });
-      console.log(response);
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error("서버 응답이 올바르지 않습니다.");
@@ -172,7 +179,6 @@ const SignupID = () => {
       setModalMessage("🎉 회원가입 성공! 로그인을 진행해주세요.");
       setIsError(false);
       setShowModal(true);
-    
     } catch (error) {
       console.error("회원가입 실패:", error);
       setModalMessage("회원가입 실패! 다른 아이디를 사용하세요");
@@ -180,11 +186,11 @@ const SignupID = () => {
       setShowModal(true);
     }
   };
-  
+
   const handleModalClose = () => {
     setShowModal(false);
     if (!isError) {
-      navigate("/login"); // 회원가입 성공 시 로그인페이지로
+      navigate("/login");
     }
   };
 
@@ -194,8 +200,12 @@ const SignupID = () => {
         <img src={LogoImage} alt="로고" />
       </HeaderLogo>
 
-      <p>소중한 시간을 내주셔서 감사합니다. 설문에 응답하시기 전에 먼저 계정을 생성해 주세요. 😊</p>
-<p>아이디와 비밀번호는 영문 소문자와 숫자를 조합하여, 5자 이내로 입력해 주세요.</p>
+      {/* ✅ 하늘색 설명 박스 */}
+      <DescriptionBox>
+        소중한 시간을 내주셔서 감사합니다.<br />
+        설문에 응답하시기 전에 먼저 계정을 생성해 주세요. 😊<br /><br />
+        아이디와 비밀번호는 <strong>영문 소문자와 숫자 조합, 5자 이내</strong>로 입력해 주세요.
+      </DescriptionBox>
 
       <Form onSubmit={handleSubmit}>
         <label>아이디</label>
@@ -214,7 +224,7 @@ const SignupID = () => {
           onChange={(e) => setPassword(e.target.value)}
           autoComplete="off"
         />
-        <PasswordHint>영문 소문자 + 숫자 조합 4자 이상</PasswordHint>
+        <PasswordHint>영문 소문자 + 숫자 조합 5자 이내</PasswordHint>
         <Button type="submit">회원가입하기</Button>
       </Form>
 

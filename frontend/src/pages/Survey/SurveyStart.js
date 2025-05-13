@@ -10,19 +10,14 @@ const SurveyStart = () => {
   const { title } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
-  //const { image, caption = [], path, surveyId } = location.state || {};
 
   const state = location.state || {};
-console.log("📌 Full state:", state);
-
-const { image, caption = [], path, surveyId, _id } = state;
-const resolvedSurveyId = surveyId || _id;
-console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
+  const { image, caption = [], path, surveyId, _id } = state;
+  const resolvedSurveyId = surveyId || _id;
 
   const [selected, setSelected] = useState({});
   const [currentIndex, setCurrentIndex] = useState(0);
   const [existingAnswers, setExistingAnswers] = useState([]);
-
 
   useEffect(() => {
     fetch(`${BASE_URL}/survey/${resolvedSurveyId}/progress`, {
@@ -38,12 +33,10 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
 
   const handleSave = async () => {
     const combinedAnswers = [...existingAnswers];
-  
-    // ✅ 현재까지 선택된 모든 답변을 반영
     Object.entries(selected).forEach(([idx, value]) => {
       combinedAnswers[idx] = value;
     });
-  
+
     try {
       const res = await fetch(`${BASE_URL}/survey/${resolvedSurveyId}/answer`, {
         method: "POST",
@@ -51,7 +44,7 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
         credentials: "include",
         body: JSON.stringify({ answers: combinedAnswers }),
       });
-  
+
       if (!res.ok) throw new Error("응답 저장 실패");
       alert("저장 완료");
       navigate("/survey", { replace: true });
@@ -60,9 +53,6 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
       alert("저장 중 오류 발생");
     }
   };
-
-  
-  
 
   const handleNext = () => {
     setCurrentIndex((prev) => Math.min(prev + 1, caption.length - 1));
@@ -83,10 +73,12 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
         <Progress>
           {currentIndex + 1}/{caption.length}
         </Progress>
+
         <ContentArea>
           <ImageBlock>
             <Image src={image || fallbackImage} alt={title} />
           </ImageBlock>
+
           <QuestionBlock>
             <Caption>{caption[currentIndex] || fallbackCaption}</Caption>
             <Options>
@@ -109,20 +101,23 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
                 </Option>
               ))}
             </Options>
+
             <ButtonGroup>
               <ContinueButton onClick={handleSave} disabled={selected[currentIndex] == null}>
                 임시 저장
               </ContinueButton>
               <ContinueButton
-    onClick={currentIndex >= caption.length - 1 ? handleSave : handleNext}
-    disabled={selected[currentIndex] == null}
-  >
-    {currentIndex >= caption.length - 1 ? "설문 끝내기" : "다음"}
-  </ContinueButton>
+                onClick={currentIndex >= caption.length - 1 ? handleSave : handleNext}
+                disabled={selected[currentIndex] == null}
+              >
+                {currentIndex >= caption.length - 1 ? "설문 끝내기" : "다음"}
+              </ContinueButton>
             </ButtonGroup>
-            <GuideImage src={Guide} alt="설문 가이드 이미지" />
           </QuestionBlock>
         </ContentArea>
+
+        {/* ✅ ContentArea 아래로 이동한 가이드 이미지 */}
+        <GuideImage src={Guide} alt="설문 가이드 이미지" />
       </Container>
     </Wrapper>
   );
@@ -130,19 +125,69 @@ console.log("📌 최종 surveyId 확인:", resolvedSurveyId);
 
 export default SurveyStart;
 
-// Styled Components
-const Wrapper = styled.div`padding: 20px;`;
-const Container = styled.div`max-width: 900px; margin: 0 auto;`;
-const Breadcrumb = styled.div`margin-bottom: 10px;`;
-const Progress = styled.div`margin-bottom: 10px;`;
-const ContentArea = styled.div`display: flex; align-items: flex-start; gap: 20px;`;
-const ImageBlock = styled.div`flex: 1;`;
-const QuestionBlock = styled.div`flex: 2;`;
-const Image = styled.img`width: 100%; max-height: 300px; object-fit: cover; border-radius: 8px;`;
-const Caption = styled.div`margin-bottom: 10px; font-weight: bold;`;
-const Options = styled.div`display: flex; flex-direction: column; align-items: flex-start;`;
-const Option = styled.label`margin-bottom: 5px; display: flex; align-items: center; gap: 8px;`;
-const ButtonGroup = styled.div`display: flex; gap: 10px; margin-top: 20px;`;
+// ✅ Styled Components
+const Wrapper = styled.div`
+  padding: 20px;
+`;
+
+const Container = styled.div`
+  max-width: 900px;
+  margin: 0 auto;
+`;
+
+const Breadcrumb = styled.div`
+  margin-bottom: 10px;
+`;
+
+const Progress = styled.div`
+  margin-bottom: 10px;
+`;
+
+const ContentArea = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+`;
+
+const ImageBlock = styled.div`
+  flex: 1;
+`;
+
+const QuestionBlock = styled.div`
+  flex: 2;
+`;
+
+const Image = styled.img`
+  width: 100%;
+  max-height: 300px;
+  object-fit: cover;
+  border-radius: 8px;
+`;
+
+const Caption = styled.div`
+  margin-bottom: 10px;
+  font-weight: bold;
+`;
+
+const Options = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const Option = styled.label`
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+`;
+
 const ContinueButton = styled.button`
   padding: 8px 14px;
   background-color: #649eff;
@@ -153,14 +198,24 @@ const ContinueButton = styled.button`
   margin-left: auto;
   cursor: pointer;
   transition: background-color 0.2s;
+
   &:hover {
     background-color: #4a82d9;
   }
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
 `;
+
 const GuideImage = styled.img`
   margin-top: 30px;
   width: 100%;
-  max-height: 180px;
-  object-fit: contain;
+  max-width: 900px;
+  object-fit: cover;
   border-radius: 8px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 `;

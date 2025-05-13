@@ -25,15 +25,25 @@ const HeaderLogo = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 
   img {
     width: 150px;
     margin-right: 10px;
   }
+`;
+
+// ✅ 설명문 하늘색 박스 추가
+const DescriptionBox = styled.div`
+  background-color: #eaf3ff;
+  padding: 16px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  width: 320px;
+  font-size: 14px;
+  color: #333;
+  text-align: center;
+  line-height: 1.5;
 `;
 
 const Form = styled.form`
@@ -97,20 +107,20 @@ class Login extends Component {
     e.preventDefault();
     const { email, password } = this.state;
 
-
     try {
       const response = await fetch(`${BASE_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           id: email.trim(),
-          password: password.trim().replace(/\n/g, ""), }),
+          password: password.trim().replace(/\n/g, ""),
+        }),
         credentials: "include",
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("❌ 로그인 실패 응답:", errorData); // ✅ 이 줄 추가
+        console.error("❌ 로그인 실패 응답:", errorData);
         alert(errorData.message || "로그인 실패");
         return;
       }
@@ -118,18 +128,13 @@ class Login extends Component {
       const data = await response.json();
       console.log("✅ 로그인 성공:", data);
 
-      
-
       if (data.role === "admin") {
-        console.log("관리자 로그인 성공!");
         alert("관리자로 로그인되었습니다.");
         this.props.navigate("/administrator");
       } else {
         alert("로그인에 성공했습니다.");
         this.props.navigate("/survey");
       }
-      
-
     } catch (error) {
       console.error("❌ 로그인 오류:", error);
       alert("서버 오류로 로그인에 실패했습니다.");
@@ -140,10 +145,13 @@ class Login extends Component {
     return (
       <Container>
         <HeaderLogo>
-        <img src={LogoImage} alt="로고" />
-      </HeaderLogo>
+          <img src={LogoImage} alt="로고" />
+        </HeaderLogo>
 
-      <p>로그인을 진행해주세요 😃</p>
+        {/* ✅ 설명문 하늘색 박스 */}
+        <DescriptionBox>
+         <strong> 앞서 생성한 계정으로 로그인을 진행해주세요 😊</strong> 
+        </DescriptionBox>
 
         <Form onSubmit={this.handleSubmit}>
           <label>아이디</label>
