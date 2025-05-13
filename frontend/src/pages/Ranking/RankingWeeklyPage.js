@@ -65,6 +65,15 @@ const RankingWeeklyPage = () => {
   };
 
   const styles = {
+    content: {
+      flex: 1,
+      padding: "20px",
+      backgroundColor: "#ffffff",
+      borderRadius: "15px",
+      fontSize: "14px",
+      minHeight: "600px",
+      marginBottom: "20px",
+    },
     container: {
       padding: "0 2rem 2rem 0",
       marginTop: "20px",
@@ -132,6 +141,7 @@ const RankingWeeklyPage = () => {
 
   return (
     <RankingpageLayout>
+      <Content>
       <div style={styles.container}>
         <h2 style={styles.header}>
           📅 주간 통합 순위
@@ -157,6 +167,7 @@ const RankingWeeklyPage = () => {
           })}
         </div>
       </div>
+      </Content>
     </RankingpageLayout>
   );
 };
