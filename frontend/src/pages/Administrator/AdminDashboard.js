@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Header from "../../components/AdminHeader";
 import StatisticsPreviewGrid from "../../components/StatisticsPreviewGrid";
 import surveyData from "../../data/SurveyData";
+import BannerImg from "../../assets/img/AdminBanner.svg";
 
 const DashboardContainer = styled.div`
   padding: 100px 40px;
@@ -13,8 +14,8 @@ const DashboardContainer = styled.div`
 `;
 
 const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 30px;
 `;
 
@@ -55,6 +56,20 @@ const Button = styled.button`
   }
 `;
 
+const BannerImage = styled.img`
+  margin-top: 60px;
+  width: 100%;
+  max-width: 1000px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.9;
+
+  @media (max-width: 768px) {
+    width: 90%;
+  }
+`;
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
@@ -67,6 +82,7 @@ const AdminDashboard = () => {
       <DashboardContainer>
         <h1>관리자 페이지</h1>
         <StatisticsPreviewGrid />
+        <BannerImage src={BannerImg} alt="곰돌이 배너" />
       </DashboardContainer>
     </>
   );
