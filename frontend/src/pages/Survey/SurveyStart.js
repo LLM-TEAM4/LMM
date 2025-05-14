@@ -12,7 +12,7 @@ const SurveyStart = () => {
   const navigate = useNavigate();
 
   const state = location.state || {};
-  const { image, caption = [], path, surveyId, _id } = state;
+  const { entityName, image, caption = [], path, surveyId, _id } = state;
   const resolvedSurveyId = surveyId || _id;
 
   const [selected, setSelected] = useState({});
@@ -71,7 +71,7 @@ const SurveyStart = () => {
       <Container>
         <Breadcrumb>{path || title}</Breadcrumb>
         <Progress>
-          {currentIndex + 1}/{caption.length}
+          {currentIndex + 1}/{caption.length} <strong>{entityName}</strong>
         </Progress>
 
         <ContentArea>

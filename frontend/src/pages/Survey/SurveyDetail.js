@@ -15,6 +15,7 @@ const SurveyDetail = () => {
     const path = `${country} > ${category} > ${entityName}`;
     navigate(`/survey/${title}/start`, {
       state: {
+        entityName,
         image,
         caption,
         path,
