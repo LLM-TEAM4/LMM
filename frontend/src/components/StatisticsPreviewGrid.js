@@ -1,5 +1,5 @@
 // components/StatisticsPreviewGrid.js
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import {
@@ -11,7 +11,6 @@ import {
   Tooltip,
   CartesianGrid,
 } from "recharts";
-import surveyData from "../data/SurveyData";
 
 const Grid = styled.div`
   display: grid;
@@ -26,7 +25,7 @@ const ChartCard = styled.div`
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: transform 0.2s;
-  height: 250px; /* 높이 고정 또는 max-height 사용 */
+  height: 250px;
   overflow: hidden;
 
   &:hover {
@@ -59,48 +58,70 @@ const HighlightText = styled.p`
   margin: 0;
 `;
 
-const aggregateScores = (votes) => {
-  const flatVotes = Object.values(votes || {}).flatMap((vote) =>
-    Object.entries(vote).flatMap(([score, count]) =>
-      Array(Number(count)).fill(Number(score))
-    )
-  );
-  const sum = flatVotes.reduce((a, b) => a + b, 0);
-  return flatVotes.length ? sum / flatVotes.length : 0;
-};
-
 const StatisticsPreviewGrid = () => {
   const navigate = useNavigate();
 
-  // 승인 대기 설문
-  const pendingSurveys = surveyData.filter((s) => s.status === "pending");
+  const [pendingSurveys, setPendingSurveys] = useState([]);
+  const [countryStats, setCountryStats] = useState([]);
+  const [categoryStats, setCategoryStats] = useState([]);
 
-  // 국가별 통계
-  const countryMap = {};
-  surveyData.forEach((s) => {
-    if (!countryMap[s.country]) countryMap[s.country] = [];
-    countryMap[s.country].push(aggregateScores(s.votes));
-  });
-  const countryData = Object.entries(countryMap).map(([country, scores]) => ({
-    country,
-    avg: Number((scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)),
-  }));
-  const sortedCountry = [...countryData].sort((a, b) => a.avg - b.avg);
+  useEffect(() => {
+    // 승인 대기 설문
+    fetch("http://localhost:4000/survey/all/posted", { credentials: "include" })
+      .then(res => res.json())
+      .then(data => setPendingSurveys(data.filter(s => s.status === "pending")))
+      .catch(err => console.error("❌ 승인 설문 불러오기 실패:", err));
 
-  // 카테고리별 통계
-  const categoryMap = {};
-  surveyData.forEach((s) => {
-    if (!categoryMap[s.category]) categoryMap[s.category] = [];
-    categoryMap[s.category].push(aggregateScores(s.votes));
-  });
-  const categoryData = Object.entries(categoryMap).map(
-    ([category, scores]) => ({
-      name: category,
-      avg: Number(
-        (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)
-      ),
+    // 국가별 통계
+    fetch("http://localhost:4000/survey/statistics/country-averages", {
+      credentials: "include",
     })
-  );
+      .then(res => res.json())
+      .then(data => setCountryStats(data))
+      .catch(err => console.error("❌ 국가별 통계 실패:", err));
+
+    // 카테고리별 통계 - 평균 점수 계산 포함
+    fetch("http://localhost:4000/survey/statistics/category-averages", {
+      credentials: "include",
+    })
+      .then(res => res.json())
+      .then(async data => {
+        const processed = await Promise.all(
+          data.map(async (item) => {
+            const allScores = [];
+
+            for (const survey of item.items) {
+              const res = await fetch(`http://localhost:4000/survey/${survey._id}`, {
+                credentials: "include",
+              });
+              const detail = await res.json();
+
+              Object.values(detail.votes || {}).forEach(voteSet => {
+                Object.entries(voteSet).forEach(([score, count]) => {
+                  allScores.push(...Array(Number(count)).fill(Number(score)));
+                });
+              });
+            }
+
+            const avg =
+              allScores.length > 0
+                ? (allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(2)
+                : 0;
+
+            return {
+              name: item.category,
+              avg: Number(avg),
+            };
+          })
+        );
+        setCategoryStats(processed);
+      })
+      .catch(err => console.error("❌ 카테고리별 통계 실패:", err));
+  }, []);
+
+  const sortedCountry = [...countryStats]
+    .map(d => ({ country: d.country, avg: d.averageScore }))
+    .sort((a, b) => a.avg - b.avg);
 
   return (
     <Grid>
@@ -108,8 +129,7 @@ const StatisticsPreviewGrid = () => {
       <ChartCard onClick={() => navigate("/administrator/requests")}>
         <Title>승인 요청된 설문조사</Title>
         <p style={{ fontSize: "14px", marginBottom: "16px" }}>
-          총 <strong>{pendingSurveys.length}</strong>개의 설문이 승인 대기
-          중입니다.
+          총 <strong>{pendingSurveys.length}</strong>개의 설문이 승인 대기 중입니다.
         </p>
         <ul style={{ marginBottom: "16px", paddingLeft: "20px" }}>
           {pendingSurveys.slice(0, 3).map((s) => (
@@ -125,9 +145,8 @@ const StatisticsPreviewGrid = () => {
         </ul>
       </ChartCard>
 
-      <ChartCard
-        onClick={() => navigate("/administrator/statistics/summary/overall")}
-      >
+      {/* 전체 통계 요약 */}
+      <ChartCard onClick={() => navigate("/administrator/statistics/summary/overall")}>
         <Title>전체 통계</Title>
         <p style={{ fontSize: "14px", marginBottom: "16px" }}>
           전체 설문에 대한 평균 점수 및 주요 통계를 확인할 수 있습니다.
@@ -142,12 +161,10 @@ const StatisticsPreviewGrid = () => {
       </ChartCard>
 
       {/* 국가별 통계 */}
-      <ChartCard
-        onClick={() => navigate("/administrator/statistics/summary/country")}
-      >
+      <ChartCard onClick={() => navigate("/administrator/statistics/summary/country")}>
         <Title>국가별 통계</Title>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={countryData.slice(0, 5)}>
+          <BarChart data={sortedCountry.slice(0, 5)}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="country" />
             <YAxis domain={[0, 5]} />
@@ -158,12 +175,10 @@ const StatisticsPreviewGrid = () => {
       </ChartCard>
 
       {/* 카테고리별 통계 */}
-      <ChartCard
-        onClick={() => navigate("/administrator/statistics/summary/category")}
-      >
+      <ChartCard onClick={() => navigate("/administrator/statistics/summary/category")}>
         <Title>카테고리별 통계</Title>
         <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={categoryData}>
+          <BarChart data={categoryStats}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis domain={[0, 5]} />

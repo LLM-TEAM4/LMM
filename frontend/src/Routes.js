@@ -31,6 +31,7 @@ import CategoryStatisticsPage from "./pages/Administrator/Statistics/CategorySta
 import CategorySurveyListPage from "./pages/Administrator/Statistics/CategorySurveyListPage";
 import OverallStatisticsPage from "./pages/Administrator/Statistics/OverallStatisticsPage";
 
+
 class AppRoutes extends React.Component {
   render() {
     return (
@@ -83,6 +84,7 @@ class AppRoutes extends React.Component {
             <Route path="result/:id" element={<SurveyResultPage />} />
             <Route path="statistics/:id" element={<SurveyStatisticsPage />} />
 
+            <Route path="statistics/result/:id" element={<SurveyResultPage />} />
             {/* 요약 통계 */}
             <Route
               path="statistics/summary/country"

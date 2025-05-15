@@ -1,9 +1,8 @@
-import React from "react";
+// ✅ OverallStatisticsPage.js
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import Header from "../../../components/AdminHeader";
-import surveyData from "../../../data/SurveyData";
 import { useNavigate } from "react-router-dom";
-
 import {
   BarChart,
   Bar,
@@ -15,7 +14,6 @@ import {
   Cell,
 } from "recharts";
 
-// Styled Components
 const Container = styled.div`
   padding: 100px 40px;
   background-color: #f9f9f9;
@@ -90,32 +88,20 @@ const ExportButton = styled.button`
 `;
 
 const OverallStatisticsPage = () => {
-  const countryStats = {};
+  const [sorted, setSorted] = useState([]);
   const navigate = useNavigate();
 
-  surveyData.forEach((s) => {
-    const votes = Object.values(s.votes || {}).flatMap((voteObj) =>
-      Object.entries(voteObj).flatMap(([score, count]) =>
-        Array(Number(count)).fill(Number(score))
-      )
-    );
-    const avg =
-      votes.length > 0 ? votes.reduce((a, b) => a + b, 0) / votes.length : 0;
-
-    if (!countryStats[s.country]) countryStats[s.country] = [];
-    countryStats[s.country].push(avg);
-  });
-
-  const countryAverages = Object.entries(countryStats).map(
-    ([country, avgs]) => ({
-      country,
-      average: Number(
-        (avgs.reduce((a, b) => a + b, 0) / avgs.length).toFixed(2)
-      ),
+  useEffect(() => {
+    fetch("http://localhost:4000/survey/statistics/country-averages", {
+      credentials: "include",
     })
-  );
-
-  const sorted = [...countryAverages].sort((a, b) => a.average - b.average);
+      .then((res) => res.json())
+      .then((data) => {
+        const sortedData = [...data].sort((a, b) => a.averageScore - b.averageScore);
+        setSorted(sortedData);
+      })
+      .catch((err) => console.error("❌ 전체 통계 불러오기 실패:", err));
+  }, []);
 
   const getColor = (value) => {
     if (value < 2.5) return "#f44336";
@@ -125,7 +111,6 @@ const OverallStatisticsPage = () => {
 
   const exportData = (type) => {
     const data = sorted;
-
     if (type === "json") {
       const blob = new Blob([JSON.stringify(data, null, 2)], {
         type: "application/json",
@@ -138,9 +123,8 @@ const OverallStatisticsPage = () => {
     } else if (type === "csv") {
       let csv = "국가,평균 점수\n";
       data.forEach((item) => {
-        csv += `${item.country},${item.average}\n`;
+        csv += `${item.country},${item.averageScore}\n`;
       });
-
       const blob = new Blob([csv], { type: "text/csv" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -156,26 +140,20 @@ const OverallStatisticsPage = () => {
       <Container>
         <Title>전체 설문 요약 통계</Title>
         <Subtitle>
-          국가별 평균 응답 점수를 기반으로 생성형 AI의 문화적 편향 정도를
-          시각화합니다. 평균 점수가 낮을수록 편향성이 더 큽니다.
+          국가별 평균 응답 점수를 기반으로 생성형 AI의 문화적 편향 정도를 시각화합니다. 평균 점수가 낮을수록 편향성이 더 큽니다.
         </Subtitle>
 
         <HighlightBox>
           <HighlightTitle>📉 가장 편향성이 큰 국가</HighlightTitle>
           <HighlightText>
             <strong>{sorted[0]?.country}</strong> — 평균 점수{" "}
-            <strong>{sorted[0]?.average}</strong>점
+            <strong>{sorted[0]?.averageScore}</strong>점
           </HighlightText>
         </HighlightBox>
 
         <div style={{ marginBottom: "30px", textAlign: "right" }}>
-          <ExportButton onClick={() => exportData("csv")}>
-            CSV로 내보내기
-          </ExportButton>
-          <ExportButton
-            onClick={() => exportData("json")}
-            style={{ marginLeft: "10px" }}
-          >
+          <ExportButton onClick={() => exportData("csv")}>CSV로 내보내기</ExportButton>
+          <ExportButton onClick={() => exportData("json")} style={{ marginLeft: "10px" }}>
             JSON으로 내보내기
           </ExportButton>
         </div>
@@ -190,18 +168,16 @@ const OverallStatisticsPage = () => {
                 formatter={(value) => `${value}점`}
                 labelFormatter={(label) => `국가: ${label}`}
               />
-              <Bar dataKey="average" barSize={40}>
+              <Bar dataKey="averageScore" barSize={40}>
                 {sorted.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={getColor(entry.average)} />
+                  <Cell key={`cell-${index}`} fill={getColor(entry.averageScore)} />
                 ))}
               </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartWrapper>
 
-        <BackButton onClick={() => navigate(-1)}>
-          ← 목록으로 돌아가기
-        </BackButton>
+        <BackButton onClick={() => navigate(-1)}>← 목록으로 돌아가기</BackButton>
       </Container>
     </>
   );

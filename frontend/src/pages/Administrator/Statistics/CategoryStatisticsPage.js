@@ -1,9 +1,7 @@
-// CategoryStatisticsPage.js
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
 import Header from "../../../components/AdminHeader";
-import surveyData from "../../../data/SurveyData";
 import {
   BarChart,
   Bar,
@@ -14,7 +12,6 @@ import {
   CartesianGrid,
 } from "recharts";
 
-// Styled Components
 const Container = styled.div`
   padding: 100px 40px 40px;
   background-color: #f9f9f9;
@@ -57,143 +54,150 @@ const BackButton = styled.button`
   }
 `;
 
-const StatItem = styled.div`
-  background: #fff;
-  padding: 20px 25px;
-  margin-bottom: 20px;
-  border-left: 6px solid #649eff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  cursor: pointer;
-  transition: all 0.2s ease;
-
-  &:hover {
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
-    transform: translateY(-2px);
-    background-color: #f0f4ff;
-  }
-`;
-
-const CategoryTitle = styled.h3`
-  font-size: 20px;
-  margin-bottom: 10px;
-  color: #444;
-`;
-
-const Count = styled.p`
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 10px;
-`;
-
-const ItemList = styled.ul`
-  list-style: disc;
-  padding-left: 20px;
-  color: #555;
-`;
-
-const Item = styled.li`
-  font-size: 14px;
-  margin-bottom: 5px;
-`;
-
-// Helper
-const aggregateScores = (votes) => {
-  const flatVotes = Object.values(votes || {}).flatMap((vote) =>
-    Object.entries(vote).flatMap(([score, count]) =>
-      Array(Number(count)).fill(Number(score))
-    )
-  );
-  const sum = flatVotes.reduce((a, b) => a + b, 0);
-  return flatVotes.length ? sum / flatVotes.length : 0;
-};
-
 const CategoryStatisticsPage = () => {
   const navigate = useNavigate();
   const [categoryStats, setCategoryStats] = useState([]);
+  const [rawStats, setRawStats] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
-  // 카테고리별 평균 점수 계산용 객체
-  const categoryMap = {
-    cuisine: {},
-    clothes: {},
-    architecture: {},
-    game: {},
-    tooleh: {},
-  };
-
-  // 카테고리별 점수 집계
-  surveyData.forEach((s) => {
-    if (!categoryMap[s.category][s.country]) {
-      categoryMap[s.category][s.country] = [];
-    }
-    categoryMap[s.category][s.country].push(aggregateScores(s.votes));
-  });
-
-  // 서버에서 카테고리별 설문 데이터 가져오기
   useEffect(() => {
     fetch("http://localhost:4000/survey/statistics/category-averages", {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data) => {
-        console.log("✅ 카테고리별 서버 응답 데이터:", data);
-        setCategoryStats(data);
+      .then(async (data) => {
+        setRawStats(data);
+        const processed = await Promise.all(
+          data.map(async (categoryItem) => {
+            const allScores = [];
+
+            for (const survey of categoryItem.items) {
+              const res = await fetch(`http://localhost:4000/survey/${survey._id}`, {
+                credentials: "include",
+              });
+              const detail = await res.json();
+
+              Object.values(detail.votes || {}).forEach((voteSet) => {
+                Object.entries(voteSet).forEach(([score, count]) => {
+                  allScores.push(...Array(Number(count)).fill(Number(score)));
+                });
+              });
+            }
+
+            const avg =
+              allScores.length > 0
+                ? (allScores.reduce((a, b) => a + b, 0) / allScores.length).toFixed(2)
+                : 0;
+
+            return {
+              name: categoryItem.category,
+              avg: Number(avg),
+            };
+          })
+        );
+
+        setCategoryStats(processed);
       })
-      .catch((err) => console.error("카테고리별 통계 불러오기 실패:", err));
+      .catch((err) => console.error("❌ 카테고리별 통계 불러오기 실패:", err));
   }, []);
 
-  // 차트 생성
-  const charts = Object.entries(categoryMap).map(
-    ([category, countryScores]) => {
-      const data = Object.entries(countryScores).map(([country, scores]) => ({
-        country,
-        average:
-          scores.length > 0
-            ? Number(
-                (scores.reduce((a, b) => a + b, 0) / scores.length).toFixed(2)
-              )
-            : 0,
-      }));
+  const exportCSV = async () => {
+    const filteredStats = selectedCategory
+      ? rawStats.filter((item) => item.category === selectedCategory)
+      : rawStats;
 
-      const colors = {
-        cuisine: "#e16162",
-        clothes: "#f2aa00",
-        architecture: "#007b83",
-        game: "#6a1b9a",
-        tooleh: "#00796b",
-      };
+    let csv = "캡션,1점,2점,3점,4점,5점,총 응답\n";
 
-      const labels = {
-        cuisine: "Food",
-        clothes: "Clothing",
-        architecture: "Architecture",
-        game: "Game",
-        tooleh: "Tooleh",
-      };
+    for (const categoryItem of filteredStats) {
+      for (const survey of categoryItem.items) {
+        const res = await fetch(`http://localhost:4000/survey/${survey._id}`, {
+          credentials: "include",
+        });
+        const detail = await res.json();
 
-      return (
-        <ChartWrapper key={category}>
-          <h3 style={{ marginBottom: "10px", color: "#333" }}>
-            {labels[category]}
-          </h3>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={data} margin={{ bottom: 30 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis
-                dataKey="country"
-                angle={-15}
-                textAnchor="end"
-                height={60}
-              />
-              <YAxis domain={[0, 5]} />
-              <Tooltip />
-              <Bar dataKey="average" fill={colors[category]} barSize={20} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-      );
+        csv += `[설문: ${detail.country} > ${detail.category} > ${detail.entityName}]\n`;
+
+        detail.captions.forEach((caption, i) => {
+          const votes = detail.votes?.[i] || {};
+          const total = Object.values(votes).reduce((a, b) => a + b, 0);
+          const row = [
+            caption.replace(/,/g, " "),
+            votes[1] || 0,
+            votes[2] || 0,
+            votes[3] || 0,
+            votes[4] || 0,
+            votes[5] || 0,
+            total,
+          ].join(",");
+          csv += row + "\n";
+        });
+
+        csv += "\n";
+      }
     }
-  );
+
+    const blob = new Blob(["\uFEFF" + csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${selectedCategory || "전체"}_카테고리_통계.csv`;
+    link.click();
+  };
+
+  const exportJSON = async () => {
+    const filteredStats = selectedCategory
+      ? rawStats.filter((item) => item.category === selectedCategory)
+      : rawStats;
+
+    const result = [];
+
+    for (const categoryItem of filteredStats) {
+      const surveys = [];
+      for (const survey of categoryItem.items) {
+        const res = await fetch(`http://localhost:4000/survey/${survey._id}`, {
+          credentials: "include",
+        });
+        const detail = await res.json();
+
+        const captions = detail.captions.map((caption, i) => {
+          const votes = detail.votes?.[i] || {};
+          const total = Object.values(votes).reduce((a, b) => a + b, 0);
+          return {
+            caption,
+            votes,
+            total,
+          };
+        });
+
+        surveys.push({
+          title: `${detail.country} > ${detail.category} > ${detail.entityName}`,
+          captions,
+        });
+      }
+
+      result.push({
+        category: categoryItem.category,
+        surveys,
+      });
+    }
+
+    const blob = new Blob([JSON.stringify(result, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${selectedCategory || "전체"}_카테고리_통계.json`;
+    link.click();
+  };
+
+  const filteredChartData = selectedCategory
+    ? categoryStats.filter((item) => item.name === selectedCategory)
+    : categoryStats;
+
+  const categoryOptions = ["architecture", "clothes", "cuisine", "game", "tool"];
 
   return (
     <>
@@ -201,61 +205,62 @@ const CategoryStatisticsPage = () => {
       <Container>
         <Title>카테고리별 국가 점수</Title>
         <Subtitle>
-          각 문화 카테고리 내에서 국가별로 평가된 생성 이미지의 설명 일치도
-          평균을 확인할 수 있습니다.
+          각 문화 카테고리 내에서 국가별로 평가된 생성 이미지의 설명 일치도 평균을 확인할 수 있습니다.
         </Subtitle>
 
-        {charts}
-
-        {/* 결과 요약 멘트 */}
-        <div
-          style={{
-            marginTop: "30px",
-            fontSize: "15px",
-            color: "#444",
-            lineHeight: "1.6",
-          }}
-        >
-          <p>
-            📉 아래는 각 문화 카테고리에서 가장 낮은 평균 점수를 기록한
-            국가입니다. 이는 해당 문화 요소에 대해 상대적으로 더 큰 편향을
-            보였을 가능성이 있습니다.
-          </p>
-          <ul style={{ marginLeft: "20px" }}>
-            {Object.entries(categoryMap).map(([category, countryScores]) => {
-              const entries = Object.entries(countryScores).map(
-                ([country, scores]) => {
-                  const avg =
-                    scores.length > 0
-                      ? Number(
-                          (
-                            scores.reduce((a, b) => a + b, 0) / scores.length
-                          ).toFixed(2)
-                        )
-                      : 0;
-                  return { country, avg };
-                }
-              );
-
-              const lowest = entries.sort((a, b) => a.avg - b.avg)[0];
-
-              const labels = {
-                cuisine: "음식",
-                clothes: "의복",
-                architecture: "건축",
-                game: "게임",
-                tooleh: "도구",
-              };
-
-              return (
-                <li key={category}>
-                  {labels[category]}: <strong>{lowest?.country}</strong> –{" "}
-                  <strong>{lowest?.avg}</strong>점
-                </li>
-              );
-            })}
-          </ul>
+        <div style={{ marginBottom: "30px", textAlign: "right" }}>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            style={{ marginRight: "10px", padding: "8px", fontSize: "14px" }}
+          >
+            <option value="">전체 카테고리</option>
+            {categoryOptions.map((cat) => (
+              <option key={cat} value={cat}>{cat}</option>
+            ))}
+          </select>
+          <button
+            onClick={exportCSV}
+            style={{
+              backgroundColor: "#4a82d9",
+              color: "white",
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "bold",
+              marginRight: "10px",
+            }}
+          >
+            CSV 다운로드
+          </button>
+          <button
+            onClick={exportJSON}
+            style={{
+              backgroundColor: "#4a82d9",
+              color: "white",
+              padding: "8px 16px",
+              border: "none",
+              borderRadius: "6px",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
+          >
+            JSON 다운로드
+          </button>
         </div>
+
+        <ChartWrapper>
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={filteredChartData} margin={{ bottom: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" angle={-15} textAnchor="end" height={60} />
+              <YAxis domain={[0, 5]} />
+              <Tooltip />
+              <Bar dataKey="avg" fill="#2196f3" barSize={20} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartWrapper>
 
         <BackButton onClick={() => navigate(-1)}>
           ← 목록으로 돌아가기

@@ -1,10 +1,7 @@
-import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import Header from "../../components/AdminHeader";
-import { useParams } from "react-router-dom";
-import surveyData from "../../data/SurveyData";
 
 const Container = styled.div`
   padding: 100px 40px 40px;
@@ -109,28 +106,45 @@ const RejectButton = styled.button`
   }
 `;
 
+const StatisticsButton = styled.button`
+  padding: 10px 20px;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #e68900;
+  }
+`;
+
 const AdminSurveyDetail = () => {
   const { id } = useParams();
-  const location = useLocation();
   const navigate = useNavigate();
-  const data = location.state;
+  const [survey, setSurvey] = useState(null);
 
-  const survey = surveyData.find((item) => String(item._id) === id);
-
-  if (!survey) {
-    return (
-      <Container>
-        <p>설문 데이터를 찾을 수 없습니다.</p>
-      </Container>
-    );
-  }
-
-  const { country, category, entityName, imageUrl, captions, admin, _id } =
-    survey;
+  useEffect(() => {
+    fetch(`http://localhost:4000/survey/detail/${id}`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data) => setSurvey(data))
+      .catch((err) => {
+        console.error("❌ 설문 상세 조회 실패:", err);
+      });
+  }, [id]);
 
   const handleApprove = async () => {
     try {
-      await axios.post(`/admin/surveys/${_id}/approve`);
+      const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: "approved" }),
+      });
+      if (!res.ok) throw new Error("승인 실패");
       alert("해당 설문이 승인되었습니다.");
       navigate(-1);
     } catch (err) {
@@ -143,13 +157,29 @@ const AdminSurveyDetail = () => {
     if (!reason) return;
 
     try {
-      await axios.patch(`/admin/surveys/${_id}/reject`, { reason });
+      const res = await fetch(`http://localhost:4000/survey/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ status: "rejected", rejectReason: reason }),
+      });
+      if (!res.ok) throw new Error("거절 실패");
       alert("해당 설문이 거절되었습니다.");
       navigate(-1);
     } catch (err) {
       alert("거절 중 오류가 발생했습니다.");
     }
   };
+
+  if (!survey) {
+    return (
+      <Container>
+        <p>로딩 중이거나 설문 데이터를 찾을 수 없습니다.</p>
+      </Container>
+    );
+  }
+
+  const { country, category, entityName, imageUrl, captions, user } = survey;
 
   return (
     <>
@@ -159,7 +189,7 @@ const AdminSurveyDetail = () => {
         <InfoBox>
           <InfoRow>
             <Label>등록자</Label>
-            <Text>{admin}</Text>
+            <Text>{user?.id || "알 수 없음"}</Text>
           </InfoRow>
 
           <InfoRow>
@@ -198,6 +228,9 @@ const AdminSurveyDetail = () => {
           <ButtonGroup>
             <ApproveButton onClick={handleApprove}>승인</ApproveButton>
             <RejectButton onClick={handleReject}>거절</RejectButton>
+            <StatisticsButton onClick={() => navigate(`/administrator/statistics/result/${id}`)}>
+              📊 통계 보기
+            </StatisticsButton>
           </ButtonGroup>
 
           <BackButton onClick={() => navigate(-1)}>

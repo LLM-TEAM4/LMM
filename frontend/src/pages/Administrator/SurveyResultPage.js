@@ -149,7 +149,15 @@ const SurveyResultPage = () => {
     const fetchSurvey = async () => {
       try {
         const res = await fetch(`http://localhost:4000/survey/${id}`, { credentials: "include" });
+        console.log("📡 API 호출 URL:", `http://localhost:4000/survey/${id}`);
+
+      if (!res.ok) {
+        console.error("❌ API 호출 실패. 상태 코드:", res.status);
+        return;
+      }
+        
         const data = await res.json();
+        console.log("✅ 설문 데이터 응답:", data);
         setSurvey(data);
       } catch (error) {
         console.error("설문 데이터 불러오기 실패:", error);
